@@ -1,48 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="start_service"
+        android:disableDependentsState = "true"
+        android:title="开启服务" />
 
     <PreferenceCategory
         android:title="权限">
 
         <Preference
             android:key="notificatListen"
+            android:dependency="start_service"
             android:title="通知使用权" />
 
         <Preference
             android:key="flotatingWindow"
+            android:dependency="start_service"
             android:title="悬浮窗权限" />
+
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Hello!" />
+        android:title="设置" >
+
+
+    <Preference
+        android:key="showFiliter"
+        android:dependency="start_service"
+        android:title="通知规则" />
+        <Preference
+            android:key="checkFiliter"
+            android:title="查看记录日志" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="save_log_to_file"
+            android:summary="记录日志总开关，开启后规则中的记录日志通知处理器才生效"
+            android:title="记录日志" />
+
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="notification_show"
+        android:dependency="start_service"
+        android:summary="在通知栏显示一条通知以防止进程关闭"
+        android:title="通知栏保活" />
 
     <Preference
         android:key="sendNotification"
         android:title="发送一条通知" />
 
-    <EditTextPreference
-        android:key="tileShowNum"
-        android:summary="在屏幕内最多可显示的磁贴数量"
-        android:inputType="number"
-        android:defaultValue="6"
-        android:title="磁贴数量" />
-
-    <Preference
-        android:key="tilePosition"
-        android:title="修改磁贴位置" />
-
-    <ListPreference
-        android:key="tileDirection"
-        android:defaultValue="up"
-        android:entries="@array/array_position_entries"
-        android:entryValues="@array/array_position_entries_values"
-        android:title="磁贴方向" />
-
     <Preference
         android:key="about"
-        android:summary="开发者：LingC"
+        android:summary="开发者：Stone"
         android:title="关于" />
+    </PreferenceCategory>
+           <PreferenceCategory
+                android:title="浮动通知处理器设置">
+
+                <EditTextPreference
+                    android:key="floattitle_tileShowNum"
+                    android:summary="在屏幕内最多可显示的磁贴数量"
+                    android:inputType="number"
+                    android:defaultValue="6"
+                    android:title="磁贴数量" />
+
+                <Preference
+                    android:key="floattitle_tilePosition"
+                    android:title="修改磁贴位置" />
+
+                <ListPreference
+                    android:key="floattitle_tileDirection"
+                    android:defaultValue="content"
+                    android:entries="@array/array_position_entries"
+                    android:entryValues="@array/array_position_entries_values"
+                    android:title="磁贴方向" />
+               <EditTextPreference
+                   android:key="floattitle_time"
+                   android:summary="设置延时多久通知自动消失（仅在通知展开情况下）"
+                   android:inputType="number"
+                   android:defaultValue="6000"
+                   android:title="延时时长(毫秒)" />
+</PreferenceCategory>
+    <PreferenceCategory
+        android:title="复制通知处理器设置">
+
+        <ListPreference
+            android:key="copyactioner_select_mode"
+            android:defaultValue="up"
+            android:entries="@array/array_copyactioner_select_mode"
+            android:entryValues="@array/array_copyactioner_select_mode_values"
+            android:title="复制内容" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="立即运行通知处理器设置">
+
+        <EditTextPreference
+            android:key="runintenactioner_time"
+            android:summary="多久后触发点击事件"
+            android:inputType="number"
+            android:defaultValue="200"
+            android:title="延时时长(毫秒)" />
+    </PreferenceCategory>
+<PreferenceCategory>
+
+</PreferenceCategory>
+    <Preference
+        android:key="donate"
+        android:title="捐赠"
+        android:summary="开发不易，喜欢本应用的话点击微信捐赠。"/>
 
 </PreferenceScreen>

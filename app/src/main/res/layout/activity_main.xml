@@ -5,12 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".MainActivity">
 
     <fragment
-        android:tag="@string/app_name"
-        android:name="com.lingc.nfloatingtile.MainFragment"
+        android:id="@+id/mian_setting"
+        android:name="com.lingc.notificationfilter.MainFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:tag="@string/app_name" />
+
 
 </FrameLayout>

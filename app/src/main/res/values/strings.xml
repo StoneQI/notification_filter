@@ -1,14 +1,71 @@
 <resources>
-    <string name="app_name">悬浮通知磁贴</string>
+    <string name="app_name">通知处理器</string>
+    <string name="actioner_setting">通知处理器设置</string>
 
+    <string name="new_filiter">新建规则</string>
+    <string name="no_filiter">无规则，请添加</string>
+    <string name="content_replace">内容替换规则（正则表达式）</string>
+    <string name="content_match">内容匹配规则（正则表达式）</string>
+    <string name="isBreak">是否阻止规则向下传播</string>
+    <string name="edit">修改</string>
+    <string name="detelet">删除</string>
+    <string name="content_extra">内容提取规则（正则表达式）</string>
+    <string name="title_replace">标题替换规则（正则表达式）</string>
+    <string name="title_extra">标题提取规则（正则表达式）</string>
+    <string name="title_match">标题匹配规则（正则表达式）</string>
+    <string name="replace">替换规则</string>
+    <string name="match">匹配规则</string>
+
+    <string name="checker">通知处理器</string>
+
+    <string name="filiter_name">规则名称</string>
+    <string name="filter_ID">规则处理顺序（数值越大的越先被处理）</string>
+    <string name="start_service">开启服务</string>
     <string-array name="array_position_entries">
         <item>向上</item>
         <item>向下</item>
     </string-array>
-
     <string-array name="array_position_entries_values">
         <item>up</item>
         <item>down</item>
     </string-array>
+
+    <string-array name="array_copyactioner_select_mode">
+        <item>标题</item>
+        <item>内容</item>
+    </string-array>
+    <string-array name="array_copyactioner_select_mode_values">
+        <item>title</item>
+        <item>content</item>
+    </string-array>
+
+
+    <string-array name="notification_actioner">
+        <item>悬浮通知</item>
+        <item>系统通知</item>
+        <item>丢弃通知</item>
+        <item>复制到内容到剪贴板</item>
+        <item>执行点击事件</item>
+        <item>保存记录</item>
+    </string-array>
+    <string name="check_float_window_permission">检查悬浮窗权限</string>
+    <string name="stop_service">停止服务,关闭所有窗口</string>
+    <string name="has_float_permission">可以添加悬浮窗</string>
+    <string name="no_float_permission">没有悬浮窗权限</string>
+    <string name="go_t0_open_float_ask">前往打开悬浮窗权限吗？</string>
+    <string name="has_notification_permission">可以获取通知</string>
+    <string name="no_notification_permission">没有获取通知权限</string>
+    <string name="go_t0_open_notification_ask">前往打开获取通知权限吗？</string>
+    <string name="has_permission">相应权限已开启</string>
+    <string name="no_permission">未获取相应权限</string>
+    <string name="service_start">服务已开启</string>
+    <string name="service_stop">服务已关闭</string>
+    <string name="close">点击关闭</string>
+    <string name="select_app_filiter">选择匹配应用</string>
+
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

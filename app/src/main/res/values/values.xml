@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">设置</string>
+<!--    <string name="app_name">DialogAppPicker</string>-->
+        <string name="applications">所有应用</string>
+    <string name="search">搜索</string>
+    <string name="shortcuts">Shortcuts</string>
+<!--    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+<!--    </style>-->
+</resources>

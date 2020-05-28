@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:id="@+id/main_fragement"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        >
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbarStyle="insideInset"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/filter_ID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/filter_ID"
+                android:inputType="number"
+                android:maxLines="1"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/filter_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/filiter_name"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:padding="6dp"
+                android:text="@string/replace"
+                android:textColor="#0D47A1"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/appPicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:minHeight="40dip"
+                android:padding="6dp"
+                android:text="@string/select_app_filiter"
+                android:textAlignment="viewStart"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/filter_tiitle_match"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/title_match"
+                android:inputType="textPersonName"
+                android:maxLines="2"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/filter_content_match"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/content_match"
+                android:inputType="textPersonName"
+                android:maxLines="2"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/filter_tiitle_match" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:padding="6dp"
+                android:text="@string/match"
+                android:textColor="#0D47A1"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/filter_tiitle_extra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/title_extra"
+                android:inputType="textPersonName"
+                android:maxLines="2"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/filter_title_replace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/title_replace"
+                android:inputType="textPersonName"
+                android:maxLines="2"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/filter_content_extra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/content_extra"
+                android:inputType="textPersonName"
+                android:maxLines="2"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/filter_content_replace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/content_replace"
+                android:inputType="textPersonName"
+                android:maxLines="2"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/filter_content_extra" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:padding="6dp"
+                android:text="@string/checker"
+                android:textColor="#0D47A1"
+                android:textSize="18sp" />
+
+            <Switch
+                android:id="@+id/isBreak"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:paddingLeft="5dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/isBreak"
+                android:textSize="14sp" />
+
+            <Spinner
+                android:id="@+id/actioner"
+                style="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/notification_actioner"
+                android:paddingTop="10dp"
+
+                android:paddingBottom="10dp"
+                tools:ignore="MissingConstraints" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <Button
+                    android:id="@+id/update_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="#00ACC1"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="@string/edit"
+
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
+
+                <Button
+                    android:id="@+id/delete_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="#00ACC1"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="@string/detelet"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
