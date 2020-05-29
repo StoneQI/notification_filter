@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter;
+package com.stone.notificationfilter;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -21,15 +21,15 @@ import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import com.blankj.utilcode.util.AppUtils;
-import com.lingc.notificationfilter.actioner.CopyActioner;
-import com.lingc.notificationfilter.actioner.RunIntentActioner;
-import com.lingc.notificationfilter.actioner.SaveToFileActioner;
-import com.lingc.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
-import com.lingc.notificationfilter.util.NotificationInfo;
-import com.lingc.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
-import com.lingc.notificationfilter.util.SpUtil;
-import com.lingc.notificationfilter.actioner.FloatingTile;
-import com.lingc.notificationfilter.actioner.TileObject;
+import com.stone.notificationfilter.actioner.CopyActioner;
+import com.stone.notificationfilter.actioner.RunIntentActioner;
+import com.stone.notificationfilter.actioner.SaveToFileActioner;
+import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
+import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
+import com.stone.notificationfilter.util.SpUtil;
+import com.stone.notificationfilter.actioner.FloatingTile;
+import com.stone.notificationfilter.actioner.TileObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +83,7 @@ public class NotificationService extends NotificationListenerService {
     private void setSystemNotificationMatchers(){
         NotificationFilterEntity notificationMatcher = new NotificationFilterEntity();
         notificationMatcher.orderID = 0;
+        notificationMatcher.name = "默认悬浮通知";
         notificationMatcher.actioner = 0;
         NotificationFilterEntity notificationMatcher2 = new NotificationFilterEntity();
 
@@ -92,8 +93,7 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(final StatusBarNotification sbn) {
         try {
-            if (!sbn.isClearable() || sbn.getPackageName().equals(getPackageName())
-                    || sbn.getPackageName().equals("android")) {
+            if (sbn.getPackageName().equals("android")) {
                 return;
             }
             PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
@@ -107,7 +107,7 @@ public class NotificationService extends NotificationListenerService {
             }
 
             for(NotificationFilterEntity notificationMatcher:customNotificationMatchers){
-                Log.e(TAG, String.valueOf(notificationMatcher.orderID));
+                Log.e(TAG, notificationMatcher.name);
                 if(  notificationMatcher.packageNames !=null && !notificationMatcher.packageNames.isEmpty() && !notificationMatcher.packageNames.contains(notificationInfo.getPackageName())){
                     continue;
                 }
@@ -213,7 +213,7 @@ public class NotificationService extends NotificationListenerService {
 
     private void floatingTileAction(final NotificationInfo notificationInfo) {
 
-                FloatingTile floatingTile = new FloatingTile(notificationInfo,NotificationService.this);
+                FloatingTile floatingTile = new FloatingTile(notificationInfo,NotificationService.this,false);
                 floatingTile.setLastTile(TileObject.lastFloatingTile);
                 floatingTile.showWindow();
     }
@@ -226,8 +226,8 @@ public class NotificationService extends NotificationListenerService {
     private void addForegroundNotification() {
         createNotificationChannel();
 
-        String contentTitle = "悬浮通知";
-        String contentText = "悬浮通知运行中...";
+        String contentTitle = "通知处理器";
+        String contentText = "通知处理器运行中...";
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -259,8 +259,8 @@ public class NotificationService extends NotificationListenerService {
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Name";
-            String description = "Description";
+            CharSequence name = "通知处理器";
+            String description = "防止通知处理器被后台关闭";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
             channel.setDescription(description);

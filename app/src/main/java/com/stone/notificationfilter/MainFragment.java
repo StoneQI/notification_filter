@@ -1,17 +1,23 @@
-package com.lingc.notificationfilter;
+package com.stone.notificationfilter;
 
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -26,11 +32,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.lingc.notificationfilter.util.DialogUtil;
-import com.lingc.notificationfilter.util.NotificationCollectorMonitorService;
-import com.lingc.notificationfilter.util.NotificationInfo;
-import com.lingc.notificationfilter.actioner.FloatingTile;
-import com.lingc.notificationfilter.actioner.TileObject;
+import com.stone.notificationfilter.util.DialogUtil;
+import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.actioner.FloatingTile;
+import com.stone.notificationfilter.actioner.TileObject;
 
 import java.util.Set;
 
@@ -40,6 +45,7 @@ import java.util.Set;
 public class MainFragment extends PreferenceFragmentCompat {
     private boolean isCanDrawWindow;
     private boolean isNotificationListenerEnable;
+    private static final String NOTIFICATION_CHANNEL_ID = "MainFragment";
 
     Dialog dia;
 
@@ -70,14 +76,6 @@ public class MainFragment extends PreferenceFragmentCompat {
             if (!isNotificationListenerEnable(getContext())){
                 toggleNotificationListenerService();
             }
-//            Log.e("MainFragment","权限足");
-//            if(SpUtil.getSp(getContext(),"appSettings").getBoolean("start_service", false)){
-//                Log.e("MainFragment","start Service2");
-//                Intent intent = new Intent(getContext(), NotificationService.class);
-//                getActivity().startService(intent);
-////                Toast.makeText(getContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
-//            }
-
         }
 
     }
@@ -146,14 +144,29 @@ public class MainFragment extends PreferenceFragmentCompat {
                     Toast.makeText(preference.getContext(), "无悬浮窗权限", Toast.LENGTH_SHORT).show();
                     return false;
                 }
-
-                NotificationInfo notificationInfo = new NotificationInfo(1,"234",System.currentTimeMillis());
-                notificationInfo.setPackageName(getContext().getPackageName());
-                notificationInfo.setTitle("Title");
-                notificationInfo.setContent("Message");
-                FloatingTile floatingTile = new FloatingTile(notificationInfo,getContext());
-                floatingTile.setLastTile(TileObject.lastFloatingTile);
-                floatingTile.showWindow();
+                createNotificationChannel();
+                NotificationManager notificationManager =
+                        (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                Intent intent = new Intent(getContext(),MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 1, intent, PendingIntent.FLAG_ONE_SHOT);
+                Notification  notification = new NotificationCompat.Builder(getContext(),NOTIFICATION_CHANNEL_ID)
+                        //指定通知的标题内容
+                        .setContentTitle("测试标题")
+                        //设置通知的内容
+                        .setContentText("测试内容：这是一条内容")
+                        //指定通知被创建的时间
+                        .setWhen(System.currentTimeMillis())
+                        //设置通知的小图标
+                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        //设置通知的大图标
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                                R.drawable.ic_launcher_background))
+                        //添加点击跳转通知跳转
+                        .setContentIntent(pendingIntent)
+                        //实现点击跳转后关闭通知
+                        .setAutoCancel(true)
+                        .build();
+                notificationManager.notify(1,notification);
                 return false;
             }
         });
@@ -181,9 +194,9 @@ public class MainFragment extends PreferenceFragmentCompat {
                         NotificationInfo notificationInfo = new NotificationInfo(1,"234",System.currentTimeMillis());
 
                         notificationInfo.setPackageName(getContext().getPackageName());
-                        notificationInfo.setTitle("Title");
-                        notificationInfo.setContent("Message");
-                        FloatingTile floatingTile = new FloatingTile(notificationInfo,getContext());
+                        notificationInfo.setTitle("设置位置");
+                        notificationInfo.setContent("上下移动设置初始位置");
+                        FloatingTile floatingTile = new FloatingTile(notificationInfo,getContext(),true);
                         floatingTile.setLastTile(TileObject.lastFloatingTile);
                         floatingTile.isEditPos = true;
                         floatingTile.showWindow();
@@ -269,6 +282,22 @@ public class MainFragment extends PreferenceFragmentCompat {
         }
     }
 
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "测试通知";
+            String description = "测试通知";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            channel.setShowBadge(false);
+//            channel.setSound(Uri sound, AudioAttributes audioAttributes);
+            NotificationManager notificationManager = getActivity().getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
 //    private void addPreferencesFromResource (int id, PreferenceGroup newParent) {
 //        PreferenceScreen screen = getPreferenceScreen ();
 //        int last = screen.getPreferenceCount ();
@@ -286,7 +315,7 @@ public class MainFragment extends PreferenceFragmentCompat {
     }
 
     private void toggleNotificationListenerService() {
-        ComponentName thisComponent = new ComponentName(getContext(),  NotificationCollectorMonitorService.class);
+        ComponentName thisComponent = new ComponentName(getContext(),  NotificationService.class);
         PackageManager pm = getActivity().getPackageManager();
         pm.setComponentEnabledSetting(thisComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         pm.setComponentEnabledSetting(thisComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);

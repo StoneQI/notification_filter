@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.dialogapppicker.adapters.mothers;
+package com.stone.notificationfilter.dialogapppicker.adapters.mothers;
 
 /*
  * Copyright (C) 2013 Peter Gregus for GravityBox Project (C3C076@xda)
@@ -23,8 +23,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.lingc.notificationfilter.dialogapppicker.IIconListAdapterItem;
-import com.lingc.notificationfilter.dialogapppicker.objects.AppItem;
+import com.stone.notificationfilter.dialogapppicker.IIconListAdapterItem;
+import com.stone.notificationfilter.dialogapppicker.objects.AppItem;
 
 import java.util.ArrayList;
 import java.util.List;

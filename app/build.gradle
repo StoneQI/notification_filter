@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.lingc.nfloatingtile"
+        applicationId "com.stone.notificationfilter"
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 2
-        versionName "1.1.190808"
+        versionName "0.9.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "releaseTime", "\"" + new Date().format("yyyy-MM-dd HH:mm:ss") + "\"")
         javaCompileOptions {
@@ -30,7 +30,7 @@ dependencies {
 
 //    implementation 'com.github.didikee:AndroidDonate:0.1.0'
 //    def room_version = "2.2.3"
-    implementation 'com.google.android.material:material:1.0.0'
+//    implementation 'com.google.android.material:material:1.0.0'
 //    implementation 'com.thefrenchtouch.lib:pbdialogapppicker:1.0.0'
     implementation 'com.blankj:utilcode:1.22.7'
 
@@ -40,7 +40,7 @@ dependencies {
     api 'com.google.guava:guava:27.0.1-android'
 //    implementation 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:1.0.0'
+//    implementation 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:1.0.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
 
     implementation 'androidx.appcompat:appcompat:1.0.2'

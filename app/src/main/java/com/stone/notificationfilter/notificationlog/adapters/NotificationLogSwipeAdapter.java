@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.notificationlog.adapters;
+package com.stone.notificationfilter.notificationlog.adapters;
 
 import android.widget.ImageView;
 
@@ -6,8 +6,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.module.BaseDraggableModule;
 import com.chad.library.adapter.base.module.DraggableModule;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.lingc.notificationfilter.R;
-import com.lingc.notificationfilter.notificationlog.objects.NotificationLogItem;
+import com.stone.notificationfilter.R;
+import com.stone.notificationfilter.notificationlog.objects.NotificationLogItem;
 //import com.github.Cy
 import org.jetbrains.annotations.NotNull;
 

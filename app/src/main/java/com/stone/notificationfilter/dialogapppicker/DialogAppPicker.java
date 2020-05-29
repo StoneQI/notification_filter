@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.dialogapppicker;
+package com.stone.notificationfilter.dialogapppicker;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,10 +23,10 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 
-import com.lingc.notificationfilter.R;
-import com.lingc.notificationfilter.dialogapppicker.adapters.mothers.IconListAdapter;
-import com.lingc.notificationfilter.dialogapppicker.objects.AppItem;
-import com.lingc.notificationfilter.dialogapppicker.objects.ShortcutItem;
+import com.stone.notificationfilter.R;
+import com.stone.notificationfilter.dialogapppicker.adapters.mothers.IconListAdapter;
+import com.stone.notificationfilter.dialogapppicker.objects.AppItem;
+import com.stone.notificationfilter.dialogapppicker.objects.ShortcutItem;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.entitys.notificationfilter;
+package com.stone.notificationfilter.entitys.notificationfilter;
 
 import androidx.room.Dao;
 import androidx.room.Delete;

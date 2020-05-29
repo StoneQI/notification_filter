@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.entitys.notificationitem;
+package com.stone.notificationfilter.entitys.notificationitem;
 
 //import android.support.annotation.NonNull;
 //import android.support.annotation.Nullable;

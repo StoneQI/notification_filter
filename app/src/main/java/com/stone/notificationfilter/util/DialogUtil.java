@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.util;
+package com.stone.notificationfilter.util;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.lingc.notificationfilter.actioner.TileObject;
+import com.stone.notificationfilter.actioner.TileObject;
 
 /**
  * Create by LingC on 2019/8/6 22:01

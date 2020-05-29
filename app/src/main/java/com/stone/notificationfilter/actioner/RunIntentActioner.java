@@ -1,9 +1,9 @@
-package com.lingc.notificationfilter.actioner;
+package com.stone.notificationfilter.actioner;
 import android.app.PendingIntent;
 import android.content.Context;
 
-import com.lingc.notificationfilter.util.NotificationInfo;
-import com.lingc.notificationfilter.util.SpUtil;
+import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.util.SpUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;

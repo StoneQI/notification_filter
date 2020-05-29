@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.util;
+package com.stone.notificationfilter.util;
 
 import android.app.PendingIntent;
 import android.graphics.drawable.Icon;

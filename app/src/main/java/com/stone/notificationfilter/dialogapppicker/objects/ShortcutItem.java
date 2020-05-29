@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.dialogapppicker.objects;
+package com.stone.notificationfilter.dialogapppicker.objects;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -10,9 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.widget.Toast;
 
-import com.lingc.notificationfilter.dialogapppicker.DialogAppPicker;
-import com.lingc.notificationfilter.dialogapppicker.ShortcutCreatedListener;
-import com.lingc.notificationfilter.dialogapppicker.ShortcutHandler;
+import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
+import com.stone.notificationfilter.dialogapppicker.ShortcutCreatedListener;
+import com.stone.notificationfilter.dialogapppicker.ShortcutHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;

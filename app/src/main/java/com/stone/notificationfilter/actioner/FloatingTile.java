@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.actioner;
+package com.stone.notificationfilter.actioner;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -18,10 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lingc.notificationfilter.R;
-import com.lingc.notificationfilter.util.NotificationInfo;
-import com.lingc.notificationfilter.util.PackageUtil;
-import com.lingc.notificationfilter.util.SpUtil;
+import com.stone.notificationfilter.R;
+import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.util.PackageUtil;
+import com.stone.notificationfilter.util.SpUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,7 +37,7 @@ public class FloatingTile {
 
     private WindowManager windowManager;
     private WindowManager.LayoutParams layoutParams;
-    public boolean isEditPos;
+    public boolean isEditPos=false;
     private boolean isOpen=true;
     private FloatingTile lastTile;
     public boolean isRemove;
@@ -46,8 +46,9 @@ public class FloatingTile {
     private View view;
     private Timer mtimer =null;
 
-    public FloatingTile(NotificationInfo notificationInfo,Context context) {
+    public FloatingTile(NotificationInfo notificationInfo,Context context, boolean isEditPos) {
         this.context = context;
+        this.isEditPos =isEditPos;
         this.notificationInfo = notificationInfo;
         String content = this.notificationInfo.getContent();
         if (!TextUtils.isEmpty(content)) {
@@ -105,7 +106,7 @@ public class FloatingTile {
 
         String showDirection = SpUtil.getSp(context,"appSettings").getString("floattitle_tileDirection", "down");
 
-        if (SpUtil.getSp(context,TAG).getInt("x", -1) == -1) {
+        if (SpUtil.getSp(context,"appSettings").getInt("floattitle_x", -1) == -1) {
             layoutParams.x = 1024;
             layoutParams.y = 300;
         } else {
@@ -159,17 +160,20 @@ public class FloatingTile {
             public void run() {
                 try {
                     windowManager.addView(view, layoutParams);
-                    long floattitle_time = Long.parseLong(SpUtil.getSp(context,"appSettings").getString("floattitle_time", "6000"));
-                    TimerTask timerTask = new TimerTask(){
-                        @Override
-                        public void run() {
-                            if (isOpen){
-                                removeTile();
+                    if(!isEditPos){
+                        long floattitle_time = Long.parseLong(SpUtil.getSp(context,"appSettings").getString("floattitle_time", "6000"));
+                        TimerTask timerTask = new TimerTask(){
+                            @Override
+                            public void run() {
+                                if (isOpen){
+                                    removeTile();
+                                }
                             }
-                        }
-                    };
-                    mtimer =new Timer();
-                    mtimer.schedule(timerTask,floattitle_time);
+                        };
+                        mtimer =new Timer();
+                        mtimer.schedule(timerTask,floattitle_time);
+                    }
+
 
                 } catch (WindowManager.BadTokenException e) {
                     // 无悬浮窗权限
@@ -191,6 +195,7 @@ public class FloatingTile {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                Log.e(TAG,String.valueOf(x)+","+String.valueOf(y));
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getRawX();

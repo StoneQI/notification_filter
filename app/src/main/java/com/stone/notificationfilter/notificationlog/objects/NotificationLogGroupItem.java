@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.notificationlog.objects;
+package com.stone.notificationfilter.notificationlog.objects;
 
 import java.util.List;
 

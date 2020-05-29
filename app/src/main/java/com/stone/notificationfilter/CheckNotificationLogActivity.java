@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter;
+package com.stone.notificationfilter;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,14 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
-import com.lingc.notificationfilter.entitys.notificationitem.NotificationItemDao;
-import com.lingc.notificationfilter.entitys.notificationitem.NotificationItemDataBase;
-import com.lingc.notificationfilter.entitys.notificationitem.NotificationItemEntity;
+import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDao;
+import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDataBase;
+import com.stone.notificationfilter.entitys.notificationitem.NotificationItemEntity;
 //import com.lingc.nfloatingtile.notificationlog.adapters.NotificationLogAdapter;
-import com.lingc.notificationfilter.notificationlog.adapters.NotificationLogSwipeAdapter;
-import com.lingc.notificationfilter.notificationlog.objects.NotificationLogItem;
-import com.lingc.notificationfilter.util.PackageUtil;
-import com.lingc.notificationfilter.util.TimeUtil;
+import com.stone.notificationfilter.notificationlog.adapters.NotificationLogSwipeAdapter;
+import com.stone.notificationfilter.notificationlog.objects.NotificationLogItem;
+import com.stone.notificationfilter.util.PackageUtil;
+import com.stone.notificationfilter.util.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +46,13 @@ public class CheckNotificationLogActivity extends AppCompatActivity {
         //当有消息发送出来的时候就执行Handler的这个方法
         public void handleMessage(Message msg){
             super.handleMessage(msg);
-
+            pd.dismiss();
             if(notificationItemEntities ==null || notificationItemEntities.size()==0){
+                findViewById(R.id.no_log_data).setVisibility(View.VISIBLE);
                 return;
+            }else
+            {
+                findViewById(R.id.no_log_data).setVisibility(View.GONE);
             }
             final ArrayList<NotificationLogItem> notificationLogItemList = new ArrayList<>();
             for (NotificationItemEntity notificationItemEntity: notificationItemEntities) {
@@ -114,15 +119,13 @@ public class CheckNotificationLogActivity extends AppCompatActivity {
             notificationLogSwipeAdapter.getDraggableModule().setOnItemDragListener(onItemDragListener);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             mRecyclerView.setAdapter(notificationLogSwipeAdapter);
-            pd.dismiss();
-
-
             
         }
     };
 
     @Override
     protected void onResume() {
+        super.onResume();
         if(notificationItemDao ==null){
             NotificationItemDataBase db =NotificationItemDataBase.getInstance(getApplicationContext());
             notificationItemDao = db.NotificationItemDao();
@@ -137,13 +140,14 @@ public class CheckNotificationLogActivity extends AppCompatActivity {
             }
         }.start();
 
-        super.onResume();
+
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_notificarion_log_activity);
+        setTitle("查看记录日志");
         mRecyclerView = findViewById(R.id.recycler_view);
 
     }

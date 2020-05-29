@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter;
+package com.stone.notificationfilter;
 
 import android.annotation.SuppressLint;
 
@@ -19,9 +19,9 @@ import android.widget.ListView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.lingc.notificationfilter.entitys.notificationfilter.NotificationFilterDao;
-import com.lingc.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
-import com.lingc.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
+import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDao;
+import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
+import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +74,7 @@ public class FiliterActivity extends AppCompatActivity {
 
         Log.e(TAG,"create");
         setContentView(R.layout.activity_filiter);
+        setTitle("所有规则");
 
         findViewById(R.id.new_filiter).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,9 +1,9 @@
-package com.lingc.notificationfilter.util;
+package com.stone.notificationfilter.util;
 
 import android.content.Context;
 import android.provider.Settings;
 
-import com.lingc.notificationfilter.basefloat.FloatWindowParamManager;
+import com.stone.notificationfilter.basefloat.FloatWindowParamManager;
 
 public class PermissionUtil {
     public static boolean notificationListenerEnable(Context context) {

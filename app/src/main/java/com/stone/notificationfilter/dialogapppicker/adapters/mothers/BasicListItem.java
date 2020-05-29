@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.dialogapppicker.adapters.mothers;
+package com.stone.notificationfilter.dialogapppicker.adapters.mothers;
 /*
  * Copyright (C) 2013 Peter Gregus for GravityBox Project (C3C076@xda)
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@ package com.lingc.notificationfilter.dialogapppicker.adapters.mothers;
  */
 
 
-import com.lingc.notificationfilter.dialogapppicker.IBaseListAdapterItem;
+import com.stone.notificationfilter.dialogapppicker.IBaseListAdapterItem;
 
 public class BasicListItem implements IBaseListAdapterItem {
     private String mText;

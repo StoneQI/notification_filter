@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.util;
+package com.stone.notificationfilter.util;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;

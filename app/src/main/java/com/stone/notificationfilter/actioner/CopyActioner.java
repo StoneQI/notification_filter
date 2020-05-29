@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.actioner;
+package com.stone.notificationfilter.actioner;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -7,8 +7,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.StringUtils;
-import com.lingc.notificationfilter.util.NotificationInfo;
-import com.lingc.notificationfilter.util.SpUtil;
+import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.util.SpUtil;
 
 public class CopyActioner {
     private static String TAG ="CopyActioner";

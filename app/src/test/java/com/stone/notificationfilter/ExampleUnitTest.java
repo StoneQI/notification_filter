@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter;
+package com.stone.notificationfilter;
 
 import org.junit.Test;
 

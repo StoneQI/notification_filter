@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.util;
+package com.stone.notificationfilter.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

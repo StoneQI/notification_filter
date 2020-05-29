@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.util;
+package com.stone.notificationfilter.util;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import com.lingc.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
+import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

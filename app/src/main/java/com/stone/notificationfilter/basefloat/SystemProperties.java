@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.basefloat;
+package com.stone.notificationfilter.basefloat;
 
 import android.text.TextUtils;
 

@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.dialogapppicker;
+package com.stone.notificationfilter.dialogapppicker;
 
 import android.content.Intent;
 

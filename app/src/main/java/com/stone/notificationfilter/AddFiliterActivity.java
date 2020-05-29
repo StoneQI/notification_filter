@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter;
+package com.stone.notificationfilter;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -17,13 +17,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.lingc.notificationfilter.entitys.notificationfilter.NotificationFilterDao;
-import com.lingc.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
-import com.lingc.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
-import com.lingc.notificationfilter.dialogapppicker.DialogAppPicker;
-import com.lingc.notificationfilter.dialogapppicker.objects.AppItem;
-import com.lingc.notificationfilter.dialogapppicker.objects.ShortcutItem;
-import com.lingc.notificationfilter.util.SpUtil;
+import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDao;
+import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
+import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
+import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
+import com.stone.notificationfilter.dialogapppicker.objects.AppItem;
+import com.stone.notificationfilter.dialogapppicker.objects.ShortcutItem;
+import com.stone.notificationfilter.util.SpUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -87,6 +87,7 @@ public class AddFiliterActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_filiter);
+        setTitle("规则操作");
         final EditText filter_id =(EditText)findViewById(R.id.filter_ID);
         final EditText filter_name =(EditText)findViewById(R.id.filter_name);
         final EditText filter_tiitle_match =(EditText)findViewById(R.id.filter_tiitle_match);

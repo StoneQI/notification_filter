@@ -1,3 +1,3 @@
-package com.lingc.notificationfilter.util;
+package com.stone.notificationfilter.util;
 
 public enum Actioner{FLOAT_TITLE,NOACTION};

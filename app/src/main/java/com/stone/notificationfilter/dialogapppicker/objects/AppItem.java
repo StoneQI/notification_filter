@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.dialogapppicker.objects;
+package com.stone.notificationfilter.dialogapppicker.objects;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -13,9 +13,9 @@ import android.graphics.drawable.Drawable;
 import android.util.LruCache;
 import android.util.TypedValue;
 
-import com.lingc.notificationfilter.dialogapppicker.DialogAppPicker;
-import com.lingc.notificationfilter.dialogapppicker.IIconListAdapterItem;
-import com.lingc.notificationfilter.dialogapppicker.utils.Utils;
+import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
+import com.stone.notificationfilter.dialogapppicker.IIconListAdapterItem;
+import com.stone.notificationfilter.dialogapppicker.utils.Utils;
 
 public class AppItem implements IIconListAdapterItem {
     protected String mAppName;

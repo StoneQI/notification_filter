@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.entitys.notificationfilter;
+package com.stone.notificationfilter.entitys.notificationfilter;
 
 import android.content.Context;
 

@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.dialogapppicker.adapters;
+package com.stone.notificationfilter.dialogapppicker.adapters;
 
 /*
  * Copyright (C) 2013 Peter Gregus for GravityBox Project (C3C076@xda)
@@ -20,8 +20,8 @@ import android.graphics.drawable.Drawable;
 
         import android.content.res.Resources;
 
-import com.lingc.notificationfilter.dialogapppicker.IIconListAdapterItem;
-import com.lingc.notificationfilter.dialogapppicker.adapters.mothers.BasicListItem;
+import com.stone.notificationfilter.dialogapppicker.IIconListAdapterItem;
+import com.stone.notificationfilter.dialogapppicker.adapters.mothers.BasicListItem;
 
 
 public class BasicIconListItem extends BasicListItem implements IIconListAdapterItem {

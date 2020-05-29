@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.dialogapppicker;
+package com.stone.notificationfilter.dialogapppicker;
 
 /*
  * Copyright (C) 2013 Peter Gregus for GravityBox Project (C3C076@xda)

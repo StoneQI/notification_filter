@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter;
+package com.stone.notificationfilter;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -13,7 +13,7 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.lingc.notificationfilter.util.SpUtil;
+import com.stone.notificationfilter.util.SpUtil;
 
 /**
  * 1.0.190807

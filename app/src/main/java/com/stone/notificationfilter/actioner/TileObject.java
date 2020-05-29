@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter.actioner;
+package com.stone.notificationfilter.actioner;
 
 import android.util.SparseBooleanArray;
 

@@ -1,4 +1,4 @@
-package com.lingc.notificationfilter;
+package com.stone.notificationfilter;
 
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +11,7 @@ public class Donate extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.donate);
+        setTitle("捐献开发者");
         findViewById(R.id.backen).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
