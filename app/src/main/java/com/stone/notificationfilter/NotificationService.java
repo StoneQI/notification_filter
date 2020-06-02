@@ -26,6 +26,7 @@ import android.util.Log;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.stone.notificationfilter.actioner.CopyActioner;
+import com.stone.notificationfilter.actioner.NotificationSoundActioner;
 import com.stone.notificationfilter.actioner.RunIntentActioner;
 import com.stone.notificationfilter.actioner.SaveToFileActioner;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
@@ -33,7 +34,6 @@ import com.stone.notificationfilter.util.NotificationInfo;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
-import com.stone.notificationfilter.actioner.TileObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,11 +99,18 @@ public class NotificationService extends NotificationListenerService {
 
     private void setSystemNotificationMatchers(){
 
+        NotificationFilterEntity notificationMatcher6 = new NotificationFilterEntity();
+        notificationMatcher6.orderID = 4;
+        notificationMatcher6.name = "播放微信提示音";
+//        notificationMatcher6.contextPatter="^(?!.*?个联系人给你发过来).*$";
+        notificationMatcher6.packageNames="com.tencent.tim;com.tencent.mm;";
+        notificationMatcher6.actioner = 6;
+        notificationMatcher6.breakDown =false;
 
         NotificationFilterEntity notificationMatcher5 = new NotificationFilterEntity();
         notificationMatcher5.orderID = 3;
         notificationMatcher5.name = "日记记录";
-        notificationMatcher5.contextPatter="/^((?!个联系人给你发来).)+$/";
+        notificationMatcher5.contextPatter="^(?!.*?个联系人给你发过来).*$";
         notificationMatcher5.packageNames="com.tencent.tim;com.tencent.mm;com.tencent.mobileqq;";
         notificationMatcher5.actioner = 5;
         notificationMatcher5.breakDown =false;
@@ -129,7 +136,7 @@ public class NotificationService extends NotificationListenerService {
         notificationMatcher.name = "默认悬浮通知";
         notificationMatcher.actioner = 0;
 
-
+        systemNotificationMatchers.add(notificationMatcher6);
         systemNotificationMatchers.add(notificationMatcher5);
         systemNotificationMatchers.add(notificationMatcher3);
         systemNotificationMatchers.add(notificationMatcher2);
@@ -242,6 +249,7 @@ public class NotificationService extends NotificationListenerService {
                     case 3:cancelNotification(notificationInfo.key);new CopyActioner(notificationInfo,NotificationService.this).run();break;
                     case 4:cancelNotification(notificationInfo.key);new RunIntentActioner(notificationInfo,NotificationService.this).run();break;
                     case 5:cancelNotification(notificationInfo.key);new SaveToFileActioner(notificationInfo,NotificationService.this).run();break;
+                    case 6:new NotificationSoundActioner(notificationInfo,NotificationService.this).run();break;
 //                default:
 //                default: cancelAllNotifications();floatingTileAction(notificationInfo); break;
                 }
@@ -285,8 +293,7 @@ public class NotificationService extends NotificationListenerService {
     private void floatingTileAction(final NotificationInfo notificationInfo) {
 
                 FloatingTileActioner floatingTile = new FloatingTileActioner(notificationInfo,NotificationService.this,false);
-                floatingTile.setLastTile(TileObject.lastFloatingTile);
-                floatingTile.showWindow();
+                floatingTile.run();
     }
 
     @Override

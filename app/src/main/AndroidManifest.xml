@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -13,8 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+
         <activity android:name="com.stone.notificationfilter.MainActivity"
-            >
+            android:configChanges = "keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -22,7 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.stone.notificationfilter.FiliterFragment"></activity>
+
+        <activity android:name="com.stone.notificationfilter.FiliterActivity"></activity>
         <activity android:name="com.stone.notificationfilter.AddFiliterActivity"></activity>
         <activity android:name="com.stone.notificationfilter.CheckNotificationLogActivity"></activity>
         <activity android:name="com.stone.notificationfilter.Donate" />

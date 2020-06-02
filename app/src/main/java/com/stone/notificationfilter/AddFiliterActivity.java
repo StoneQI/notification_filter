@@ -15,14 +15,11 @@ import android.widget.Switch;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDao;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
 import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
-import com.stone.notificationfilter.dialogapppicker.objects.AppItem;
-import com.stone.notificationfilter.dialogapppicker.objects.ShortcutItem;
 import com.stone.notificationfilter.util.SpUtil;
 
 import java.util.HashSet;

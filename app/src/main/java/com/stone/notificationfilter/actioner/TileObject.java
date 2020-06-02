@@ -1,16 +1,18 @@
 package com.stone.notificationfilter.actioner;
 
-import android.util.SparseBooleanArray;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Create by LingC on 2019/8/6 16:06
  */
 public class TileObject {
-
+ private final  static  String TAG = "TileObject";
     public static int showTileNum = 0;
+    public static  int mMostShowTitleNum =0;
 
     public static FloatingTileActioner lastFloatingTile;
 
@@ -18,33 +20,56 @@ public class TileObject {
 
     // key: Tile的y, value: Tile是否在显示
     // 数量一般为指定数量
-    public static SparseBooleanArray positionArray = new SparseBooleanArray();
+    public static List<Boolean> positionArray = new ArrayList<>();
 
     public static List<FloatingTileActioner> waitingForShowingTileList = new ArrayList<>();
 
-    public static int getYInNullTile() {
-        for (int i = 0; i < positionArray.size(); i++) {
-            boolean isExiat = positionArray.valueAt(i);
-            if (!isExiat) {
-                return positionArray.keyAt(i);
+
+
+    public static int getNextPosition() {
+        for (int i = 0; i <positionArray.size() ; i++) {
+            if(!positionArray.get(i)){
+                positionArray.set(i,true);
+                showTileNum++;
+                return i;
             }
         }
         return -1;
     }
 
+    public static  void setMostShowTitleNum(int mostShowTitleNum){
+        for (;mMostShowTitleNum < mostShowTitleNum; mMostShowTitleNum++){
+            positionArray.add(mMostShowTitleNum,false);
+        }
+
+    }
+    public static void removeSingleShowingTile(FloatingTileActioner floatingTileActioner){
+        int showID = floatingTileActioner.showID;
+        Log.e(TAG,String.valueOf(showID));
+        positionArray.set(showID,false);
+        showingFloatingTileList.remove(floatingTileActioner);
+        showTileNum--;
+        showWaitingTile();
+    }
+
     public static void clearShowingTile() {
-        lastFloatingTile = null;
         showTileNum = 0;
-        positionArray.clear();
         for (FloatingTileActioner floatingTile : showingFloatingTileList) {
-            floatingTile.removeView();
-            floatingTile.showWaitingTile();
+            floatingTile.removeTile();
         }
         showingFloatingTileList.clear();
 //        for (int i = 0; i < positionArray.size(); i++) {
 //            int y = positionArray.keyAt(i);
 //            positionArray.put(y, false);
 //        }
+    }
+
+    public static  void showWaitingTile() {
+        if (!TileObject.waitingForShowingTileList.isEmpty()) {
+            FloatingTileActioner floatingTile = TileObject.waitingForShowingTileList.get(0);
+            floatingTile.addViewToWindow();
+            TileObject.waitingForShowingTileList.remove(floatingTile);
+        }
     }
 
     public static void clearAllTile() {
@@ -55,17 +80,5 @@ public class TileObject {
     public static void getDisplayInform (){
     }
 
-    /**
-     * 获取已被移除的 Tile
-     * @return
-     */
-//    public static FloatingTile getNullOneInList() {
-//        for (FloatingTile floatingTile : floatingTileList) {
-//            if (floatingTile.isRemove) {
-//                return floatingTile;
-//            }
-//        }
-//        return null;
-//    }
 
 }

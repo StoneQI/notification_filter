@@ -52,49 +52,49 @@ public class FloatingTileActioner {
     private WindowManager.LayoutParams layoutParams;
     public boolean isEditPos=false;
     private boolean isOpen=true;
-    private FloatingTileActioner lastTile;
     public boolean isRemove;
     private int viewWidth;
     private int viewHeight;
     private int mScreenHeight;
     private int mScreenWidth;
+    public  int showID = -1;
     private View view;
     private Timer mtimer =null;
     private  boolean isLeft=true;
     private  boolean isVert =false;
 
-    class FloatingNotificationItem{
-        protected View view;
-        protected Timer mtimer =null;
-        protected int viewWidth;
-        protected int viewHeight;
-        protected boolean isShow =false;
-        protected boolean isOpen = true;
-        protected PendingIntent intent =null;
-        protected NotificationInfo notificationInfo =null;
-
-        FloatingNotificationItem(Context context, NotificationInfo notificationInfo){
-            final LinearLayout messageLay = view.findViewById(R.id.window_messgae_lay);
-            ImageView imageView = view.findViewById(R.id.window_icon_img);
-            if (this.notificationInfo.getLargeIcon() ==null){
-                imageView.setImageDrawable(PackageUtil.getAppIconFromPackname(context, this.notificationInfo.getPackageName()));
-            } else {
-                imageView.setImageIcon(this.notificationInfo.getLargeIcon());
-            }
-
-            final TextView titleText = view.findViewById(R.id.window_title_text);
-            final TextView contentText = view.findViewById(R.id.window_content_text);
-            titleText.setText(this.notificationInfo.getTitle());
-            contentText.setText(this.notificationInfo.getContent());
-
-            intent = this.notificationInfo.getIntent();
-            int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-            int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-            view.measure(width, height);
-            viewWidth = view.getMeasuredWidth();
-            viewHeight = view.getMeasuredHeight();
-        }
-    }
+//    class FloatingNotificationItem{
+//        protected View view;
+//        protected Timer mtimer =null;
+//        protected int viewWidth;
+//        protected int viewHeight;
+//        protected boolean isShow =false;
+//        protected boolean isOpen = true;
+//        protected PendingIntent intent =null;
+//        protected NotificationInfo notificationInfo =null;
+//
+//        FloatingNotificationItem(Context context, NotificationInfo notificationInfo){
+//            final LinearLayout messageLay = view.findViewById(R.id.window_messgae_lay);
+//            ImageView imageView = view.findViewById(R.id.window_icon_img);
+//            if (this.notificationInfo.getLargeIcon() ==null){
+//                imageView.setImageDrawable(PackageUtil.getAppIconFromPackname(context, this.notificationInfo.getPackageName()));
+//            } else {
+//                imageView.setImageIcon(this.notificationInfo.getLargeIcon());
+//            }
+//
+//            final TextView titleText = view.findViewById(R.id.window_title_text);
+//            final TextView contentText = view.findViewById(R.id.window_content_text);
+//            titleText.setText(this.notificationInfo.getTitle());
+//            contentText.setText(this.notificationInfo.getContent());
+//
+//            intent = this.notificationInfo.getIntent();
+//            int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+//            int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+//            view.measure(width, height);
+//            viewWidth = view.getMeasuredWidth();
+//            viewHeight = view.getMeasuredHeight();
+//        }
+//    }
 
     public FloatingTileActioner(NotificationInfo notificationInfo, Context context, boolean isEditPos) {
         this.context = context;
@@ -104,9 +104,6 @@ public class FloatingTileActioner {
         if(content.length() >18){
             this.notificationInfo.setContent(content.substring(0,18)+"...");
         }
-//        Configuration mConfiguration = context.getResources().getConfiguration(); //获取设置的配置信息
-//        int ori = mConfiguration.orientation; //获取屏幕方向
-
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         viewInit(context);
@@ -119,10 +116,8 @@ public class FloatingTileActioner {
         getScreenSize();
         if (ori == Configuration.ORIENTATION_LANDSCAPE) {
             isVert =false;
-            floattitle_x = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_x", mScreenWidth) ;
-//             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//强制为竖屏
+            floattitle_x = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_x", mScreenHeight) ;
         } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
-//                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制为横屏
             floattitle_x = SpUtil.getSp(context,"appSettings").getInt("floattitle_portrait_x", mScreenWidth);
             isVert =true;
         }
@@ -142,10 +137,10 @@ public class FloatingTileActioner {
     private void viewInit(Context context) {
         setSceneOrientation(context);
         if (isLeft){
-            layoutParams.gravity= Gravity.LEFT;
+            layoutParams.gravity= Gravity.LEFT|Gravity.TOP;
             view = View.inflate(context, R.layout.window_lay_left, null);
         }else{
-            layoutParams.gravity =Gravity.RIGHT;
+            layoutParams.gravity =Gravity.RIGHT|Gravity.TOP;
             view = View.inflate(context, R.layout.window_lay_right, null);
         }
         layoutParams.x =0;
@@ -170,12 +165,7 @@ public class FloatingTileActioner {
         viewHeight = view.getMeasuredHeight();
         layoutParams.width = viewWidth;
         layoutParams.height = viewHeight;
-//        if(viewWidth>mScreenWidth*(2/3)){
-//            messageLay.setWeightSum(mScreenWidth*(2/3));
-//            layoutParams.width = mScreenWidth*(2/3);
-//        }
-        setOnTouchListenr();
-
+//        setOnTouchListenr();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
@@ -186,9 +176,6 @@ public class FloatingTileActioner {
         layoutParams.format = PixelFormat.RGBA_8888;
         layoutParams.windowAnimations = android.R.style.Animation_Translucent;
 
-    }
-    public void setLastTile(FloatingTileActioner lastTile) {
-        this.lastTile = lastTile;
     }
     private void getScreenSize() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
@@ -202,13 +189,13 @@ public class FloatingTileActioner {
         }
 //        mCurrentIconAlpha = 70 / 100f;
     }
-    public void showWindow(){
+    public void run(){
         isEditPos = false;
         setOnTouchListenr();
         addViewToWindow();
 
     }
-    public void showWindow(Activity activity){
+    public void run(Activity activity){
         isEditPos = true;
         setOnTouchListenr(activity);
         addViewToWindow();
@@ -219,91 +206,57 @@ public class FloatingTileActioner {
         String showDirection = SpUtil.getSp(context,"appSettings").getString("floattitle_tileDirection", "down");
 
         if(isVert){
-            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_portrait_y", 1300);
+            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_portrait_y", (int)(mScreenHeight*(3.0/5.0)));
         }else
         {
-            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_y", 450);
+            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_y", (int)(mScreenHeight*(3.0/5.0)));
         }
-//        if (SpUtil.getSp(context,"appSettings").getInt("floattitle_y", -1) == -1) {
-////            layoutParams.x = 1024;
-//            layoutParams.y = 300;
-//        } else {
-////            layoutParams.x = SpUtil.getSp(context,"appSettings").getInt("floattitle_x", -1);
-//            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_y", -1);
-//        }
 
-        int mostShowNum = Integer.parseInt(SpUtil.getSp(context,"appSettings").getString("floattitle_tileShowNum", "6"));
-
-
-        if (TileObject.showTileNum == 0) {
-            // 屏幕内没有任何 Tile
-            lastTile = null;
-        }
-        if (lastTile != null) {
-            if (TileObject.positionArray.size() != mostShowNum) {
-                // 此时固定位置并未分配完毕
+        int mostShowNum = Integer.parseInt(SpUtil.getSp(context,"appSettings").getString("floattitle_tileShowNum", "4"));
+        TileObject.setMostShowTitleNum(mostShowNum);
+        if(TileObject.showTileNum < mostShowNum){
+            showID = TileObject.getNextPosition();
+            if(showID != -1){
                 if (showDirection.equals("up")) {
-                    layoutParams.y = lastTile.layoutParams.y - viewHeight - 18;
+                    layoutParams.y = layoutParams.y - (viewHeight + 18)*showID;
                 } else {
-                    layoutParams.y = lastTile.layoutParams.y + viewHeight + 18;
+                    layoutParams.y = layoutParams.y + (viewHeight + 18)*showID;
                 }
-            } else {
-                // OOM
-                TileObject.lastFloatingTile = null;
-            }
-            if (TileObject.positionArray.get(layoutParams.y)) {
-                // 位置冲突
-                int y = TileObject.getYInNullTile();
-                if (y != -1) {
-                    // 如果屏幕内有空闲位置
-                    layoutParams.y = y;
-                    TileObject.positionArray.put(y, true);
-                } else {
-                    TileObject.waitingForShowingTileList.add(this);
-                    return;
-                }
-            }
-        }
-        TileObject.positionArray.put(layoutParams.y, true);
-        if (TileObject.showTileNum < mostShowNum){
-            TileObject.showTileNum++;
-        } else {
-            // 非法显示，屏幕内磁贴数量已超过指定数量
-            TileObject.waitingForShowingTileList.add(this);
-            return;
-        }
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    windowManager.addView(view, layoutParams);
-                    long floattitle_time = Long.parseLong(SpUtil.getSp(context,"appSettings").getString("floattitle_time", "6"));
-                    if(!isEditPos || floattitle_time <=0){
-                        TimerTask timerTask = new TimerTask(){
-                            @Override
-                            public void run() {
-                                if (isOpen){
-                                    removeTile();
-                                }
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            windowManager.addView(view, layoutParams);
+                            long floattitle_time = Long.parseLong(SpUtil.getSp(context,"appSettings").getString("floattitle_time", "6"));
+                            if(!isEditPos || floattitle_time <=0){
+                                TimerTask timerTask = new TimerTask(){
+                                    @Override
+                                    public void run() {
+                                        if (isOpen){
+                                            removeTile();
+                                        }
+                                    }
+                                };
+                                mtimer =new Timer();
+                                mtimer.schedule(timerTask,floattitle_time*1000);
                             }
-                        };
-                        mtimer =new Timer();
-                        mtimer.schedule(timerTask,floattitle_time*1000);
+
+
+
+                        } catch (WindowManager.BadTokenException e) {
+                            // 无悬浮窗权限
+                            e.printStackTrace();
+                        }
                     }
-
-
-                } catch (WindowManager.BadTokenException e) {
-                    // 无悬浮窗权限
-                    e.printStackTrace();
-                }
-                if (!isEditPos) {
-                    TileObject.showingFloatingTileList.add(FloatingTileActioner.this);
-                }
+                });
+                TileObject.showingFloatingTileList.add(this);
+                return;
 
             }
-        });
-        TileObject.lastFloatingTile = this;
+        }
+
+        TileObject.waitingForShowingTileList.add(this);
     }
 
     private  void setOnTouchListenr(final Activity activity){
@@ -353,11 +306,7 @@ public class FloatingTileActioner {
                             }else
                             {
                                 movedX =0;
-//                                if(isLeft) {
-//                                viewx = x;
-//                                }else {
-//                                    viewx = mScreenWidth-x;
-//                                }
+
                             }
                         }
                         Log.e(TAG,"viewx:"+String.valueOf(movedX));
@@ -365,22 +314,22 @@ public class FloatingTileActioner {
                         x = nowX;
                         y = nowY;
                         layoutParams.x = movedX;
-                        layoutParams.y = layoutParams.y + movedY;
+                        layoutParams.y = nowY;
                         // 更新悬浮窗控件布局
                         windowManager.updateViewLayout(v, layoutParams);
                         break;
                     case MotionEvent.ACTION_UP:
                         if (isVert){
+                            Log.e(TAG,"portrait:"+String.valueOf(x)+","+String.valueOf(layoutParams.y));
                             SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_portrait_x", x).apply();
-                            SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_portrait_y", layoutParams.y).apply();
+                            SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_portrait_y", y).apply();
                         }else {
+                            Log.e(TAG,"landscape:"+String.valueOf(x)+","+String.valueOf(layoutParams.y));
                             SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_landscape_x", x).apply();
-                            SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_landscape_y", layoutParams.y).apply();
+                            SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_landscape_y", y).apply();
                         }
                         removeTile();
-                        if(isVert){
-                            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                        }
+                        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 //                        mtimer.cancel();
                         Toast.makeText(context, "修改成功", Toast.LENGTH_SHORT).show();
                         break;
@@ -532,27 +481,17 @@ public class FloatingTileActioner {
         if (isRemove) {
             return;
         }
-        TileObject.showTileNum--;
-        isRemove = true;
-        TileObject.showingFloatingTileList.remove(this);
-        TileObject.positionArray.put(layoutParams.y, false);
-        showWaitingTile();
-        removeView();
-    }
-
-    public void showWaitingTile() {
-        if (!TileObject.waitingForShowingTileList.isEmpty()) {
-            FloatingTileActioner floatingTile = TileObject.waitingForShowingTileList.get(0);
-            floatingTile.setLastTile(lastTile);
-            floatingTile.addViewToWindow();
-            TileObject.waitingForShowingTileList.remove(floatingTile);
-        }
-    }
-
-    public void removeView() {
         if(mtimer !=null){
             mtimer.cancel();
         }
+        isRemove = true;
+        removeView();
+        TileObject.removeSingleShowingTile(this);
+
+    }
+
+
+    public void removeView() {
         windowManager.removeView(view);
     }
 

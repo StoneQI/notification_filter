@@ -43,6 +43,8 @@ import com.stone.notificationfilter.actioner.TileObject;
 import com.stone.notificationfilter.util.SpUtil;
 
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import moe.shizuku.preference.Preference;
 import moe.shizuku.preference.PreferenceFragment;
@@ -283,16 +285,30 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
             public boolean onPreferenceClick(Preference preference) {
                 DialogUtil.showDialog(preference.getContext(), new DialogUtil.onClickListener() {
                     //                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    @SuppressLint("SourceLockedOrientationActivity")
                     @Override
                     public void onClick() {
-                        NotificationInfo notificationInfo = new NotificationInfo(1, "234", System.currentTimeMillis());
-                        notificationInfo.setPackageName(getContext().getPackageName());
-                        notificationInfo.setTitle("设置位置");
-                        notificationInfo.setContent("上下移动设置初始位置");
-                        FloatingTileActioner floatingTile = new FloatingTileActioner(notificationInfo, getContext(), true);
-                        floatingTile.setLastTile(TileObject.lastFloatingTile);
-//                        floatingTile.isEditPos = true;
-                        floatingTile.showWindow(getActivity());
+                        Configuration mConfiguration = getContext().getResources().getConfiguration(); //获取设置的配置信息
+                        int ori = mConfiguration.orientation;
+                        Log.e(TAG,String.valueOf(ori));
+                        if(ori != Configuration.ORIENTATION_PORTRAIT){
+                            Log.e(TAG,String.valueOf(ori));
+                            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        }
+                        TimerTask task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                NotificationInfo notificationInfo = new NotificationInfo(1, "234", System.currentTimeMillis());
+                                notificationInfo.setPackageName(getContext().getPackageName());
+                                notificationInfo.setTitle("设置竖屏位置");
+                                notificationInfo.setContent("上下移动设置竖屏初始位置");
+                                FloatingTileActioner floatingTile = new FloatingTileActioner(notificationInfo, getContext(), true);
+                                floatingTile.run(getActivity());
+                            }
+                        };
+                        Timer timer = new Timer();
+                        timer.schedule(task, 500);
+
                     }
                 }, new DialogUtil.onClickListener() {
                     @SuppressLint("SourceLockedOrientationActivity")
@@ -305,13 +321,20 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
                             Log.e(TAG,String.valueOf(ori));
                             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                         }
-                        NotificationInfo notificationInfo = new NotificationInfo(1, "234", System.currentTimeMillis());
-                        notificationInfo.setPackageName(getContext().getPackageName());
-                        notificationInfo.setTitle("设置位置");
-                        notificationInfo.setContent("上下移动设置初始位置");
-                        FloatingTileActioner floatingTile = new FloatingTileActioner(notificationInfo, getContext(), true);
-                        floatingTile.setLastTile(TileObject.lastFloatingTile);
-                        floatingTile.showWindow(getActivity());
+                        TimerTask task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                NotificationInfo notificationInfo = new NotificationInfo(1, "234", System.currentTimeMillis());
+                                notificationInfo.setPackageName(getContext().getPackageName());
+                                notificationInfo.setTitle("设置横屏位置");
+                                notificationInfo.setContent("上下移动设置横屏初始位置");
+                                FloatingTileActioner floatingTile = new FloatingTileActioner(notificationInfo, getContext(), true);
+                                floatingTile.run(getActivity());
+                            }
+                        };
+                        Timer timer = new Timer();
+                        timer.schedule(task, 1000);
+
 
                     }
                 });
@@ -321,11 +344,11 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
         findPreference("showFiliter").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                MainActivity mainActivity = (MainActivity)getActivity();
-                mainActivity.replaceFragment(new FiliterFragment());
-//                Intent intent = new Intent(getActivity(), FiliterFragment.class);
-//////                startActivity(intent);
-
+//                MainActivity mainActivity = (MainActivity)getActivity();
+//                mainActivity.replaceFragment(new FiliterActivity());
+                Intent intent = new Intent(getActivity(), FiliterActivity.class);
+                startActivity(intent);
+//
                 return false;
             }
         });

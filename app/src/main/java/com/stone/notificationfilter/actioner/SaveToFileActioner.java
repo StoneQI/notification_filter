@@ -3,6 +3,7 @@ package com.stone.notificationfilter.actioner;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDao;
 import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDataBase;
@@ -26,6 +27,7 @@ public class SaveToFileActioner {
 
     }
     public void  run(){
+        Log.e(TAG,TAG);
         if (!SpUtil.getSp(context,"appSettings").getBoolean("save_log_to_file",true)){
           return;
         };

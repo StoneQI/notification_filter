@@ -1,7 +1,6 @@
 package com.stone.notificationfilter.dialogapppicker;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +8,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
@@ -30,11 +24,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.dialogapppicker.adapters.mothers.IconListAdapter;
 import com.stone.notificationfilter.dialogapppicker.objects.AppItem;
-import com.stone.notificationfilter.dialogapppicker.objects.ShortcutItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -181,8 +173,7 @@ public class DialogAppPicker {
                 for (ResolveInfo ri : appList) {
                     if (this.isCancelled()) break;
                     String appName = ri.loadLabel(mPackageManager).toString();
-                    AppItem ai = mMode == MODE_SHORTCUT ?
-                            new ShortcutItem(c, appName, ri) : new AppItem(c, appName, ri);
+                    AppItem ai = new AppItem(c, appName, ri);
                     itemList.add(ai);
                 }
 
