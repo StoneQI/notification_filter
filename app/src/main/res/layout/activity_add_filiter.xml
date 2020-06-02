@@ -45,12 +45,12 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:padding="6dp"
-                android:text="@string/replace"
+                android:text="@string/match"
                 android:textColor="#0D47A1"
                 android:textSize="18sp" />
 
@@ -90,12 +90,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/filter_tiitle_match" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:padding="6dp"
-                android:text="@string/match"
+                android:text="@string/replace"
                 android:textColor="#0D47A1"
                 android:textSize="18sp" />
 

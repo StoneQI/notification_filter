@@ -29,7 +29,7 @@ import com.stone.notificationfilter.util.TimeUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CheckNotificationLogActivity extends AppCompatActivity {
+public class CheckNotificationLogActivity extends BaseActivity {
     private final static  String TAG ="CheckNotificActivity";
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
     private RecyclerView mRecyclerView;
@@ -134,7 +134,6 @@ public class CheckNotificationLogActivity extends AppCompatActivity {
         pd= ProgressDialog.show(CheckNotificationLogActivity.this, "加载数据", "Loading…");
         new Thread(){
             public void run(){
-                //在新线程里执行长耗时方法
                 notificationItemEntities = notificationItemDao.loadAllDESC();
                 handler.sendEmptyMessage(0);
             }

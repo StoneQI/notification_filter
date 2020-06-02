@@ -27,17 +27,15 @@
 
     </ListView>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/new_filiter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
-        android:background="#00ACC1"
         android:padding="6dp"
-        android:text="@string/new_filiter"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp" />
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:text="@string/new_filiter" />
 
 </LinearLayout>

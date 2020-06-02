@@ -5,8 +5,10 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
@@ -18,6 +20,8 @@ import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import androidx.core.app.NotificationCompat;
+
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.blankj.utilcode.util.AppUtils;
@@ -28,11 +32,12 @@ import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilte
 import com.stone.notificationfilter.util.NotificationInfo;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
 import com.stone.notificationfilter.util.SpUtil;
-import com.stone.notificationfilter.actioner.FloatingTile;
+import com.stone.notificationfilter.actioner.FloatingTileActioner;
 import com.stone.notificationfilter.actioner.TileObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -50,6 +55,9 @@ public class NotificationService extends NotificationListenerService {
     private Bitmap iconBitmap = null;
     private ArrayList<NotificationFilterEntity> systemNotificationMatchers= new ArrayList<NotificationFilterEntity>();
     private List<NotificationFilterEntity> customNotificationMatchers= null;
+    public static Set<String> selectAppList = null;
+    public static  boolean appListMode = false;
+    private boolean isSceenLock =false;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler(){
@@ -67,7 +75,16 @@ public class NotificationService extends NotificationListenerService {
         if (SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("notification_show", false)){
             addForegroundNotification();
         }
+
+        String packageNamestring = SpUtil.getSp(getApplicationContext(),"appSettings").getString("select_applists", "");
+        selectAppList = SpUtil.string2Set(packageNamestring);
+
+        appListMode = SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("applist_mode", false);
         Log.e(TAG,"service create");
+        registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
+        registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_USER_PRESENT));
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -81,23 +98,71 @@ public class NotificationService extends NotificationListenerService {
     }
 
     private void setSystemNotificationMatchers(){
+
+
+        NotificationFilterEntity notificationMatcher5 = new NotificationFilterEntity();
+        notificationMatcher5.orderID = 3;
+        notificationMatcher5.name = "日记记录";
+        notificationMatcher5.contextPatter="/^((?!个联系人给你发来).)+$/";
+        notificationMatcher5.packageNames="com.tencent.tim;com.tencent.mm;com.tencent.mobileqq;";
+        notificationMatcher5.actioner = 5;
+        notificationMatcher5.breakDown =false;
+
+        NotificationFilterEntity notificationMatcher2 = new NotificationFilterEntity();
+        notificationMatcher2.orderID = 1;
+        notificationMatcher2.name = "排除正在运行";
+        notificationMatcher2.titlePattern="正在运行";
+        notificationMatcher2.actioner = 2;
+        notificationMatcher2.breakDown =true;
+
+        NotificationFilterEntity notificationMatcher3 = new NotificationFilterEntity();
+        notificationMatcher3.orderID = 1;
+        notificationMatcher3.name = "排除下载";
+        notificationMatcher3.titlePattern="下载";
+        notificationMatcher3.actioner = 2;
+        notificationMatcher3.breakDown =true;
+
+
+
         NotificationFilterEntity notificationMatcher = new NotificationFilterEntity();
         notificationMatcher.orderID = 0;
         notificationMatcher.name = "默认悬浮通知";
         notificationMatcher.actioner = 0;
-        NotificationFilterEntity notificationMatcher2 = new NotificationFilterEntity();
 
+
+        systemNotificationMatchers.add(notificationMatcher5);
+        systemNotificationMatchers.add(notificationMatcher3);
+        systemNotificationMatchers.add(notificationMatcher2);
         systemNotificationMatchers.add(notificationMatcher);
+
+
+
     }
 
     @Override
     public void onNotificationPosted(final StatusBarNotification sbn) {
         try {
-            if (sbn.getPackageName().equals("android")) {
+            if (sbn.isClearable() ==false || sbn.getPackageName().equals("android")) {
+                super.onNotificationPosted(sbn);
                 return;
             }
+            if(selectAppList.size()!=0){
+                if(appListMode){
+                    if(!selectAppList.contains(sbn.getPackageName())){
+                        cancelNotification(sbn.getKey());
+                        return;
+                    }
+                }else {
+                    if(selectAppList.contains(sbn.getPackageName())){
+                        cancelNotification(sbn.getKey());
+                        return;
+                    }
+                }
+
+            }
             PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-            if (!powerManager.isScreenOn()) {
+
+            if (isSceenLock) {
                 return;
             }
 
@@ -106,25 +171,31 @@ public class NotificationService extends NotificationListenerService {
                 return;
             }
 
+//            Log.e(TAG, "notifi_id"+String.valueOf(notificationInfo.ID));
+            Log.e(TAG, "notifi_key"+notificationInfo.key);
+            Log.e(TAG, "notifi_id"+String.valueOf(notificationInfo.getContent()));
             for(NotificationFilterEntity notificationMatcher:customNotificationMatchers){
                 Log.e(TAG, notificationMatcher.name);
-                if(  notificationMatcher.packageNames !=null && !notificationMatcher.packageNames.isEmpty() && !notificationMatcher.packageNames.contains(notificationInfo.getPackageName())){
-                    continue;
+                if(  notificationMatcher.packageNames !=null && !notificationMatcher.packageNames.isEmpty()){
+                    if (!notificationMatcher.packageNames.contains(notificationInfo.getPackageName())){
+                        continue;
+                    }
+
                 }
 
-                if(notificationMatcher.titlePattern != null && !notificationMatcher.titlePattern.isEmpty() ){
+                if(!TextUtils.isEmpty(notificationMatcher.titlePattern) ){
                     Pattern p =  Pattern.compile(notificationMatcher.titlePattern);
                     if (!p.matcher(notificationInfo.getTitle()).find()) continue;
                 }
 
-                if(notificationMatcher.contextPatter != null  && !notificationMatcher.contextPatter.isEmpty() ){
+                if(!TextUtils.isEmpty(notificationMatcher.contextPatter)){
                     Pattern p =  Pattern.compile(notificationMatcher.contextPatter);
                     if (!p.matcher(notificationInfo.getContent()).find()) continue;
                 }
 
-                if( notificationMatcher.titleFiliter != null  &&!notificationMatcher.titleFiliter.isEmpty() ){
+                if( !TextUtils.isEmpty(notificationMatcher.titleFiliter)){
                     String new_title = "";
-                    if (notificationMatcher.titleFiliterReplace != null  && !notificationMatcher.titleFiliterReplace.isEmpty()){
+                    if (!TextUtils.isEmpty(notificationMatcher.titleFiliterReplace)){
                         try {
                             new_title = notificationInfo.getTitle();
                             new_title = new_title.replaceAll(notificationMatcher.titleFiliter,notificationMatcher.titleFiliterReplace);
@@ -143,9 +214,9 @@ public class NotificationService extends NotificationListenerService {
                     notificationInfo.setTitle(new_title);
 
                 }
-                if(notificationMatcher.contextFiliter != null  && !notificationMatcher.contextFiliter.isEmpty() ){
+                if(!TextUtils.isEmpty(notificationMatcher.contextFiliter)){
                     String new_Content = "";
-                    if (notificationMatcher.contextFiliterReplace != null && !notificationMatcher.contextFiliterReplace.isEmpty()){
+                    if (!TextUtils.isEmpty(notificationMatcher.contextFiliterReplace )){
                         try {
                             new_Content = notificationInfo.getTitle();
                             new_Content.replaceAll(notificationMatcher.contextFiliter,notificationMatcher.contextFiliterReplace);
@@ -166,7 +237,7 @@ public class NotificationService extends NotificationListenerService {
 
                 switch (notificationMatcher.actioner){
                     case 0:cancelNotification(notificationInfo.key);floatingTileAction(notificationInfo); break;
-                    case 1:super.onNotificationPosted(sbn);break;
+                    case 1:break;
                     case 2:cancelNotification(notificationInfo.key); break;
                     case 3:cancelNotification(notificationInfo.key);new CopyActioner(notificationInfo,NotificationService.this).run();break;
                     case 4:cancelNotification(notificationInfo.key);new RunIntentActioner(notificationInfo,NotificationService.this).run();break;
@@ -183,15 +254,11 @@ public class NotificationService extends NotificationListenerService {
             e.printStackTrace();
         }
 
-//        cancelAllNotifications();
-
-
-//        final Object finalIcon = icon;
-//        floatingTileAction(notificationInfo);
     }
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(mBroadcastReceiver);
         super.onDestroy();
         Log.e(TAG,"service stop");
     }
@@ -207,13 +274,17 @@ public class NotificationService extends NotificationListenerService {
         notificationInfo.setSmallIcon(sbn.getNotification().getSmallIcon());
         notificationInfo.setTitle(extras.getString(android.app.Notification.EXTRA_TITLE));
         notificationInfo.setContent(extras.getString(android.app.Notification.EXTRA_TEXT));
+//        extras.getString(android.app.Notification.EX);
+//        extras.getString(Notification.DEFAULT_SOUND);
         notificationInfo.setIntent(sbn.getNotification().contentIntent);
+        PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        notificationInfo.setInteractive(powerManager.isInteractive());
         return notificationInfo;
     }
 
     private void floatingTileAction(final NotificationInfo notificationInfo) {
 
-                FloatingTile floatingTile = new FloatingTile(notificationInfo,NotificationService.this,false);
+                FloatingTileActioner floatingTile = new FloatingTileActioner(notificationInfo,NotificationService.this,false);
                 floatingTile.setLastTile(TileObject.lastFloatingTile);
                 floatingTile.showWindow();
     }
@@ -272,5 +343,29 @@ public class NotificationService extends NotificationListenerService {
         }
     }
 
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (!TextUtils.isEmpty(action)) {
+                switch (action) {
+                    case Intent.ACTION_SCREEN_OFF:
+                        isSceenLock =true;
+                        Log.d(TAG, "屏幕关闭，变黑");
+                        break;
+                    case Intent.ACTION_SCREEN_ON:
+                        Log.d(TAG, "屏幕开启，变亮");
+                        break;
+                    case Intent.ACTION_USER_PRESENT:
+                        isSceenLock =false;
+                        Log.d(TAG, "解锁成功");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
 
 }

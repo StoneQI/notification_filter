@@ -85,15 +85,26 @@ public class NotificationInfo {
     public int ID;
     public String key;
     public long postTime;
-    public Boolean isClearable;
-    public Boolean isOnGoing;
+    public Boolean isClearable=false;
+    public Boolean isOnGoing=false;
     public String packageName;
     public String Tag;
     public Icon smallIcon;
     public Icon largeIcon;
     public String title;
     public String content;
-    public PendingIntent intent;
+    public Boolean isInteractive =false;
+    public PendingIntent intent =null;
+
+    public Boolean getInteractive() {
+        return isInteractive;
+    }
+
+    public void setInteractive(Boolean interactive) {
+        isInteractive = interactive;
+    }
+
+
 //    public String
 
 }

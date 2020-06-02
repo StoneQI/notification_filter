@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FFFFFF</color>
-    <color name="colorPrimaryDark">#212121</color>
-    <color name="colorAccent">#2979FF</color>
-    <color name="bg_item_normal_state">#fff0f0f0</color>
-    <color name="bg_item_dragging_state">#ffffdddd</color>
-    <color name="bg_item_dragging_active_state">#ffff9999</color>
-    <color name="bg_item_swiping_state">#ffddddff</color>
-    <color name="bg_item_swiping_active_state">#ff9999ff</color>
+    <color name="primaryColor">#1a76d3</color>
+    <color name="primaryLightColor">#64a4ff</color>
+    <color name="primaryDarkColor">#1E4376</color>
+    <color name="secondaryColor">#2893ea</color>
+    <color name="secondaryLightColor">#6fc3ff</color>
+    <color name="secondaryDarkColor">#0066b7</color>
+    <color name="primaryTextColor">#f5f5f5</color>
+    <color name="secondaryTextColor">#f5f5f5</color>
+    <color name="colorAccent">#FF4081</color>
 
-    <color name="bg_group_item_normal_state">#ffddffdd</color>
-    <color name="bg_group_item_normal_pressed_state">#ff99cc99</color>
-    <color name="bg_group_item_expanded_state">#ff88dd88</color>
-    <color name="bg_group_item_expanded_pressed_state">#ff99cc99</color>
-    <color name="bg_group_item_dragging_state">#ffeeccff</color>
-    <color name="bg_group_item_dragging_active_state">#ffee99ff</color>
-    <color name="bg_group_item_swiping_state">#ffddccff</color>
-    <color name="bg_group_item_swiping_active_state">#ffbb99ff</color>
+    <color name="colorPrimaryBlue">#1E4376</color>
+    <color name="statusBarColor">#FAFAFA</color>
+    <color name="backgroundColor">#FAFAFA</color>
+    <color name="toolbarColor">#FAFAFA</color>
+    <color name="chipBackgroundColor">#EDEDED</color>
 
-    <color name="bg_swipe_item_neutral">@android:color/transparent</color>
-    <color name="bg_swipe_item_pinned">#fff9930d</color>
-    <color name="bg_swipe_item_dismiss">#ff2f8b2a</color>
-    <color name="bg_swipe_item_gray">#999999</color>
-    <color name="bg_swipe_group_item_pinned">#fff45f30</color>
-    <color name="bg_swipe_group_item_dismiss">#ff295db3</color>
+<!--    <color name="primaryCardColorStopped">#FF888888</color>-->
+<!--    <color name="primaryCardColorStarted">#1E4376</color>-->
 
-    <color name="snackbar_action_color_done">#ffccccff</color>
+    <color name="nightSurface">#121212</color>
 
     <color name="expandable_item_indicator_color">#42000000</color>
 </resources>

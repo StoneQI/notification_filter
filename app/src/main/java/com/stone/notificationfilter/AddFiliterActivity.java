@@ -28,7 +28,7 @@ import com.stone.notificationfilter.util.SpUtil;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AddFiliterActivity extends AppCompatActivity {
+public class AddFiliterActivity extends BaseActivity {
     private final static  String TAG ="AddFiliterActivity";
 
     private NotificationFilterDao notificationFilterDao =null;
@@ -153,6 +153,10 @@ public class AddFiliterActivity extends AppCompatActivity {
                 if (packageNames.size() !=0){
                     notificationFiliter.packageNames = SpUtil.set2String(packageNames) ;
                 }
+                if(notificationFilterDao ==null){
+                    NotificationFilterDataBase db =NotificationFilterDataBase.getInstance(getApplicationContext());
+                    notificationFilterDao = db.NotificationFilterDao();
+                }
                 if(isUpdate){
                     updateNotificationFilter();
                 }else {
@@ -178,21 +182,6 @@ public class AddFiliterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.e(TAG,"appPicker Clicked");
                 DialogAppPicker mDialog = new DialogAppPicker(AddFiliterActivity.this,packageNames);
-                mDialog.setOnItemChooseListener(new DialogAppPicker.OnItemChooseListener() {
-                    @Override
-                    public void onAppSelected(AppItem item) {
-                        if (packageNames.contains(item.getPackageName())){
-                            packageNames.remove(item.getPackageName());
-                        }else {
-                            packageNames.add(item.getPackageName());
-                        }
-                    }
-
-                    @Override
-                    public void onShortcutSelected(ShortcutItem item) {
-                        // Do something with the shortcut
-                    }
-                });
                 mDialog.getDialog()
                         .setPositiveButton("确定", null)
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {

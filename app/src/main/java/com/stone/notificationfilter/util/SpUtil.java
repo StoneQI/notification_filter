@@ -40,7 +40,7 @@ public class SpUtil {
         StringBuffer sb1 = new StringBuffer();
         String allStr4="";
         for(int i=0;i<strsTrue.length;i++){
-            allStr4=sb1.append(strsTrue[i]).toString();
+            allStr4=sb1.append(strsTrue[i]+SEPARATE).toString();
         }
         return allStr4;
     }

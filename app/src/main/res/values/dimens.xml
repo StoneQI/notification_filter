@@ -20,5 +20,10 @@
     <dimen name="list_item_height">64dp</dimen>
     <dimen name="list_item2_height">96dp</dimen>
     <dimen name="list_group_item_height">96dp</dimen>
+
     <dimen name="list_group_item_with_add_remove_buttons_height">108dp</dimen>
+
+    <dimen name="cardview_margin_left_rgiht">12dp</dimen>
+    <dimen name="cardview_margin_bootom_top">6dp</dimen>
+
 </resources>

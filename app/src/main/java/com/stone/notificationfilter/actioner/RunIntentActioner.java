@@ -20,8 +20,8 @@ public class RunIntentActioner {
     }
     public void  run(){
 
-        long time = Long.parseLong(SpUtil.getSp(context,"appSettings").getString("runintenactioner_time","2000"));
-
+        long time = Long.parseLong(SpUtil.getSp(context,"appSettings").getString("runintenactioner_time","1"));
+        if (time <= 0 ) time=0;
         if(notificationInfo.intent !=null){
             TimerTask task = new TimerTask() {
                 @Override
@@ -35,7 +35,7 @@ public class RunIntentActioner {
                 }
             };
             Timer timer = new Timer();
-            timer.schedule(task, time);
+            timer.schedule(task, time*1000);
         }
     }
 }

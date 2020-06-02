@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/window_root_lay"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_background_right"
+    android:elevation="3dp"
+    android:gravity="center|center_vertical"
+    android:padding="3dp">
+
+        <!--        <ImageView-->
+        <!--            android:id="@+id/window_icon_img"-->
+        <!--            android:layout_margin="3dp"-->
+        <!--            android:contentDescription="@string/app_name"-->
+        <!--            android:layout_width="42dp"-->
+        <!--            android:layout_height="42dp" />-->
+        <com.cbman.roundimageview.RoundImageView
+            android:id="@+id/window_icon_img"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            android:scaleType="centerInside"
+            android:padding="2dp"
+            app:borderWidth="0dp"
+
+            app:displayBorder="false"
+            app:displayType="round_rect"
+            app:radius="7dp" />
+
+        <LinearLayout
+            android:id="@+id/window_messgae_lay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+                <com.stone.notificationfilter.widget.MarqueeTextView
+                    android:id="@+id/window_title_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:focusable="true"
+                    android:ellipsize="marquee"
+                    android:textColor="#000000" />
+
+                <com.stone.notificationfilter.widget.MarqueeTextView
+                    android:id="@+id/window_content_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"/>
+
+
+        </LinearLayout>
+
+</LinearLayout>

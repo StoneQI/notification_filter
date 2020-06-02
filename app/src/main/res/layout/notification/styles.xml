@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+
+
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+
+        <!--        <item name="colorAccent">@color/colorAccent</item>-->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <!--        <item name="textColorPrimary">@color/primaryTextColor</item>-->
+        <!--        <item name="color"-->
+
+        <item name="popupMenuStyle">@style/Widget.MaterialComponents.PopupMenu</item>
+        <item name="android:contextPopupMenuStyle">
+            @style/Widget.MaterialComponents.PopupMenu.ContextMenu
+        </item>
+        <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow
+        </item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+
+
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+
+        <item name="popupMenuStyle">@style/Widget.MaterialComponents.PopupMenu</item>
+        <item name="android:contextPopupMenuStyle">
+            @style/Widget.MaterialComponents.PopupMenu.ContextMenu
+        </item>
+        <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow
+        </item>
+
+        <!--        <item name="colorAccent">@color/colorAccent</item>-->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <!--        <item name="textColorPrimary">@color/primaryTextColor</item>-->
+        <!--        <item name="color"-->
+
+
+    </style>
+</resources>

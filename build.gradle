@@ -6,6 +6,11 @@ buildscript {
         maven { url 'http://maven.aliyun.com/nexus/content/repositories/google' }
 //        maven { url 'https://jitpack.io' }
         maven { url 'https://jitpack.io' }
+        maven {
+            url "https://dl.bintray.com/rikkaw/MaterialPreference"
+        }
+//
+
 
 
     }
@@ -19,8 +24,13 @@ buildscript {
 
 allprojects {
     repositories {
+        maven {
+            url "https://dl.bintray.com/rikkaw/MaterialPreference"
+        }
         maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
         maven { url 'http://maven.aliyun.com/nexus/content/repositories/google' }
+
+        maven { url 'https://jitpack.io' }
 //        google()
 //        jcenter()
 //        maven { url 'https://jitpack.io' }

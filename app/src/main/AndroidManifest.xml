@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.stone.notificationfilter.MainActivity">
+        <activity android:name="com.stone.notificationfilter.MainActivity"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -21,15 +22,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.stone.notificationfilter.FiliterActivity"></activity>
+        <activity android:name="com.stone.notificationfilter.FiliterFragment"></activity>
         <activity android:name="com.stone.notificationfilter.AddFiliterActivity"></activity>
         <activity android:name="com.stone.notificationfilter.CheckNotificationLogActivity"></activity>
-        <activity android:name="com.stone.notificationfilter.Donate"></activity>
+        <activity android:name="com.stone.notificationfilter.Donate" />
 
         <service
             android:name="com.stone.notificationfilter.NotificationService"
             android:label="@string/app_name"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            >
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>

@@ -20,6 +20,7 @@ public class NotificationItemEntity {
     public int dayOfYear;
     public String packageName;
     public String tag;
+    public String intentUrl;
     public String title;
     public String content;
 

@@ -12,15 +12,15 @@ public class TileObject {
 
     public static int showTileNum = 0;
 
-    public static FloatingTile lastFloatingTile;
+    public static FloatingTileActioner lastFloatingTile;
 
-    public static List<FloatingTile> showingFloatingTileList = new ArrayList<>();
+    public static List<FloatingTileActioner> showingFloatingTileList = new ArrayList<>();
 
     // key: Tile的y, value: Tile是否在显示
     // 数量一般为指定数量
     public static SparseBooleanArray positionArray = new SparseBooleanArray();
 
-    public static List<FloatingTile> waitingForShowingTileList = new ArrayList<>();
+    public static List<FloatingTileActioner> waitingForShowingTileList = new ArrayList<>();
 
     public static int getYInNullTile() {
         for (int i = 0; i < positionArray.size(); i++) {
@@ -36,7 +36,7 @@ public class TileObject {
         lastFloatingTile = null;
         showTileNum = 0;
         positionArray.clear();
-        for (FloatingTile floatingTile : showingFloatingTileList) {
+        for (FloatingTileActioner floatingTile : showingFloatingTileList) {
             floatingTile.removeView();
             floatingTile.showWaitingTile();
         }

@@ -38,7 +38,7 @@
         android:layout_gravity="center"
         android:layout_margin="10dp" />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/icon_list"
         android:layout_width="match_parent"
         android:layout_height="0dip"
