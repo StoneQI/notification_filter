@@ -9,7 +9,7 @@
         android:title="开启服务" />
 
     <PreferenceCategory
-        android:title="权限">
+        android:title="权限"/>
 
         <Preference
             android:key="notificatListen"
@@ -20,7 +20,6 @@
             android:key="flotatingWindow"
             android:dependency="start_service"
             android:title="悬浮窗权限" />
-    </PreferenceCategory>
 
 <!--    <PreferenceCategory-->
 <!--        android:title="内容设置权限">-->
@@ -34,7 +33,7 @@
 <!--    </PreferenceCategory>-->
 
     <PreferenceCategory
-        android:title="设置" >
+        android:title="设置" />
 
 
     <Preference
@@ -87,9 +86,9 @@
         android:key="about"
         android:summary="开发者：Stone"
         android:title="关于" />
-    </PreferenceCategory>
-           <PreferenceCategory
-                android:title="浮动通知处理器设置">
+
+    <PreferenceCategory
+                android:title="浮动通知处理器设置"/>
 
                 <EditTextPreference
                     android:key="floattitle_tileShowNum"
@@ -114,9 +113,9 @@
                    android:inputType="number"
                    android:defaultValue="6"
                    android:title="延时时长(秒)" />
-</PreferenceCategory>
+
     <PreferenceCategory
-        android:title="复制通知处理器设置">
+        android:title="复制通知处理器设置"/>
 
         <ListPreference
             android:key="copyactioner_select_mode"
@@ -124,9 +123,9 @@
             android:entries="@array/array_copyactioner_select_mode"
             android:entryValues="@array/array_copyactioner_select_mode_values"
             android:title="复制内容" />
-    </PreferenceCategory>
+
     <PreferenceCategory
-        android:title="立即运行通知处理器设置">
+        android:title="立即运行通知处理器设置"/>
 
         <EditTextPreference
             android:key="runintenactioner_time"
@@ -134,13 +133,23 @@
             android:inputType="number"
             android:defaultValue="1"
             android:title="延时时长(毫秒)" />
-    </PreferenceCategory>
-<PreferenceCategory>
 
-</PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="声音提醒通知处理器设置"/>
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="on_sound_message"
+            android:summary="声音提醒总开关，开启后规则中的记录日志通知处理器才生效"
+            android:title="声音提醒" />
+
+
+
+
+
     <Preference
         android:key="donate"
         android:title="捐赠"
         android:summary="开发不易，喜欢本应用的话点击微信捐赠。"/>
-
 </PreferenceScreen>

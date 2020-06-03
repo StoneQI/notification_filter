@@ -1,2 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<linearInterpolator xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt"/>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="true" >
+
+    <!--透明度-->
+    <alpha
+        android:fromAlpha="0"
+        android:toAlpha="1" />
+
+<!--    &lt;!&ndash;缩放&ndash;&gt;-->
+<!--    <scale-->
+<!--        android:fromXScale="0.5f"-->
+<!--        android:fromYScale="1.5f"-->
+<!--        android:toXScale="0.5f"-->
+<!--        android:toYScale="1.5f"-->
+<!--        android:pivotX="100"-->
+<!--        android:pivotY="100" />-->
+
+    <!--位移-->
+    <translate
+        android:fromXDelta="0"
+        android:toXDelta="0"
+        android:fromYDelta="200"
+        android:toYDelta="200" />
+
+    <!--旋转-->
+<!--    <rotate-->
+<!--        android:fromDegrees="0"-->
+<!--        android:toDegrees="360"-->
+<!--        android:pivotX="200"-->
+<!--        android:pivotY="200" />-->
+
+</set>

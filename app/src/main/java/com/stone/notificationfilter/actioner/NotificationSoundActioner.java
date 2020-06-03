@@ -20,12 +20,17 @@ public class NotificationSoundActioner {
     private int soundID;
 //    private PendingIntent intent = null;
 
+
     public NotificationSoundActioner(NotificationInfo notificationInfo, Context context) {
+        this.context = context;
         soundPool = new SoundPool.Builder().build();
         soundID = soundPool.load(context, R.raw.wenxing, 1);
     }
     public void  run(){
         Log.e(TAG,TAG);
+        if (!SpUtil.getSp(context,"appSettings").getBoolean("on_sound_message",false)){
+            return;
+        };
         soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int i, int i2) {

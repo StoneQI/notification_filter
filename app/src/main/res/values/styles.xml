@@ -9,6 +9,7 @@
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="android:statusBarColor">@color/colorPrimaryBlue</item>
 
+
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
 
     </style>
@@ -33,10 +34,10 @@
 <!--        <item name="android:textSize">16sp</item>-->
 <!--    </style>-->
 
-    <!-- ActionBar menu text -->
-    <style name="CustomActionBarMenu">
-        <item name="android:textSize">16sp</item>
-    </style>
+<!--    &lt;!&ndash; ActionBar menu text &ndash;&gt;-->
+<!--    <style name="CustomActionBarMenu">-->
+<!--        <item name="android:textSize">16sp</item>-->
+<!--    </style>-->
 
 <!--    <style name="CustomActionBar" parent="r">-->
 

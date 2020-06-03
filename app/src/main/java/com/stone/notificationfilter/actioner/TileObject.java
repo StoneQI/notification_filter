@@ -17,7 +17,7 @@ public class TileObject {
     public static FloatingTileActioner lastFloatingTile;
 
     public static List<FloatingTileActioner> showingFloatingTileList = new ArrayList<>();
-
+    public static int currentPosition=0;
     // key: Tile的y, value: Tile是否在显示
     // 数量一般为指定数量
     public static List<Boolean> positionArray = new ArrayList<>();
@@ -28,11 +28,18 @@ public class TileObject {
 
     public static int getNextPosition() {
         for (int i = 0; i <positionArray.size() ; i++) {
-            if(!positionArray.get(i)){
-                positionArray.set(i,true);
-                showTileNum++;
-                return i;
+            if(currentPosition==mMostShowTitleNum || showTileNum ==0){
+                currentPosition=0;
             }
+            if(!positionArray.get(currentPosition)){
+                positionArray.set(currentPosition,true);
+                showTileNum++;
+//                currentPosition++;
+                return currentPosition;
+            }
+            currentPosition++;
+
+
         }
         return -1;
     }
@@ -54,9 +61,13 @@ public class TileObject {
 
     public static void clearShowingTile() {
         showTileNum = 0;
-        for (FloatingTileActioner floatingTile : showingFloatingTileList) {
-            floatingTile.removeTile();
+
+        for (int i = 0; i < showingFloatingTileList.size();) {
+            showingFloatingTileList.get(i).removeTile();
         }
+//        for (FloatingTileActioner floatingTile : showingFloatingTileList) {
+//            floatingTile.removeTile();
+//        }
         showingFloatingTileList.clear();
 //        for (int i = 0; i < positionArray.size(); i++) {
 //            int y = positionArray.keyAt(i);

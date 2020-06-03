@@ -135,6 +135,7 @@ public class NotificationService extends NotificationListenerService {
         notificationMatcher.orderID = 0;
         notificationMatcher.name = "默认悬浮通知";
         notificationMatcher.actioner = 0;
+        notificationMatcher.breakDown =true;
 
         systemNotificationMatchers.add(notificationMatcher6);
         systemNotificationMatchers.add(notificationMatcher5);

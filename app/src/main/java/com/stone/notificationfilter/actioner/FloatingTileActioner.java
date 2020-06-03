@@ -104,8 +104,8 @@ public class FloatingTileActioner {
         if(content.length() >18){
             this.notificationInfo.setContent(content.substring(0,18)+"...");
         }
-        windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        windowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         viewInit(context);
     }
 
@@ -123,12 +123,12 @@ public class FloatingTileActioner {
         }
         Log.e(TAG, "floattitle_x:"+String.valueOf(floattitle_x));
         if (Math.abs(floattitle_x) < Math.abs(floattitle_x - mScreenWidth)){
-            layoutParams.gravity= Gravity.LEFT;
+            layoutParams.gravity= Gravity.START;
 //            view = View.inflate(context, R.layout.window_lay_left, null);
             isLeft =true;
 
         }else{
-            layoutParams.gravity =Gravity.RIGHT;
+            layoutParams.gravity =Gravity.END;
 //            view = View.inflate(context, R.layout.window_lay_right, null);
             isLeft =false;
         }
@@ -137,10 +137,8 @@ public class FloatingTileActioner {
     private void viewInit(Context context) {
         setSceneOrientation(context);
         if (isLeft){
-            layoutParams.gravity= Gravity.LEFT|Gravity.TOP;
             view = View.inflate(context, R.layout.window_lay_left, null);
         }else{
-            layoutParams.gravity =Gravity.RIGHT|Gravity.TOP;
             view = View.inflate(context, R.layout.window_lay_right, null);
         }
         layoutParams.x =0;
@@ -151,6 +149,8 @@ public class FloatingTileActioner {
         } else {
             imageView.setImageIcon(this.notificationInfo.getLargeIcon());
         }
+        Animation ani = AnimationUtils.loadAnimation(context, R.anim.mtrl_linear);
+        view.startAnimation(ani);
 
         final TextView titleText = view.findViewById(R.id.window_title_text);
         final TextView contentText = view.findViewById(R.id.window_content_text);
@@ -169,12 +169,16 @@ public class FloatingTileActioner {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+            layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;;
         }
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
         layoutParams.format = PixelFormat.RGBA_8888;
-        layoutParams.windowAnimations = android.R.style.Animation_Translucent;
+        layoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
+//        layoutParams.windowAnimations = android.R.style.Animation_Translucent;
+
+
+
 
     }
     private void getScreenSize() {
@@ -202,14 +206,13 @@ public class FloatingTileActioner {
     }
     public void addViewToWindow() {
 
-
         String showDirection = SpUtil.getSp(context,"appSettings").getString("floattitle_tileDirection", "down");
 
         if(isVert){
-            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_portrait_y", (int)(mScreenHeight*(3.0/5.0)));
+            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_portrait_y", -65);
         }else
         {
-            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_y", (int)(mScreenHeight*(3.0/5.0)));
+            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_y", -101);
         }
 
         int mostShowNum = Integer.parseInt(SpUtil.getSp(context,"appSettings").getString("floattitle_tileShowNum", "4"));
@@ -222,6 +225,8 @@ public class FloatingTileActioner {
                 } else {
                     layoutParams.y = layoutParams.y + (viewHeight + 18)*showID;
                 }
+
+
 
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
@@ -263,6 +268,8 @@ public class FloatingTileActioner {
         final OnTouchListener editPosFloatingOnTouchListener = new OnTouchListener() {
             private int x;
             private int y;
+            float lastX,lastY,changeX,changeY;
+            int newX, newY;
             int viewx =0;
 
             @SuppressLint("SourceLockedOrientationActivity")
@@ -280,10 +287,14 @@ public class FloatingTileActioner {
                             viewx = mScreenWidth-x;
                         }
                         y = (int) event.getRawY();
+                        lastX = event.getRawX();
+                        lastY = event.getRawY();
                         Log.e(TAG,"viewx:"+String.valueOf(viewx));
                         break;
                     case MotionEvent.ACTION_MOVE:
-
+                        changeX = (int) event.getRawX();
+                        changeY = (int) event.getRawY();
+//                        newX = (int)(m)
                         int nowX = (int) event.getRawX();
                         int nowY = (int) event.getRawY();
                         Log.e(TAG,"viewwidth:"+viewWidth);
@@ -314,7 +325,7 @@ public class FloatingTileActioner {
                         x = nowX;
                         y = nowY;
                         layoutParams.x = movedX;
-                        layoutParams.y = nowY;
+                        layoutParams.y = layoutParams.y+ movedY;
                         // 更新悬浮窗控件布局
                         windowManager.updateViewLayout(v, layoutParams);
                         break;
@@ -322,11 +333,11 @@ public class FloatingTileActioner {
                         if (isVert){
                             Log.e(TAG,"portrait:"+String.valueOf(x)+","+String.valueOf(layoutParams.y));
                             SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_portrait_x", x).apply();
-                            SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_portrait_y", y).apply();
+                            SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_portrait_y", layoutParams.y).apply();
                         }else {
                             Log.e(TAG,"landscape:"+String.valueOf(x)+","+String.valueOf(layoutParams.y));
                             SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_landscape_x", x).apply();
-                            SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_landscape_y", y).apply();
+                            SpUtil.getSp(context,"appSettings").edit().putInt("floattitle_landscape_y", layoutParams.y).apply();
                         }
                         removeTile();
                         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -397,6 +408,16 @@ public class FloatingTileActioner {
                     }
 
                     Log.i(TAG, "向左滑...");
+                    Log.i(TAG, String.valueOf(mScreenHeight));
+                    return true;
+                }
+
+                if (e2.getX() - e1.getX() > 50) {
+                    if(isLeft){
+                        showNoificationInfo();
+                    }else {
+                        closeNoificationInfo();
+                    }
                     return true;
                 }
 
@@ -414,14 +435,7 @@ public class FloatingTileActioner {
                     Log.i(TAG, "向上滑...");
                     return true;
                 }
-                if (e2.getX() - e1.getX() > 50) {
-                    if(isLeft){
-                        showNoificationInfo();
-                    }else {
-                        closeNoificationInfo();
-                    }
-                    return true;
-                }
+
 
 
                 Log.d("TAG", e2.getX() + " " + e2.getY());
