@@ -49,6 +49,7 @@
         <item>执行点击事件</item>
         <item>保存到日记记录</item>
         <item>播放提示音</item>
+        <item>通知组件悬浮</item>
     </string-array>
     <string name="check_float_window_permission">检查悬浮窗权限</string>
     <string name="stop_service">停止服务,关闭所有窗口</string>

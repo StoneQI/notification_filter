@@ -25,5 +25,7 @@
 
     <dimen name="cardview_margin_left_rgiht">12dp</dimen>
     <dimen name="cardview_margin_bootom_top">6dp</dimen>
+    <dimen name="sd_close_elevation">5dp</dimen>
+    <dimen name="sd_overlay_elevation">@dimen/sd_close_elevation</dimen>
 
 </resources>

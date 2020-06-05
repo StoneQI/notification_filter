@@ -23,6 +23,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
         <activity android:name="com.stone.notificationfilter.FiliterActivity"></activity>
@@ -38,6 +39,7 @@
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
+<!--            <intent-filter android:priority="1000" />-->
         </service>
     </application>
 

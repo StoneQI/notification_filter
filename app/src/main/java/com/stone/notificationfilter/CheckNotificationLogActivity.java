@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -52,6 +54,7 @@ public class CheckNotificationLogActivity extends BaseActivity {
                 return;
             }else
             {
+                mRecyclerView.removeAllViews();
                 findViewById(R.id.no_log_data).setVisibility(View.GONE);
             }
             final ArrayList<NotificationLogItem> notificationLogItemList = new ArrayList<>();
@@ -149,5 +152,33 @@ public class CheckNotificationLogActivity extends BaseActivity {
         setTitle("查看记录日志");
         mRecyclerView = findViewById(R.id.recycler_view);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.check_log_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i("dayang","选择列表项时执行------------");
+        //对菜单项点击内容进行设置
+        int id = item.getItemId();
+        if (id == R.id.delete_all_notification) {
+            if(notificationItemDao ==null){
+                NotificationItemDataBase db =NotificationItemDataBase.getInstance(getApplicationContext());
+                notificationItemDao = db.NotificationItemDao();
+            }
+
+            pd= ProgressDialog.show(CheckNotificationLogActivity.this, "删除数据", "Loading…");
+            new Thread(){
+                public void run(){
+                    notificationItemDao.deleteAll();
+                    notificationItemEntities = notificationItemDao.loadAllDESC();
+                    handler.sendEmptyMessage(0);
+                }
+            }.start();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

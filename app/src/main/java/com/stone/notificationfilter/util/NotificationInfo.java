@@ -2,6 +2,7 @@ package com.stone.notificationfilter.util;
 
 import android.app.PendingIntent;
 import android.graphics.drawable.Icon;
+import android.widget.RemoteViews;
 
 public class NotificationInfo {
     public Boolean getClearable() {
@@ -95,6 +96,7 @@ public class NotificationInfo {
     public String content;
     public Boolean isInteractive =false;
     public PendingIntent intent =null;
+    public RemoteViews remoteViews;
 
     public Boolean getInteractive() {
         return isInteractive;

@@ -1,5 +1,10 @@
 package com.stone.notificationfilter.actioner;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -23,6 +28,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -133,24 +139,29 @@ public class FloatingTileActioner {
             isLeft =false;
         }
     }
-
     private void viewInit(Context context) {
+        layoutParams.x =0;
         setSceneOrientation(context);
         if (isLeft){
             view = View.inflate(context, R.layout.window_lay_left, null);
+            layoutParams.windowAnimations =R.style.PopupFloatTiltAnimLeft;
         }else{
             view = View.inflate(context, R.layout.window_lay_right, null);
+            layoutParams.windowAnimations = R.style.PopupFloatTiltAnimright;
+
         }
-        layoutParams.x =0;
+
         final LinearLayout messageLay = view.findViewById(R.id.window_messgae_lay);
+//        final LinearLayout message_content = view.findViewById(R.id.message_content);
         ImageView imageView = view.findViewById(R.id.window_icon_img);
         if (this.notificationInfo.getLargeIcon() ==null){
             imageView.setImageDrawable(PackageUtil.getAppIconFromPackname(context, this.notificationInfo.getPackageName()));
         } else {
             imageView.setImageIcon(this.notificationInfo.getLargeIcon());
         }
-        Animation ani = AnimationUtils.loadAnimation(context, R.anim.mtrl_linear);
-        view.startAnimation(ani);
+
+
+
 
         final TextView titleText = view.findViewById(R.id.window_title_text);
         final TextView contentText = view.findViewById(R.id.window_content_text);
@@ -174,7 +185,7 @@ public class FloatingTileActioner {
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
         layoutParams.format = PixelFormat.RGBA_8888;
-        layoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
+//        layoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 //        layoutParams.windowAnimations = android.R.style.Animation_Translucent;
 
 
@@ -194,6 +205,12 @@ public class FloatingTileActioner {
 //        mCurrentIconAlpha = 70 / 100f;
     }
     public void run(){
+        if (!notificationInfo.isClearable){
+            return;
+        }
+        if (notificationInfo.getContent() == null && notificationInfo.getTitle()==null) {
+                return;
+            }
         isEditPos = false;
         setOnTouchListenr();
         addViewToWindow();
@@ -400,7 +417,17 @@ public class FloatingTileActioner {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 Log.i(TAG, velocityX+","+velocityY);
-                if (e1.getX() - e2.getX() > FLIP_DISTANCE) {
+
+
+                if (e2.getX() - e1.getX() > 50) {
+                    if(isLeft){
+                        showNoificationInfo();
+                    }else {
+                        closeNoificationInfo();
+                    }
+                    return true;
+                }
+                if (e1.getX() - e2.getX() > 80) {
                     if(!isLeft){
                         showNoificationInfo();
                     }else {
@@ -411,30 +438,21 @@ public class FloatingTileActioner {
                     Log.i(TAG, String.valueOf(mScreenHeight));
                     return true;
                 }
-
-                if (e2.getX() - e1.getX() > 50) {
-                    if(isLeft){
-                        showNoificationInfo();
-                    }else {
-                        closeNoificationInfo();
-                    }
-                    return true;
-                }
-
-                if (e1.getY() - e2.getY() > 40) {
+                if (e1.getY() - e2.getY() > 30) {
                     if(isOpen){
                         removeTile();
                     }
                     Log.i(TAG, "向下滑...");
                     return true;
                 }
-                if (e2.getY() - e1.getY() > 40) {
+                if (e2.getY() - e1.getY() > 30) {
                     if(isOpen){
                         removeTile();
                     }
                     Log.i(TAG, "向上滑...");
                     return true;
                 }
+
 
 
 
@@ -506,6 +524,26 @@ public class FloatingTileActioner {
 
 
     public void removeView() {
+//        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//            @Override
+//            public void run() {
+//                final LinearLayout messageLay = view.findViewById(R.id.window_root_lay);
+//                final LinearLayout message_content = view.findViewById(R.id.message_content);
+//                if(messageLay != null && message_content !=null){
+//                    if (context !=null){
+//                        Animation ani = AnimationUtils.loadAnimation(context, R.anim.pop_alpha_slide_right_exit);
+////        ani.setDuration(800);
+//                        message_content.setAnimation(ani);
+//                    }
+//                    Log.e(TAG,"remove_content");
+//                    messageLay.removeView(message_content);
+//                    addViewToWindow();
+//                }
+//            }
+//        });
+
+
+
         windowManager.removeView(view);
     }
 

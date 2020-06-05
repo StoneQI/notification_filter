@@ -24,6 +24,9 @@ public interface NotificationItemDao {
     @Query("DELETE FROM notificationitementity WHERE id = :id ")
     public int deleteByID(long id);
 
+    @Query("DELETE  FROM notificationitementity")
+    public int deleteAll();
+
 //    @Query("select * from notificationitementity where order_id= :id")
 //    public NotificationItemEntity findById(int id);
 

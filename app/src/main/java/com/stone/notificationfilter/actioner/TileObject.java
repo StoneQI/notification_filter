@@ -28,16 +28,21 @@ public class TileObject {
 
     public static int getNextPosition() {
         for (int i = 0; i <positionArray.size() ; i++) {
-            if(currentPosition==mMostShowTitleNum || showTileNum ==0){
-                currentPosition=0;
-            }
-            if(!positionArray.get(currentPosition)){
-                positionArray.set(currentPosition,true);
+            if(!positionArray.get(i)){
+                positionArray.set(i,true);
                 showTileNum++;
-//                currentPosition++;
-                return currentPosition;
+                return i;
             }
-            currentPosition++;
+//            if(currentPosition==mMostShowTitleNum || showTileNum ==0){
+//                currentPosition=0;
+//            }
+//            if(!positionArray.get(currentPosition)){
+//                positionArray.set(currentPosition,true);
+//                showTileNum++;
+////                currentPosition++;
+//                return currentPosition;
+//            }
+//            currentPosition++;
 
 
         }

@@ -14,39 +14,6 @@
 
     </style>
 
-<!--    <style name="CustomActionBar" parent="Theme.AppCompat.Light.DarkActionBar">-->
-<!--&lt;!&ndash;        <item name="android:titleTextStyle">@style/CustomActionBarTitle</item>&ndash;&gt;-->
-<!--&lt;!&ndash;        <item name="backgroundColor">@color/colorPrimaryBlue</item>&ndash;&gt;-->
-<!--        <item name="background">@color/colorPrimaryBlue</item>-->
-<!--        <item name="android:background">@color/colorPrimaryBlue</item>-->
-<!--&lt;!&ndash;        <item name="android:colorBackground">@color/colorPrimaryBlue</item>&ndash;&gt;-->
-<!--        &lt;!&ndash; Support library compatibility &ndash;&gt;-->
-<!--&lt;!&ndash;        <item name="titleTextStyle">@style/CustomActionBarTitle</item>&ndash;&gt;-->
-<!--    </style>-->
-
-    <!-- ActionBar title text -->
-<!--    <style name="CustomActionBarTitle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">-->
-<!--&lt;!&ndash;        <item name="android:textColor">@color/primaryTextColor</item>&ndash;&gt;-->
-<!--        <item name="android:textColor">@android:color/white</item>-->
-<!--        <item name="colorOnPrimary">@android:color/white</item>-->
-<!--        <item name="android:textColorPrimary">@android:color/white</item>-->
-<!--        <item name="textColor">@android:color/white</item>-->
-<!--        <item name="android:textSize">16sp</item>-->
-<!--    </style>-->
-
-<!--    &lt;!&ndash; ActionBar menu text &ndash;&gt;-->
-<!--    <style name="CustomActionBarMenu">-->
-<!--        <item name="android:textSize">16sp</item>-->
-<!--    </style>-->
-
-<!--    <style name="CustomActionBar" parent="r">-->
-
-<!--&lt;!&ndash;        <item name="android:textColor">@color/primaryTextColor</item>&ndash;&gt;-->
-<!--        <item name="backgroundColor">@color/colorPrimaryBlue</item>-->
-<!--        <item name="textColor">@color/primaryTextColor</item>-->
-<!--        <item name="android:textSize">20sp</item>-->
-<!--    </style>-->
-<!--    <style name="AppTheme.Main" parent="AppTheme" />-->
 
     <style name="AppTheme.ThemeOverlay" />
 
@@ -64,6 +31,14 @@
     <!--The lable text size-->
     <attr format="string" name="textSize"/>
 
+    <style name="PopupFloatTiltAnimright">
+        <item name="android:windowEnterAnimation">@anim/pop_alpha_slide_right_enter</item>
+        <item name="android:windowExitAnimation">@anim/pop_alpha_slide_right_exit</item>
+    </style>
+    <style name="PopupFloatTiltAnimLeft">
+        <item name="android:windowEnterAnimation">@anim/pop_alpha_slide_left_enter</item>
+        <item name="android:windowExitAnimation">@anim/pop_alpha_slide_left_exit</item>
+    </style>
 
     <style name="myRecyclerViewStyle">
         <!-- NOTE: clipChildren should be false on API level 11 or later -->
