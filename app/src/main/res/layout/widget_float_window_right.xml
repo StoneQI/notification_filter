@@ -3,6 +3,7 @@
     android:id="@+id/gr"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
+    android:elevation="3dp"
     android:background="@drawable/widget_float_button_right_bg"
     android:gravity="end|center"
     android:orientation="horizontal">

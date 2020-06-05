@@ -53,6 +53,10 @@ public class FloatCustomViewActioner {
 
     }
     public void run(){
+
+        if (!SpUtil.getSp(context,"appSettings").getBoolean("on_notification_float_message",false)){
+            return;
+        };
         view = notificationInfo.remoteViews.apply(context,null);
         Log.e(TAG,"Key"+key);
         if (key.equals(this.notificationInfo.key)&& isShow ==true){

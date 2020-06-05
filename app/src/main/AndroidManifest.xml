@@ -41,6 +41,7 @@
             </intent-filter>
 <!--            <intent-filter android:priority="1000" />-->
         </service>
+        <service android:name=".util.NotificationCollectorMonitorService"/>
     </application>
 
 </manifest>

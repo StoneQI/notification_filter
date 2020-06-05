@@ -2,6 +2,7 @@ package com.stone.notificationfilter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 //import android.support.v7.app.AlertDialog;
@@ -23,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.stone.notificationfilter.util.NotificationCollectorMonitorService;
 import com.stone.notificationfilter.util.SpUtil;
 
 /**
@@ -45,6 +47,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startService(new Intent(this, NotificationCollectorMonitorService.class));
 
 //        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //        CoordinatorLayout groupPollingAddress = (CoordinatorLayout)inflater.inflate(R.layout.tool_bar, null);

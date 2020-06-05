@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -76,7 +77,12 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        if (SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("notification_show", false)){
+            addForegroundNotification();
+        }
+//        if (SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("notification_show", false)){
+//            addForegroundNotification();
+//        }
         String packageNamestring = SpUtil.getSp(getApplicationContext(),"appSettings").getString("select_applists", "");
         selectAppList = SpUtil.string2Set(packageNamestring);
 
@@ -96,13 +102,12 @@ public class NotificationService extends NotificationListenerService {
             }
         }).start();
 
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("notification_show", false)){
-            addForegroundNotification();
-        }
+
         super.onStartCommand(intent, flags, startId);
         return START_REDELIVER_INTENT;
     }
@@ -293,8 +298,9 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public void onListenerDisconnected() {
-        super.onListenerDisconnected();
-//        requestRebind();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            requestRebind(new ComponentName(this, NotificationService.class));
+        }
     }
 
     @Override
@@ -317,28 +323,28 @@ public class NotificationService extends NotificationListenerService {
         notificationInfo.setSmallIcon(sbn.getNotification().getSmallIcon());
         notificationInfo.setTitle(extras.getString(android.app.Notification.EXTRA_TITLE));
         notificationInfo.setContent(extras.getString(android.app.Notification.EXTRA_TEXT));
-        notification.getBubbleMetadata();
+//        notification.getBubbleMetadata();
 //        extras.getString(android.app.Notification.EX);
 //        extras.getString(Notification.DEFAULT_SOUND);
         notificationInfo.setIntent(sbn.getNotification().contentIntent);
         PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-        String audioContentsURI = extras.getString(Notification.EXTRA_AUDIO_CONTENTS_URI);
-        String backgoundImageURI = extras.getString(Notification.EXTRA_BACKGROUND_IMAGE_URI);
-        String audioContentsUri = extras.getString(Notification.EXTRA_AUDIO_CONTENTS_URI);
-        String bigText = extras.getString(Notification.EXTRA_BIG_TEXT);
-        String channelGroupID = extras.getString(Notification.EXTRA_CHANNEL_GROUP_ID);
-        String channelID = extras.getString(Notification.EXTRA_CHANNEL_ID);
-//        String EXTRA_CONTAINS_CUSTOM_VIEW = extras.getString(Notification.EXTRA_CONTAINS_CUSTOM_VIEW);
-
-        String EXTRA_TEMPLATE = extras.getString(Notification.EXTRA_TEMPLATE);
-        Log.e(TAG,"TEMPLATE"+EXTRA_TEMPLATE);
-        String textLines = extras.getString(Notification.EXTRA_TEXT_LINES);
-        MediaSession.Token EXTRA_MEDIA_SESSION = extras.getParcelable(Notification.EXTRA_MEDIA_SESSION);
-//        String EXTRA_COMPACT_ACTIONS = extras.getString(Notification.EXTRA_COMPACT_ACTIONS);
-        String EXTRA_SUMMARY_TEXT = extras.getString(Notification.EXTRA_SUMMARY_TEXT);
-        String EXTRA_TITLE_BIG = extras.getString(Notification.EXTRA_TITLE_BIG);
-
-        RemoteViews remoteView = sbn.getNotification().contentView;
+//        String audioContentsURI = extras.getString(Notification.EXTRA_AUDIO_CONTENTS_URI);
+//        String backgoundImageURI = extras.getString(Notification.EXTRA_BACKGROUND_IMAGE_URI);
+//        String audioContentsUri = extras.getString(Notification.EXTRA_AUDIO_CONTENTS_URI);
+//        String bigText = extras.getString(Notification.EXTRA_BIG_TEXT);
+//        String channelGroupID = extras.getString(Notification.EXTRA_CHANNEL_GROUP_ID);
+//        String channelID = extras.getString(Notification.EXTRA_CHANNEL_ID);
+////        String EXTRA_CONTAINS_CUSTOM_VIEW = extras.getString(Notification.EXTRA_CONTAINS_CUSTOM_VIEW);
+//
+//        String EXTRA_TEMPLATE = extras.getString(Notification.EXTRA_TEMPLATE);
+//        Log.e(TAG,"TEMPLATE"+EXTRA_TEMPLATE);
+//        String textLines = extras.getString(Notification.EXTRA_TEXT_LINES);
+//        MediaSession.Token EXTRA_MEDIA_SESSION = extras.getParcelable(Notification.EXTRA_MEDIA_SESSION);
+////        String EXTRA_COMPACT_ACTIONS = extras.getString(Notification.EXTRA_COMPACT_ACTIONS);
+//        String EXTRA_SUMMARY_TEXT = extras.getString(Notification.EXTRA_SUMMARY_TEXT);
+//        String EXTRA_TITLE_BIG = extras.getString(Notification.EXTRA_TITLE_BIG);
+//
+//        RemoteViews remoteView = sbn.getNotification().contentView;
 
 //        if (notification == null) return;
         RemoteViews remoteViews = getBigContentView(getApplicationContext(), notification);

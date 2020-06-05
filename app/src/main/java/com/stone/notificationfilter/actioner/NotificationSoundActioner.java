@@ -18,12 +18,14 @@ public class NotificationSoundActioner {
     private SoundPool soundPool;
     private Context context;
     private int soundID;
+    private NotificationInfo notificationInfo;
 //    private PendingIntent intent = null;
 
 
     public NotificationSoundActioner(NotificationInfo notificationInfo, Context context) {
         this.context = context;
         soundPool = new SoundPool.Builder().build();
+        this.notificationInfo =notificationInfo;
         soundID = soundPool.load(context, R.raw.wenxing, 1);
     }
     public void  run(){
@@ -31,6 +33,12 @@ public class NotificationSoundActioner {
         if (!SpUtil.getSp(context,"appSettings").getBoolean("on_sound_message",false)){
             return;
         };
+        if (!notificationInfo.isClearable){
+            return;
+        }
+        if (notificationInfo.getContent() == null && notificationInfo.getTitle()==null) {
+            return;
+        }
         soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int i, int i2) {

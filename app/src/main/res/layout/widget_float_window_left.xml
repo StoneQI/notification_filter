@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/widget_float_action_button_bg"
     android:gravity="center"
+    android:elevation="3dp"
     android:orientation="horizontal">
 
     <ImageView

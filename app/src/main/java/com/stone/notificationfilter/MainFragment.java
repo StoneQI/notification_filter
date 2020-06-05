@@ -135,7 +135,8 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
 
                     if (isNotificationListenerEnable && isCanDrawWindow){
                         Log.e("MainFragment",String.valueOf(isClicked));
-
+//                        Intent intent = new Intent(getActivity(),NotificationService.class);
+//                        getActivity().startService(intent);
                         startNotificationListenerService();
                         Toast.makeText(getContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
                         return true;

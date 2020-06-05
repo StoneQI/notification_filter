@@ -141,8 +141,16 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="on_sound_message"
-            android:summary="声音提醒总开关，开启后规则中的记录日志通知处理器才生效"
+            android:summary="声音提醒总开关，开启后规则中的声音提醒通知处理器才生效，默认开启微信通知和TIM通知"
             android:title="声音提醒" />
+    <PreferenceCategory
+        android:title="通知悬浮处理器设置"/>
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="on_notification_float_message"
+        android:summary="通知悬浮处理器总开关，开启后规则中的通知悬浮处理器才生效，一般用于音乐控制，默认开启网易云音乐和QQ音乐"
+        android:title="通知悬浮处理器" />
 
 
 
