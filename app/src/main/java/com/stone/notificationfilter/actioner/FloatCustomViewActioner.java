@@ -54,19 +54,20 @@ public class FloatCustomViewActioner {
     }
     public void run(){
 
-        if (!SpUtil.getSp(context,"appSettings").getBoolean("on_notification_float_message",false)){
+        if (!SpUtil.getSp(context,"appSettings").getBoolean("on_notification_float_message",true)){
             return;
         };
         view = notificationInfo.remoteViews.apply(context,null);
         Log.e(TAG,"Key"+key);
         if (key.equals(this.notificationInfo.key)&& isShow ==true){
             dialog.setContentView(view);
+            dialog.updateExpanedView();
             return;
         }
         if (dialog!=null){
             dialog.dismiss();
         }
-        dialog=new com.stone.notificationfilter.actioner.floatbutton.FloatWindow(context,0,500, new FloatWindow.IOnItemClicked() {
+        dialog=new com.stone.notificationfilter.actioner.floatbutton.FloatWindow(context,500, new FloatWindow.IOnItemClicked() {
             @Override
             public void onBackItemClick() {
                 try {
@@ -80,7 +81,7 @@ public class FloatCustomViewActioner {
 
             @Override
             public void onCloseItemClick() {
-                Toast.makeText(context,"关闭",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"通知悬浮组件关闭",Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
                 isShow=false;
             }

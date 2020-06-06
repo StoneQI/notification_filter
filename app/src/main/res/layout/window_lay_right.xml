@@ -28,6 +28,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="vertical"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="2dp"
                     android:visibility="visible">
 
                         <com.stone.notificationfilter.widget.MarqueeTextView

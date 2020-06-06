@@ -137,7 +137,7 @@ public abstract class BaseFloatDailog {
     /**
      * 用于 定时 判断 横竖屏的定时器
      */
-    private CountDownTimer mIsPortraitTimer;
+//    private CountDownTimer mIsPortraitTimer;
 
 
     /**
@@ -299,7 +299,7 @@ public abstract class BaseFloatDailog {
      */
     protected BaseFloatDailog(Context context,int defaultY) {
         this.mActivity = context;
-        mDefaultLocation=LEFT;
+        mDefaultLocation=RIGHT;
         mHintLocation=mDefaultLocation;
         initFloatWindow(defaultY);
         initTimer();
@@ -366,40 +366,41 @@ public abstract class BaseFloatDailog {
             }
         };
 
-        Configuration mConfiguration = mActivity.getResources().getConfiguration(); //获取设置的配置信息
-        initOrientation = mConfiguration.orientation;
+//        Configuration mConfiguration = mActivity.getResources().getConfiguration(); //获取设置的配置信息
+//        initOrientation = mConfiguration.orientation;
 
-        mIsPortraitTimer = new CountDownTimer(2000,10) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                Log.e("baseFLoat","millisUntilFinished:"+String.valueOf(millisUntilFinished));
-            }
-
-            @Override
-            public void onFinish() {
-
-                Configuration mConfiguration = mActivity.getResources().getConfiguration(); //获取设置的配置信息
-                int ori = mConfiguration.orientation; //获取屏幕方向
-                Log.e("baseFLoat","ori:"+ori);
-                int floattitle_x=0;
-                getScreenSize();
-                if (ori != initOrientation) {
-                    if (ori == Configuration.ORIENTATION_LANDSCAPE) {
-//                    dismiss();
-                        reSetView(300);
-                        initOrientation = Configuration.ORIENTATION_LANDSCAPE;
-//                    isVert =false;
-//                    floattitle_x = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_x", mScreenHeight) ;
-                    } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
-//                    dismiss();
-                        reSetView(500);
-                        initOrientation = Configuration.ORIENTATION_PORTRAIT;
-//                    floattitle_x = SpUtil.getSp(context,"appSettings").getInt("floattitle_portrait_x", mScreenWidth);
-//                    isVert =true;
-                    }
-                }
-            }
-        };
+//        mIsPortraitTimer = new CountDownTimer(20000000,1000) {
+//            @Override
+//            public void onTick(long millisUntilFinished) {
+//                Log.e("baseFLoat","millisUntilFinished:"+String.valueOf(millisUntilFinished));
+//                Configuration mConfiguration = mActivity.getResources().getConfiguration(); //获取设置的配置信息
+//                int ori = mConfiguration.orientation; //获取屏幕方向
+//                Log.e("baseFLoat","ori:"+ori);
+//                int floattitle_x=0;
+//                getScreenSize();
+//                if (ori != initOrientation) {
+//                    if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+////                    dismiss();
+//                        reSetView(300);
+//                        initOrientation = Configuration.ORIENTATION_LANDSCAPE;
+////                    isVert =false;
+////                    floattitle_x = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_x", mScreenHeight) ;
+//                    } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
+////                    dismiss();
+//                        reSetView(500);
+//                        initOrientation = Configuration.ORIENTATION_PORTRAIT;
+////                    floattitle_x = SpUtil.getSp(context,"appSettings").getInt("floattitle_portrait_x", mScreenWidth);
+////                    isVert =true;
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFinish() {
+//
+//
+//            }
+//        };
     }
 
 
@@ -494,6 +495,9 @@ public abstract class BaseFloatDailog {
      * 悬浮窗touch事件的 move 事件
      */
     private void floatEventMove(MotionEvent event) {
+//        if (isExpaned){
+//            openOrCloseMenu();
+//        }
         if (!isExpaned)
         {
             mXInScreen = event.getRawX();
@@ -659,11 +663,11 @@ public abstract class BaseFloatDailog {
             }
             if (mHideTimer != null) {
                 mHideTimer.start();
-                mIsPortraitTimer.start();
+//                mIsPortraitTimer.start();
             } else {
                 initTimer();
                 mHideTimer.start();
-                mIsPortraitTimer.start();
+//                mIsPortraitTimer.start();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -739,6 +743,59 @@ public abstract class BaseFloatDailog {
 
     protected abstract void updateViewBeforeOpenMenu(int mHintLocation);
 
+    public void updateExpanedView(){
+        if(isExpaned){
+            try {
+                updateViewBeforeOpenMenu(mHintLocation);
+                if (mHintLocation == RIGHT) {
+                    int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                    int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                    rightView.measure(width, height);
+                    Log.e("baseFLoat", "right width::"+String.valueOf(rightView.getMeasuredWidth()));
+                    Log.e("baseFLoat", "right height::"+String.valueOf(rightView.getMeasuredHeight()));
+
+                    wManager.updateViewLayout(rightView, wmParams);
+//                    if (mGetViewCallback == null) {
+//                        rightViewOpened(rightView);
+//                    } else {
+//                        mGetViewCallback.rightViewOpened(rightView);
+//                    }
+                } else {
+                    int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                    int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                    leftView.measure(width, height);
+                    Log.e("baseFLoat", "right width::"+String.valueOf(leftView.getMeasuredWidth()));
+                    Log.e("baseFLoat", "right height::"+String.valueOf(leftView.getMeasuredHeight()));
+                    wManager.updateViewLayout(leftView, wmParams);
+//                    if (mGetViewCallback == null) {
+//                        leftViewOpened(leftView);
+//                    } else {
+//                        mGetViewCallback.leftViewOpened(leftView);
+//                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            isExpaned = true;
+            mHideTimer.cancel();
+        } else {
+            try {
+                updateViewBeforeCloseMenu(mHintLocation);
+                wManager.removeViewImmediate(mHintLocation == LEFT ? leftView : rightView);
+                wManager.addView(logoView, wmParams);
+                if (mGetViewCallback == null) {
+                    leftOrRightViewClosed(logoView);
+                } else {
+                    mGetViewCallback.leftOrRightViewClosed(logoView);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     /**
      * 更新悬浮窗在屏幕中的位置。
@@ -771,7 +828,7 @@ public abstract class BaseFloatDailog {
         logoView.clearAnimation();
         try {
             mHideTimer.cancel();
-            mIsPortraitTimer.cancel();
+//            mIsPortraitTimer.cancel();
             if (isExpaned) {
                 wManager.removeViewImmediate(mHintLocation == LEFT ? leftView : rightView);
             } else {

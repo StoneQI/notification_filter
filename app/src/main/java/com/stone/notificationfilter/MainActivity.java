@@ -47,7 +47,6 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startService(new Intent(this, NotificationCollectorMonitorService.class));
 
 //        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //        CoordinatorLayout groupPollingAddress = (CoordinatorLayout)inflater.inflate(R.layout.tool_bar, null);

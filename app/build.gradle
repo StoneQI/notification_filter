@@ -16,8 +16,8 @@ android {
         applicationId "com.stone.notificationfilter"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 2
-        versionName "0.9.4"
+        versionCode 20200606
+        versionName "0.9.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "releaseTime", "\"" + new Date().format("yyyy-MM-dd HH:mm:ss") + "\"")
         javaCompileOptions {
@@ -46,6 +46,7 @@ dependencies {
     implementation("moe.shizuku.preference:preference-appcompat:4.0.0")
     implementation("moe.shizuku.preference:preference-simplemenu-appcompat:4.0.0")
     implementation 'com.github.xujiaji:dmlib2:0.0.6'
+    implementation 'com.noober.floatmenu:common:1.0.4'
     implementation "androidx.room:room-runtime:2.2.3"
     annotationProcessor "androidx.room:room-compiler:2.2.3" // For Kotlin use kapt instead of annotationProcessor
     api 'com.google.guava:guava:27.0.1-android'

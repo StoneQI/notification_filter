@@ -22,6 +22,7 @@ import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import androidx.core.app.NotificationCompat;
+import android.app.PendingIntent;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -39,6 +40,7 @@ import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilte
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
 
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,22 +49,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+
 /**
  * Create by LingC on 2019/8/4 21:46
  */
 public class NotificationService extends NotificationListenerService {
     private final static  String TAG ="NotificationService";
-    private static final String NOTIFICATION_CHANNEL_ID = "FloatWindowService";
-    public static final int MANAGER_NOTIFICATION_ID = 0x1001;
-    public static final int HANDLER_DETECT_PERMISSION = 0x2001;
-    private String content;
-    private Icon iconIcon=null;
-    private Bitmap iconBitmap = null;
+
+    public static boolean isStartListener = true;
+    public static  boolean isCancalSystemNotification = false;
+
     private ArrayList<NotificationFilterEntity> systemNotificationMatchers= new ArrayList<NotificationFilterEntity>();
     private List<NotificationFilterEntity> customNotificationMatchers= null;
     public static Set<String> selectAppList = null;
+//    True为白名单， false为黑名单
     public static  boolean appListMode = false;
     private boolean isSceenLock =false;
+    private NotificationInfo notificationInfo=null;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler(){
@@ -77,12 +80,11 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("notification_show", false)){
+        isStartListener = true;
+        if (SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("notification_show", true)){
             addForegroundNotification();
         }
-//        if (SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("notification_show", false)){
-//            addForegroundNotification();
-//        }
+
         String packageNamestring = SpUtil.getSp(getApplicationContext(),"appSettings").getString("select_applists", "");
         selectAppList = SpUtil.string2Set(packageNamestring);
 
@@ -91,6 +93,7 @@ public class NotificationService extends NotificationListenerService {
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_USER_PRESENT));
+        registerReceiver(mBroadcastReceiver, new IntentFilter(NOTIFICATION_FILTER_START_INTENT));
 
         new Thread(new Runnable() {
             @Override
@@ -107,12 +110,19 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         super.onStartCommand(intent, flags, startId);
         return START_REDELIVER_INTENT;
     }
 
     private void setSystemNotificationMatchers(){
+
+        NotificationFilterEntity notificationMatcher8 = new NotificationFilterEntity();
+        notificationMatcher8.orderID = 8;
+        notificationMatcher8.name = "去掉正在其他应用上层";
+        notificationMatcher8.contextPatter="正在其他的应用上层";
+        notificationMatcher8.actioner = 2;
+        notificationMatcher8.breakDown =false;
+
         NotificationFilterEntity notificationMatcher7 = new NotificationFilterEntity();
         notificationMatcher7.orderID = 5;
         notificationMatcher7.name = "播放网易云";
@@ -161,6 +171,7 @@ public class NotificationService extends NotificationListenerService {
         notificationMatcher.breakDown =true;
 
         systemNotificationMatchers.add(notificationMatcher7);
+        systemNotificationMatchers.add(notificationMatcher8);
         systemNotificationMatchers.add(notificationMatcher6);
         systemNotificationMatchers.add(notificationMatcher5);
         systemNotificationMatchers.add(notificationMatcher3);
@@ -173,45 +184,38 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(final StatusBarNotification sbn) {
+        Log.i(TAG,"onNotificationPosted:"+isStartListener);
+        if (!isStartListener){
+            return;
+        }
+        if(selectAppList.size()!=0){
+            if(appListMode){
+                if(!selectAppList.contains(sbn.getPackageName())){
+                    cancelNotification(sbn.getKey());
+                    return;
+                }
+            }else {
+                if(selectAppList.contains(sbn.getPackageName())){
+                    cancelNotification(sbn.getKey());
+                    return;
+                }
+            }
+        }
+        if (isSceenLock) {
+            return;
+        }
         try {
 
-            if(selectAppList.size()!=0){
-                if(appListMode){
-                    if(!selectAppList.contains(sbn.getPackageName())){
-                        cancelNotification(sbn.getKey());
-                        return;
-                    }
-                }else {
-                    if(selectAppList.contains(sbn.getPackageName())){
-                        cancelNotification(sbn.getKey());
-                        return;
-                    }
-                }
-
-            }
-            PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-
-            if (isSceenLock) {
-                return;
-            }
-
-            NotificationInfo notificationInfo = getNotificationInfo(sbn);
-//            if (notificationInfo.getContent() == null && notificationInfo.getTitle()==null) {
-//                return;
-//            }
-
-//            if (sbn.isClearable() ==false || sbn.getPackageName().equals("android")) {
-////                super.onNotificationPosted(sbn);
-//                return;
-//            }
-
-
+//            PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+            notificationInfo = getNotificationInfo(sbn);
+            isCancalSystemNotification =false;
 
 //            Log.e(TAG, "notifi_id"+String.valueOf(notificationInfo.ID));
-            Log.e(TAG, "notifi_key"+notificationInfo.key);
-            Log.e(TAG, "notifi_id"+String.valueOf(notificationInfo.getContent()));
+//            Log.e(TAG, "notifi_key"+notificationInfo.key);
+//            Log.e(TAG, "notifi_id"+String.valueOf(notificationInfo.getContent()));
             for(NotificationFilterEntity notificationMatcher:customNotificationMatchers){
-                Log.e(TAG, notificationMatcher.name);
+
+//                Log.e(TAG, notificationMatcher.name);
                 if(  notificationMatcher.packageNames !=null && !notificationMatcher.packageNames.isEmpty()){
                     if (!notificationMatcher.packageNames.contains(notificationInfo.getPackageName())){
                         continue;
@@ -275,12 +279,12 @@ public class NotificationService extends NotificationListenerService {
                 switch (notificationMatcher.actioner){
                     case 0:cancelNotification(notificationInfo.key);floatingTileAction(notificationInfo); break;
                     case 1:break;
-                    case 2:cancelNotification(notificationInfo.key); break;
-                    case 3:cancelNotification(notificationInfo.key);new CopyActioner(notificationInfo,NotificationService.this).run();break;
-                    case 4:cancelNotification(notificationInfo.key);new RunIntentActioner(notificationInfo,NotificationService.this).run();break;
-                    case 5:cancelNotification(notificationInfo.key);new SaveToFileActioner(notificationInfo,NotificationService.this).run();break;
-                    case 6:new NotificationSoundActioner(notificationInfo,NotificationService.this).run();break;
-                    case 7:cancelNotification(notificationInfo.key);new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();break;
+                    case 2:isCancalSystemNotification =true; break;
+                    case 3:new CopyActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
+                    case 4:new RunIntentActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
+                    case 5:new SaveToFileActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
+                    case 6:new NotificationSoundActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
+                    case 7:new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
 
 //                default:
 //                default: cancelAllNotifications();floatingTileAction(notificationInfo); break;
@@ -290,14 +294,27 @@ public class NotificationService extends NotificationListenerService {
                 }
             }
         }catch (Exception e){
-            super.onNotificationPosted(sbn);
+            isCancalSystemNotification =false;
             e.printStackTrace();
-        }
+        }finally {
+            if (isCancalSystemNotification){
+                if (notificationInfo!=null){
+                    cancelNotification(notificationInfo.key);
+                }
 
+            }
+        }
+    }
+
+    @Override
+    public void onListenerConnected() {
+        Log.i(TAG,"notification service connected start");
+        super.onListenerConnected();
     }
 
     @Override
     public void onListenerDisconnected() {
+        Log.i(TAG,"notification service connected stop");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             requestRebind(new ComponentName(this, NotificationService.class));
         }
@@ -308,7 +325,7 @@ public class NotificationService extends NotificationListenerService {
         unregisterReceiver(mBroadcastReceiver);
         stopForeground(true);
         super.onDestroy();
-        Log.e(TAG,"service stop");
+        Log.i(TAG,"notification service stop");
     }
 
     private NotificationInfo getNotificationInfo(StatusBarNotification sbn) {
@@ -390,29 +407,37 @@ public class NotificationService extends NotificationListenerService {
     public void onNotificationRemoved(StatusBarNotification sbn) {
         super.onNotificationRemoved(sbn);
     }
-
+    private RemoteViews mRemoteViews;
+    private NotificationCompat.Builder mBuilder;
+    private static final String NOTIFICATION_CHANNEL_ID = "FloatWindowService";
+    private static final String NOTIFICATION_FILTER_START_INTENT = "com.stone.notificationfilter.FloatServiceStart";
+    public static final int MANAGER_NOTIFICATION_ID = 0x1001;
     private void addForegroundNotification() {
         createNotificationChannel();
 
-        String contentTitle = "通知处理器";
-        String contentText = "通知处理器运行中...";
+        mRemoteViews = new RemoteViews(getPackageName(),R.layout.notification_custom_layout);
+        notificationCustomRemoteVIew();
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
-                .setContentTitle(contentTitle)
-                .setContentText(contentText)
-                .setWhen(System.currentTimeMillis())
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        PendingIntent homeIntent = PendingIntent.getBroadcast(this,1,new Intent(NOTIFICATION_FILTER_START_INTENT),PendingIntent.FLAG_UPDATE_CURRENT);
+        mRemoteViews.setOnClickPendingIntent(R.id.notification_filter_start,homeIntent);
+
+        String contentText = "通知处理器开启运行中...";
 
         Intent msgIntent = getStartAppIntent(getApplicationContext());
         PendingIntent mainPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
                 msgIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = mBuilder.setContentIntent(mainPendingIntent)
-                .setAutoCancel(false).build();
+        mBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setOngoing(true)
+                .setCustomContentView(mRemoteViews)
+                .setWhen(System.currentTimeMillis())
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setTicker(contentText)
+                .setContentIntent(mainPendingIntent)
+                .setAutoCancel(false);
 
-        startForeground(MANAGER_NOTIFICATION_ID, notification);
+        startForeground(MANAGER_NOTIFICATION_ID, mBuilder.build());
     }
     private Intent getStartAppIntent(Context context) {
         Intent intent = context.getPackageManager()
@@ -440,6 +465,24 @@ public class NotificationService extends NotificationListenerService {
         }
     }
 
+    private void updateNotification(){
+        Log.i(TAG,"updateNotification:"+isStartListener);
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationCustomRemoteVIew();
+        mNotificationManager.notify(MANAGER_NOTIFICATION_ID, mBuilder.build());
+
+    }
+
+    private void notificationCustomRemoteVIew() {
+        if(isStartListener){
+            mRemoteViews.setTextViewText(R.id.notification_filter_title, getResources().getString(R.string.service_start));
+            mRemoteViews.setImageViewResource(R.id.notification_filter_start, android.R.drawable.ic_media_play);
+        }else{
+            mRemoteViews.setTextViewText(R.id.notification_filter_title, getResources().getString(R.string.service_stop));
+            mRemoteViews.setImageViewResource(R.id.notification_filter_start, android.R.drawable.ic_media_pause);
+        }
+    }
+
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -458,6 +501,10 @@ public class NotificationService extends NotificationListenerService {
                         isSceenLock =false;
                         Log.d(TAG, "解锁成功");
                         break;
+                    case NOTIFICATION_FILTER_START_INTENT:
+                        isStartListener=!isStartListener;
+                        updateNotification();
+                        Log.i(TAG,"updateNotification:"+isStartListener);
                     default:
                         break;
                 }

@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
 import com.stone.notificationfilter.util.DialogUtil;
+import com.stone.notificationfilter.util.NotificationCollectorMonitorService;
 import com.stone.notificationfilter.util.NotificationInfo;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
 import com.stone.notificationfilter.actioner.TileObject;
@@ -86,18 +87,12 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
         }else {
             boolean isStart = SpUtil.getSp(getContext(),"appSettings").getBoolean("start_service", false);
             if (isStart){
-                startNotificationListenerService();
+//                NotificationService.isStartListener=true;
+                getActivity().startService(new Intent(getActivity(), NotificationCollectorMonitorService.class));
 //                Toast.makeText(getContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
             }else {
-//                Log.e("MainFragment",String.valueOf(isClicked));
-                stopNotificationListenerService();
-//                Toast.makeText(getContext(), "服务未开启", Toast.LENGTH_SHORT).show();
-//                return false;
+                NotificationService.isStartListener=false;
             }
-//            if (){
-//            hideInBackground
-//                toggleNotificationListenerService();
-//            }
         }
 
     }
@@ -106,25 +101,6 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
     public void onCreatePreferences(Bundle bundle, String s) {
         getPreferenceManager().setSharedPreferencesName("appSettings");
         addPreferencesFromResource(R.xml.pref_lay);
-//        addPreferencesFromResource(R.xml.pred_actioner_setting);
-//        PreferenceCategory notifications = (PreferenceCategory) getPreferenceScreen ().findPreference (PreferenceKey.pref_notifications.name ());
-//        addPreferencesFromResource (R.xml.pref_notifications, notifications);
-
-//        SwitchPreferenceCompat switchPreference =(SwitchPreferenceCompat) findPreference("start_service");
-
-
-//        findPreference("test_content").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            @Override
-//            public boolean onPreferenceClick(Preference preference) {
-//                final FloatNotificationGroup floatNotificationGroup = FloatNotificationGroup.getInstance(getContext());
-//
-//                floatNotificationGroup.addView(getContext(),null);
-////                floatNotificationGroup.addView(getContext());
-//
-//
-//                return false;
-//            }
-//        });
 
         findPreference("start_service").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -137,7 +113,9 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
                         Log.e("MainFragment",String.valueOf(isClicked));
 //                        Intent intent = new Intent(getActivity(),NotificationService.class);
 //                        getActivity().startService(intent);
-                        startNotificationListenerService();
+                        NotificationService.isStartListener=true;
+                        getActivity().startService(new Intent(getActivity(), NotificationCollectorMonitorService.class));
+//                        startNotificationListenerService();
                         Toast.makeText(getContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
                         return true;
                     }else {
@@ -147,7 +125,8 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
                     }
                 }else {
                     Log.e("MainFragment",String.valueOf(isClicked));
-                    stopNotificationListenerService();
+//                    stopNotificationListenerService();
+                    NotificationService.isStartListener=false;
                     Toast.makeText(getContext(), R.string.service_stop, Toast.LENGTH_SHORT).show();
                     return true;
                 }
@@ -443,19 +422,6 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
         super.onStop();
     }
 
-    private void startNotificationListenerService() {
-        ComponentName thisComponent = new ComponentName(getContext(),  com.stone.notificationfilter.NotificationService.class);
-        PackageManager pm = getActivity().getPackageManager();
-        pm.setComponentEnabledSetting(thisComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-        pm.setComponentEnabledSetting(thisComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-    }
-
-    private void stopNotificationListenerService() {
-        ComponentName thisComponent = new ComponentName(getContext(),   com.stone.notificationfilter.NotificationService.class);
-        PackageManager pm = getActivity().getPackageManager();
-        pm.setComponentEnabledSetting(thisComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-//        pm.setComponentEnabledSetting(thisComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

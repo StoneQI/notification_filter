@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -42,6 +43,10 @@ public class FloatWindow extends BaseFloatDailog {
         super(context,location,defaultY);
         this.itemClickedListener=callBack;
     }
+    public FloatWindow(Context context, int defaultY,IOnItemClicked callBack) {
+        super(context,defaultY);
+        this.itemClickedListener=callBack;
+    }
 
     @Override
     protected void updateViewBeforeCloseMenu(int mHintLocation) {
@@ -71,7 +76,7 @@ public class FloatWindow extends BaseFloatDailog {
                 itemClickedListener.onBackItemClick();
             }
         });
-        FrameLayout closeItem=(FrameLayout)view.findViewById(R.id.close_item);
+        ImageView closeItem=(ImageView)view.findViewById(R.id.close_item);
         closeItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,7 +96,7 @@ public class FloatWindow extends BaseFloatDailog {
                 itemClickedListener.onBackItemClick();
             }
         });
-        FrameLayout closeItem=(FrameLayout)view.findViewById(R.id.close_item);
+        ImageView closeItem=(ImageView)view.findViewById(R.id.close_item);
         closeItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
