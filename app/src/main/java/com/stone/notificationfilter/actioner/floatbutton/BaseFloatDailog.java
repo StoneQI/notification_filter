@@ -20,7 +20,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -34,8 +33,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-
-import com.stone.notificationfilter.util.SpUtil;
 
 
 /**
@@ -55,6 +52,7 @@ public abstract class BaseFloatDailog {
      */
     private static final String LOCATION_X = "hintLocation";
     private static final String LOCATION_Y = "locationY";
+    private static final long LONGPRESSREANGE = 500;
 
 
     /**
@@ -137,7 +135,7 @@ public abstract class BaseFloatDailog {
     /**
      * 用于 定时 判断 横竖屏的定时器
      */
-//    private CountDownTimer mIsPortraitTimer;
+    private CountDownTimer mIsPortraitTimer;
 
 
     /**
@@ -290,7 +288,7 @@ public abstract class BaseFloatDailog {
     protected void reSetView(int defaultY){
         initFloatWindow(defaultY);
         initTimer();
-        initFloatView();
+//        initFloatView();
     }
     /**
      *
@@ -366,41 +364,43 @@ public abstract class BaseFloatDailog {
             }
         };
 
-//        Configuration mConfiguration = mActivity.getResources().getConfiguration(); //获取设置的配置信息
-//        initOrientation = mConfiguration.orientation;
+        Configuration mConfiguration = mActivity.getResources().getConfiguration(); //获取设置的配置信息
+        initOrientation = mConfiguration.orientation;
 
-//        mIsPortraitTimer = new CountDownTimer(20000000,1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                Log.e("baseFLoat","millisUntilFinished:"+String.valueOf(millisUntilFinished));
-//                Configuration mConfiguration = mActivity.getResources().getConfiguration(); //获取设置的配置信息
-//                int ori = mConfiguration.orientation; //获取屏幕方向
-//                Log.e("baseFLoat","ori:"+ori);
-//                int floattitle_x=0;
-//                getScreenSize();
-//                if (ori != initOrientation) {
-//                    if (ori == Configuration.ORIENTATION_LANDSCAPE) {
-////                    dismiss();
-//                        reSetView(300);
-//                        initOrientation = Configuration.ORIENTATION_LANDSCAPE;
-////                    isVert =false;
-////                    floattitle_x = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_x", mScreenHeight) ;
-//                    } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
-////                    dismiss();
-//                        reSetView(500);
-//                        initOrientation = Configuration.ORIENTATION_PORTRAIT;
-////                    floattitle_x = SpUtil.getSp(context,"appSettings").getInt("floattitle_portrait_x", mScreenWidth);
-////                    isVert =true;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//
-//
-//            }
-//        };
+        mIsPortraitTimer = new CountDownTimer(20000000,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                if(isDraging){
+                    return;
+                }
+                Log.e("baseFLoat","millisUntilFinished:"+String.valueOf(millisUntilFinished));
+                Configuration mConfiguration = mActivity.getResources().getConfiguration(); //获取设置的配置信息
+                int ori = mConfiguration.orientation; //获取屏幕方向
+                Log.e("baseFLoat","ori:"+ori);
+                if (ori != initOrientation) {
+                    if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+                        dismiss();
+                        reSetView(300);
+                        initOrientation = Configuration.ORIENTATION_LANDSCAPE;
+                        show();
+                    } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
+                        dismiss();
+                        reSetView(500);
+                        initOrientation = Configuration.ORIENTATION_PORTRAIT;
+                        show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFinish() {
+
+
+            }
+        };
+
+//        mIsPortraitTimer.start();
+
     }
 
 
@@ -418,13 +418,13 @@ public abstract class BaseFloatDailog {
      */
     private void initFloatWindow(int defaultY) {
         wmParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        if (mActivity instanceof Activity) {
-            Activity activity = (Activity) mActivity;
-            wManager = activity.getWindowManager();
-            //类似dialog，寄托在activity的windows上,activity关闭时需要关闭当前float
-            wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
-            isApplictionDialog = true;
-        } else {
+//        if (mActivity instanceof Activity) {
+//            Activity activity = (Activity) mActivity;
+//            wManager = activity.getWindowManager();
+//            //类似dialog，寄托在activity的windows上,activity关闭时需要关闭当前float
+//            wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
+//            isApplictionDialog = true;
+//        } else {
             wManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
             //判断状态栏是否显示 如果不显示则statusBarHeight为0
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -432,18 +432,8 @@ public abstract class BaseFloatDailog {
             } else {
                 wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;;
             }
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                if (Build.VERSION.SDK_INT > 23) {
-//                    //在android7.1以上系统需要使用TYPE_PHONE类型 配合运行时权限
-//                    wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-//                } else {
-//                    wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
-//                }
-//            } else {
-//                wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
-//            }
             isApplictionDialog = false;
-        }
+//        }
         getScreenSize();
 
         wmParams.format = PixelFormat.RGBA_8888;
@@ -480,6 +470,12 @@ public abstract class BaseFloatDailog {
         } else {
             mGetViewCallback.resetLogoViewSize(mHintLocation, logoView);
         }
+//        mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                dismiss();
+//            }
+//        }, LONGPRESSREANGE);
 
         mXInView = event.getX();
         mYinview = event.getY();
@@ -610,6 +606,32 @@ public abstract class BaseFloatDailog {
     }
 
     /**
+     * * 判断是否有长按动作发生 * @param lastX 按下时X坐标 * @param lastY 按下时Y坐标 *
+     *
+     * @param thisX
+     *            移动时X坐标 *
+     * @param thisY
+     *            移动时Y坐标 *
+     * @param lastDownTime
+     *            按下时间 *
+     * @param thisEventTime
+     *            移动时间 *
+     * @param longPressTime
+     *            判断长按时间的阀值
+     */
+    static boolean isLongPressed(float lastX, float lastY, float thisX,
+                                 float thisY, long lastDownTime, long thisEventTime,
+                                 long longPressTime) {
+        float offsetX = Math.abs(thisX - lastX);
+        float offsetY = Math.abs(thisY - lastY);
+        long intervalTime = thisEventTime - lastDownTime;
+        if (offsetX <= 10 && offsetY <= 10 && intervalTime >= longPressTime) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 手指离开屏幕后 用于恢复 悬浮球的 logo 的左右位置
      */
     private Runnable updatePositionRunnable = new Runnable() {
@@ -663,11 +685,11 @@ public abstract class BaseFloatDailog {
             }
             if (mHideTimer != null) {
                 mHideTimer.start();
-//                mIsPortraitTimer.start();
+                mIsPortraitTimer.start();
             } else {
                 initTimer();
                 mHideTimer.start();
-//                mIsPortraitTimer.start();
+                mIsPortraitTimer.start();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -828,7 +850,7 @@ public abstract class BaseFloatDailog {
         logoView.clearAnimation();
         try {
             mHideTimer.cancel();
-//            mIsPortraitTimer.cancel();
+            mIsPortraitTimer.cancel();
             if (isExpaned) {
                 wManager.removeViewImmediate(mHintLocation == LEFT ? leftView : rightView);
             } else {

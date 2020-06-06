@@ -169,16 +169,17 @@ public class FloatWindow extends BaseFloatDailog {
 
     @Override
     protected void onDestoryed() {
-        if(isApplictionDialog()){
-            if(getContext() instanceof Activity){
-                dismiss();
-            }
-        }
+//        if(isApplictionDialog()){
+//            if(getContext() instanceof Activity){
+//                dismiss();
+//            }
+//        }
     }
 
-    public void setContentView(View view){
+    public void setContentView(View view,Context context){
         layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.width = (int)(mScreenWidth*0.8);
+//        layoutParams.width = (int)(mScreenWidth*0.8);
+        layoutParams.width = (int)dp2Px(320,context);
 
         this.view = view;
 

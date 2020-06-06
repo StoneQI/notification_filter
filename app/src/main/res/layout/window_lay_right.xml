@@ -47,6 +47,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="marquee"
                             android:focusable="true"
+                            android:textColor="#FF757575"
                             android:marqueeRepeatLimit="marquee_forever"
                             android:singleLine="true" />
 

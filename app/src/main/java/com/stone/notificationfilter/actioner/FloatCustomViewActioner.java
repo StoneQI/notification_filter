@@ -60,7 +60,7 @@ public class FloatCustomViewActioner {
         view = notificationInfo.remoteViews.apply(context,null);
         Log.e(TAG,"Key"+key);
         if (key.equals(this.notificationInfo.key)&& isShow ==true){
-            dialog.setContentView(view);
+            dialog.setContentView(view,context);
             dialog.updateExpanedView();
             return;
         }
@@ -96,7 +96,7 @@ public class FloatCustomViewActioner {
                 return;
             }
         });
-        dialog.setContentView(view);
+        dialog.setContentView(view,context);
         dialog.show();
         isShow =true;
         key = this.notificationInfo.key;
