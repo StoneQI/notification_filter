@@ -179,7 +179,7 @@ public class FloatWindow extends BaseFloatDailog {
     public void setContentView(View view,Context context){
         layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 //        layoutParams.width = (int)(mScreenWidth*0.8);
-        layoutParams.width = (int)dp2Px(320,context);
+        layoutParams.width = (int)dp2Px(300,context);
 
         this.view = view;
 

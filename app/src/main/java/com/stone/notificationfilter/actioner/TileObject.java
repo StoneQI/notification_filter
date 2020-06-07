@@ -18,6 +18,7 @@ public class TileObject {
 
     public static List<FloatingTileActioner> showingFloatingTileList = new ArrayList<>();
     public static int currentPosition=0;
+    private static boolean isClearMultiNOfici = false;
     // key: Tile的y, value: Tile是否在显示
     // 数量一般为指定数量
     public static List<Boolean> positionArray = new ArrayList<>();
@@ -61,27 +62,25 @@ public class TileObject {
         positionArray.set(showID,false);
         showingFloatingTileList.remove(floatingTileActioner);
         showTileNum--;
-        showWaitingTile();
+        if (!isClearMultiNOfici){
+            showWaitingTile();
+        }
     }
 
     public static void clearShowingTile() {
-        showTileNum = 0;
 
+        isClearMultiNOfici =true;
         for (int i = 0; i < showingFloatingTileList.size();) {
             showingFloatingTileList.get(i).removeTile();
         }
-//        for (FloatingTileActioner floatingTile : showingFloatingTileList) {
-//            floatingTile.removeTile();
-//        }
         showingFloatingTileList.clear();
-//        for (int i = 0; i < positionArray.size(); i++) {
-//            int y = positionArray.keyAt(i);
-//            positionArray.put(y, false);
-//        }
+        isClearMultiNOfici =false;
+        showWaitingTile();
     }
 
     public static  void showWaitingTile() {
-        if (!TileObject.waitingForShowingTileList.isEmpty()) {
+        while (!TileObject.waitingForShowingTileList.isEmpty()) {
+            if (showTileNum == mMostShowTitleNum)break;
             FloatingTileActioner floatingTile = TileObject.waitingForShowingTileList.get(0);
             floatingTile.addViewToWindow();
             TileObject.waitingForShowingTileList.remove(floatingTile);

@@ -66,6 +66,7 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
     @Override
     public void onResume() {
         super.onResume();
+        Log.i(TAG,"onResume is runing");
         isNotificationListenerEnable = true;
         isCanDrawWindow = true;
         if (!isNotificationListenerEnable(getContext())) {

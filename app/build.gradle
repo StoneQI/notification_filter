@@ -16,7 +16,7 @@ android {
         applicationId "com.stone.notificationfilter"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 20200606
+        versionCode 20200607
         versionName "0.9.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "releaseTime", "\"" + new Date().format("yyyy-MM-dd HH:mm:ss") + "\"")

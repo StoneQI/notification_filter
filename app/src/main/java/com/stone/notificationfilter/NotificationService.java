@@ -308,12 +308,14 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public void onListenerConnected() {
+        isStartListener =true;
         Log.i(TAG,"notification service connected start");
         super.onListenerConnected();
     }
 
     @Override
     public void onListenerDisconnected() {
+        isStartListener = false;
         Log.i(TAG,"notification service connected stop");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             requestRebind(new ComponentName(this, NotificationService.class));

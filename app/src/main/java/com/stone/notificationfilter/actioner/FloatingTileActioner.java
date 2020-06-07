@@ -419,17 +419,21 @@ public class FloatingTileActioner {
                 Log.i(TAG, velocityX+","+velocityY);
 
 
-                if (e2.getX() - e1.getX() > 50) {
+                if (e2.getX() - e1.getX() > 90) {
                     if(isLeft){
-                        showNoificationInfo();
+                        if (isOpen){
+                            TileObject.clearShowingTile();
+                        }
                     }else {
                         closeNoificationInfo();
                     }
                     return true;
                 }
-                if (e1.getX() - e2.getX() > 80) {
+                if (e1.getX() - e2.getX() > 90) {
                     if(!isLeft){
-                        showNoificationInfo();
+                        if (isOpen){
+                            TileObject.clearShowingTile();
+                        }
                     }else {
                         closeNoificationInfo();
                     }
@@ -524,26 +528,6 @@ public class FloatingTileActioner {
 
 
     public void removeView() {
-//        new Handler(Looper.getMainLooper()).post(new Runnable() {
-//            @Override
-//            public void run() {
-//                final LinearLayout messageLay = view.findViewById(R.id.window_root_lay);
-//                final LinearLayout message_content = view.findViewById(R.id.message_content);
-//                if(messageLay != null && message_content !=null){
-//                    if (context !=null){
-//                        Animation ani = AnimationUtils.loadAnimation(context, R.anim.pop_alpha_slide_right_exit);
-////        ani.setDuration(800);
-//                        message_content.setAnimation(ani);
-//                    }
-//                    Log.e(TAG,"remove_content");
-//                    messageLay.removeView(message_content);
-//                    addViewToWindow();
-//                }
-//            }
-//        });
-
-
-
         windowManager.removeView(view);
     }
 
