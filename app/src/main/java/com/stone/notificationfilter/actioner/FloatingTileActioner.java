@@ -97,9 +97,6 @@ public class FloatingTileActioner {
         this.context = context;
         this.isEditPos =isEditPos;
         this.notificationInfo = notificationInfo;
-        String content = this.notificationInfo.getContent();
-
-
         windowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         viewInit(context);

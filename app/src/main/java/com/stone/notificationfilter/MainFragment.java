@@ -330,7 +330,6 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
 //                mainActivity.replaceFragment(new FiliterActivity());
                 Intent intent = new Intent(getActivity(), FiliterActivity.class);
                 startActivity(intent);
-//
                 return false;
             }
         });

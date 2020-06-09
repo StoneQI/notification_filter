@@ -86,7 +86,7 @@ public class NotificationInfo {
     public int ID;
     public String key;
     public long postTime;
-    public Boolean isClearable=false;
+    public Boolean isClearable=true;
     public Boolean isOnGoing=false;
     public String packageName;
     public String Tag;
