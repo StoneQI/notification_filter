@@ -1,156 +1,249 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:id="@+id/main_fragement"
         android:layout_height="match_parent"
-        android:padding="10dp"
-        >
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <include layout="@layout/toolbar_main" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbarStyle="insideInset"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:scrollbarStyle="insideInset">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <EditText
-                android:id="@+id/filter_ID"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/filter_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_weight="0.70"
+                        android:layout_marginEnd="30dp"
+                        android:ems="10"
+                        android:gravity="start"
+                        android:hint="@string/filiter_name"
+                        android:inputType="textPersonName"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/filter_ID"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_weight="0.30"
+                        android:ems="10"
+                        android:hint="@string/filter_ID"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/filter_ID"
-                android:inputType="number"
-                android:maxLines="1"
-                android:textSize="14sp" />
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/filter_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/filiter_name"
-                android:inputType="textPersonName"
-                android:maxLines="1"
-                android:textSize="14sp" />
-
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="#0D47A1"
+                    android:textSize="18sp"
+                    android:text="@string/match"
+/>
+        </LinearLayout>
             <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:padding="6dp"
-                android:text="@string/match"
-                android:textColor="#0D47A1"
-                android:textSize="18sp" />
-
-            <Button
                 android:id="@+id/appPicker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#00FFFFFF"
-                android:minHeight="40dip"
+                android:clickable="true"
+                android:textColor="@color/textColorDrak"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:padding="6dp"
                 android:text="@string/select_app_filiter"
                 android:textAlignment="viewStart"
                 android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/filter_tiitle_match"
+            <LinearLayout
+                android:id="@+id/notification_patter_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/title_match"
-                android:inputType="textPersonName"
-                android:maxLines="2"
-                android:textSize="14sp" />
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/filter_content_match"
+            </LinearLayout>
+<!--            <include layout="@layout/notification_handler_patter_item"/>-->
+
+            <LinearLayout
+                android:id="@+id/notification_replace_input_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/content_match"
-                android:inputType="textPersonName"
-                android:maxLines="2"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/filter_tiitle_match" />
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView3"
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_weight="0.7"
+                    android:paddingStart="0dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:text="@string/replace"
+                    android:textColor="#0D47A1"
+                    android:textSize="18sp" />
+
+                <ImageButton
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:background="@drawable/bg_swipe_log_item"
+                    android:src="@drawable/ic_arrow_drop_down_black_24dp" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/notification_replace_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:padding="6dp"
-                android:text="@string/replace"
-                android:textColor="#0D47A1"
-                android:textSize="18sp" />
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <EditText
-                android:id="@+id/filter_tiitle_extra"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/title_extra"
-                android:inputType="textPersonName"
-                android:maxLines="2"
-                android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/filter_title_replace"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/title_replace"
-                android:inputType="textPersonName"
-                android:maxLines="2"
-                android:textSize="14sp" />
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/notification_replace_input_margin_bottom"
+                    android:hint="@string/title_extra"
+                    app:endIconMode="clear_text">
 
-            <EditText
-                android:id="@+id/filter_content_extra"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/content_extra"
-                android:inputType="textPersonName"
-                android:maxLines="2"
-                android:textSize="14sp" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/filter_tiitle_extra"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:ems="10"
+                        android:gravity="start"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/filter_content_replace"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/content_replace"
-                android:inputType="textPersonName"
-                android:maxLines="2"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/filter_content_extra" />
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/notification_replace_input_margin_bottom"
+                    android:hint="@string/title_replace"
+                    app:endIconMode="clear_text">
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/filter_title_replace"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:ems="10"
+                        android:gravity="start"
+
+                        android:inputType="textPersonName"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/notification_replace_input_margin_bottom"
+                    android:hint="@string/content_extra"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/filter_content_extra"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:ems="10"
+                        android:gravity="start"
+
+                        android:inputType="textPersonName"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/notification_replace_input_margin_bottom"
+                    android:hint="@string/content_replace"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/filter_content_replace"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:ems="10"
+                        android:gravity="start"
+
+                        android:inputType="textPersonName"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:padding="6dp"
-                android:text="@string/checker"
+                android:paddingStart="0dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:textColor="#0D47A1"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:text="@string/checker"
+             />
 
             <Switch
                 android:id="@+id/isBreak"
@@ -169,6 +262,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/notification_actioner"
+                android:paddingTop="10dp"
+
+                android:paddingBottom="10dp"
+                tools:ignore="MissingConstraints" />
+            <Spinner
+                android:id="@+id/sceen_status_on"
+                style="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/notification_sceen_status_on"
                 android:paddingTop="10dp"
 
                 android:paddingBottom="10dp"
@@ -211,4 +314,4 @@
 
         </LinearLayout>
     </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

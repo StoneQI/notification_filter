@@ -1,44 +1,63 @@
-package com.stone.notificationfilter;
+package com.stone.notificationfilter.notificationhandler;
 
 import android.annotation.SuppressLint;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-//import android.support.annotation.Nullable;
-//import android.support.v7.app.AppCompatActivity;
-import android.os.PersistableBundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chad.library.adapter.base.listener.OnItemDragListener;
+import com.chad.library.adapter.base.listener.OnItemSwipeListener;
+import com.stone.notificationfilter.notificationhandler.AddFiliterActivity;
+import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDao;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
+import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDataBase;
+import com.stone.notificationfilter.entitys.notificationitem.NotificationItemEntity;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerAdapter;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItem;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItemFileStorage;
+import com.stone.notificationfilter.notificationlog.adapters.NotificationLogSwipeAdapter;
+import com.stone.notificationfilter.notificationlog.objects.NotificationLogItem;
+import com.stone.notificationfilter.util.PackageUtil;
+import com.stone.notificationfilter.util.TimeUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+//import android.support.annotation.Nullable;
+//import android.support.v7.app.AppCompatActivity;
 
 public class FiliterActivity extends AppCompatActivity {
     private final static  String TAG ="FiliterActivity";
-    private NotificationFilterDao notificationFilterDao =null;
+//    private NotificationFilterDao notificationFilterDao =null;
 //    private String filiter_path = "";
-    private List<NotificationFilterEntity> notificationMatcherArrayList = null;
-    private static ArrayList<String> data = null;
-    private static ArrayAdapter<String> adapter = null;
+    private ArrayList<NotificationHandlerItem> notificationMatcherArrayList = new ArrayList<>();
+    private NotificationHandlerAdapter notificationHandlerAdapter=null;
+
+    private static NotificationHandlerItemFileStorage notificationHandlerItemFileStorage;
+//    private static ArrayAdapter<String> adapter = null;
+    private RecyclerView mRecyclerView;
 //    private View view =null;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,30 +68,28 @@ public class FiliterActivity extends AppCompatActivity {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("所有规则");
 
-
-        data = new ArrayList<String>();
         Log.e(TAG,"create");
 
-//        setTitle("所有规则");
-        adapter = new ArrayAdapter<String>(FiliterActivity.this,android.R.layout.simple_list_item_1,data);
-        ListView listView = (ListView)findViewById(R.id.filiters_list);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(FiliterActivity.this,AddFiliterActivity.class);
-                intent.putExtra("notification", notificationMatcherArrayList.get(position));
-                startActivity(intent);
+        mRecyclerView = findViewById(R.id.filiters_list);
 
+        notificationHandlerAdapter = new NotificationHandlerAdapter(notificationMatcherArrayList);
+        notificationHandlerAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+                Intent intent = new Intent(FiliterActivity.this,AddFiliterActivity.class);
+                intent.putExtra("notificationHandlerID", notificationMatcherArrayList.get(position).ID);
+                startActivity(intent);
             }
         });
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mRecyclerView.setAdapter(notificationHandlerAdapter);
 
         findViewById(R.id.new_filiter).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e(TAG,"goto AddFiliterActivity");
                 Intent intent = new Intent(FiliterActivity.this,AddFiliterActivity.class);
-                intent.putExtra("ID",-1);
                 startActivity(intent);
                 return;
             }
@@ -91,21 +108,16 @@ public class FiliterActivity extends AppCompatActivity {
         @Override
         //当有消息发送出来的时候就执行Handler的这个方法
         public void handleMessage(Message msg){
+
             super.handleMessage(msg);
 
-            if (notificationMatcherArrayList.isEmpty()){
+            if(notificationMatcherArrayList ==null || notificationMatcherArrayList.size()==0){
                 findViewById(R.id.no_filiter).setVisibility(View.VISIBLE);
-                data.clear();
-                pd.dismiss();
-            }else {
+            }else
+            {
                 findViewById(R.id.no_filiter).setVisibility(View.GONE);
             }
-
-            for (NotificationFilterEntity notificationMatcher: notificationMatcherArrayList) {
-                data.clear();
-                data.add(notificationMatcher.name);
-            }
-            adapter.notifyDataSetChanged();
+            notificationHandlerAdapter.notifyDataSetChanged();
             pd.dismiss();
         }
     };
@@ -135,11 +147,19 @@ public class FiliterActivity extends AppCompatActivity {
         pd= ProgressDialog.show(FiliterActivity.this, "Load", "Loading…");
         new Thread(){
             public void run(){
-                if(notificationFilterDao==null){
-                    NotificationFilterDataBase db =NotificationFilterDataBase.getInstance(FiliterActivity.this);
-                    notificationFilterDao = db.NotificationFilterDao();
+
+                try {
+                    notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),true);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                notificationMatcherArrayList = notificationFilterDao.loadAll();
+
+                ArrayList<NotificationHandlerItem> notificationHandlerItems= notificationHandlerItemFileStorage.getAllAsArrayList();
+
+                notificationMatcherArrayList.clear();
+                if (notificationHandlerItems.size() !=0){
+                    notificationMatcherArrayList.addAll(notificationHandlerItems);
+                }
                 handler.sendEmptyMessage(0);
             }
         }.start();

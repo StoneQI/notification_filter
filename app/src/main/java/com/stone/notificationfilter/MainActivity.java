@@ -1,31 +1,24 @@
 package com.stone.notificationfilter;
 
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 //import android.support.v7.app.AlertDialog;
 //import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.stone.notificationfilter.util.NotificationCollectorMonitorService;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItem;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItemFileStorage;
 import com.stone.notificationfilter.util.SpUtil;
+//import com.stone.notificationfilter.util.filestore.FileStorage;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * 1.0.190807
@@ -48,26 +41,29 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        CoordinatorLayout groupPollingAddress = (CoordinatorLayout)inflater.inflate(R.layout.tool_bar, null);
-//        setTranslucentStatus();
-//        mToolBar = (Toolbar) findViewById(R.id.tool_bar);
-//        setSupportActionBar(mToolBar);
-//        //设置标题
-//        getSupportActionBar().setTitle("我是ToolBar");
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolBar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(mToolBar);
+        //设置标题
+        getSupportActionBar().setTitle(R.string.app_name);
 
-//        if (Build.VERSION.SDK_INT >= 23) {
-//            Window window = getWindow();
-//            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//            window.setStatusBarColor(Color.parseColor("#e5e5e5"));
-//            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+
+//        NotificationHandlerItem notificationHandlerItem = new NotificationHandlerItem();
+//        try {
+//            NotificationHandlerItemFileStorage fileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),"notificationHandles.json",true);
+//            notificationHandlerItem.orderID=2;
+//            notificationHandlerItem.name="weqwe";
+//            notificationHandlerItem.notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("123","contain","sada",true));
+//            notificationHandlerItem.notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("123","contain","sada",true));
+//            fileStorage.store(String.valueOf(System.currentTimeMillis()), notificationHandlerItem);
+//            ArrayList<NotificationHandlerItem> notificationHandlerItems =fileStorage.getAllAsArrayList();
+//            Log.i(TAG,String.valueOf(fileStorage.getSize()));
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
 //        }
 
-//        finishAndRemoveTask();
 
-        boolean isFirstBoot = SpUtil.getSp(this,"appSettings").getBoolean("isFirstBoot", true);
+        boolean isFirstBoot = SpUtil.getBoolean(this,"appSettings","isFirstBoot", true);
         if (isFirstBoot) {
             new AlertDialog.Builder(this)
                     .setTitle("欢迎使用 " + getString(R.string.app_name))
@@ -88,7 +84,7 @@ public class MainActivity extends BaseActivity {
                     .setPositiveButton("了解", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            SpUtil.getSp(MainActivity.this,"appSettings").edit().putBoolean("isFirstBoot", false).apply();
+                            SpUtil.putBoolean(MainActivity.this,"appSettings","isFirstBoot", false);
                         }
                     })
                     .show();
@@ -111,6 +107,18 @@ public class MainActivity extends BaseActivity {
         transaction.commit();
     }
 
+//    private void initToolbar(showHomeAsUp: Boolean) {
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+//        if (toolbar != null) {
+//            setSupportActionBar(toolbar)
+//            tvTitle = toolbar.findViewById(R.id.tv_toolbar_title)
+//        }
+//        supportActionBar?.setDisplayHomeAsUpEnabled(showHomeAsUp)
+//        supportActionBar?.setDisplayShowHomeEnabled(showHomeAsUp)
+//        if (tvTitle != null) {
+//            supportActionBar?.setDisplayShowTitleEnabled(false)
+//        }
+//    }
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        MenuInflater inflater = getMenuInflater();

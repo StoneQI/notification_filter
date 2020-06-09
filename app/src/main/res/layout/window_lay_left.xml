@@ -14,28 +14,22 @@
             android:id="@+id/window_messgae_lay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="3dp"
-            android:gravity="center_vertical"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center_vertical|start"
             android:orientation="vertical"
             android:visibility="visible">
 
-                <com.stone.notificationfilter.widget.MarqueeTextView
+                <com.stone.notificationfilter.widget.ScrollTextView
                     android:id="@+id/window_title_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:focusable="true"
-                    android:singleLine="true"
                     android:textColor="#000000" />
 
-                <com.stone.notificationfilter.widget.MarqueeTextView
+                <com.stone.notificationfilter.widget.ScrollTextView
                     android:id="@+id/window_content_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:focusable="true"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:singleLine="true"
                     android:textColor="#FF757575" />
 
 
@@ -46,9 +40,8 @@
             android:layout_width="37dp"
             android:layout_height="37dp"
             android:layout_margin="0dp"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             app:borderWidth="0dp"
-            android:padding="2dp"
             app:displayBorder="false"
             app:displayType="round_rect"
             app:radius="7dp" />

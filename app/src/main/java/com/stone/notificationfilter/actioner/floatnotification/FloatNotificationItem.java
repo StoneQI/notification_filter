@@ -4,7 +4,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.stone.notificationfilter.R;
-import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.util.PackageUtil;
 
 import java.lang.ref.WeakReference;

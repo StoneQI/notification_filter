@@ -20,7 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.stone.notificationfilter.R;
-import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

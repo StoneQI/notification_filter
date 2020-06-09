@@ -8,11 +8,10 @@ import android.util.Log;
 import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDao;
 import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDataBase;
 import com.stone.notificationfilter.entitys.notificationitem.NotificationItemEntity;
-import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.util.PackageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.util.TimeUtil;
-import com.xujiaji.dmlib2.LogUtil;
 
 public class SaveToFileActioner {
     private static String TAG ="FloatingTile";
@@ -28,7 +27,7 @@ public class SaveToFileActioner {
     }
     public void  run(){
         Log.e(TAG,TAG);
-        if (!SpUtil.getSp(context,"appSettings").getBoolean("save_log_to_file",true)){
+        if (!SpUtil.getBoolean(context,"appSettings","save_log_to_file",true)){
           return;
         };
         if(notificationItemDao ==null)

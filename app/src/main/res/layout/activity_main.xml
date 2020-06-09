@@ -11,6 +11,12 @@
 <!--                android:fitsSystemWindows="true"-->
 <!--                android:layout_width="match_parent">-->
 <!--            </androidx.appcompat.widget.Toolbar>-->
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/toolbar_main" />
+        </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout android:id="@+id/fragment" android:tag="MainFragment" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>
 <!--        <android.support.design.widget.BottomNavigationView android:id="@+id/main_bottom_nav" android:background="?unknown_attr_ref: 1010054" android:layout_width="match_parent" android:layout_height="wrap_content" app:menu="@menu/menu_main_bottom_nav"/>-->

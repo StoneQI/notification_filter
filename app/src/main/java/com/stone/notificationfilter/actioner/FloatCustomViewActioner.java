@@ -1,31 +1,15 @@
 package com.stone.notificationfilter.actioner;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.graphics.PixelFormat;
-import android.graphics.Point;
-import android.os.Build;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.actioner.floatbutton.FloatWindow;
-import com.stone.notificationfilter.actioner.floatbutton.MainActivity;
-import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.util.SpUtil;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class FloatCustomViewActioner {
 
@@ -54,7 +38,7 @@ public class FloatCustomViewActioner {
     }
     public void run(){
 
-        if (!SpUtil.getSp(context,"appSettings").getBoolean("on_notification_float_message",true)){
+        if (!SpUtil.getBoolean(context,"appSettings","on_notification_float_message",true)){
             return;
         };
         view = notificationInfo.remoteViews.apply(context,null);

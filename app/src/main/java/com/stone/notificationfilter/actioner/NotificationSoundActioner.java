@@ -1,15 +1,11 @@
 package com.stone.notificationfilter.actioner;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.media.SoundPool;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.blankj.utilcode.util.StringUtils;
 import com.stone.notificationfilter.R;
-import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.util.SpUtil;
 
 public class NotificationSoundActioner {
@@ -30,7 +26,7 @@ public class NotificationSoundActioner {
     }
     public void  run(){
         Log.e(TAG,TAG);
-        if (!SpUtil.getSp(context,"appSettings").getBoolean("on_sound_message",false)){
+        if (!SpUtil.getBoolean(context,"appSettings","on_sound_message",false)){
             return;
         };
         if (!notificationInfo.isClearable){

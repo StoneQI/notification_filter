@@ -28,7 +28,7 @@ public class NotificationLogSwipeAdapter extends BaseQuickAdapter<NotificationLo
 //    }
 
     public NotificationLogSwipeAdapter(ArrayList<NotificationLogItem> data) {
-        super(R.layout.list_child_item, data);
+        super(R.layout.notification_log_list_child_item, data);
 ////        this.data =data;
         BaseDraggableModule baseDraggableModule =  getDraggableModule();
 //        baseDraggableModule.setDragEnabled(true);

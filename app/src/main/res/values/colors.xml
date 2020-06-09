@@ -13,10 +13,13 @@
     <color name="colorPrimaryBlue">#1E4376</color>
     <color name="statusBarColor">#FAFAFA</color>
     <color name="backgroundColor">#FAFAFA</color>
-    <color name="toolbarColor">#FAFAFA</color>
+    <color name="toolbarTextColor">#FFFFFF</color>
     <color name="chipBackgroundColor">#EDEDED</color>
     <color name="sd_overlay_color">#80E6E6E6</color>
     <color name="greyColor">#707070</color>
+    <color name="textColorDrak">#FF2B2B2B</color>
+
+    <color name="ic_launcher_background_gray">#707070</color>
 
 <!--    <color name="primaryCardColorStopped">#FF888888</color>-->
 <!--    <color name="primaryCardColorStarted">#1E4376</color>-->
