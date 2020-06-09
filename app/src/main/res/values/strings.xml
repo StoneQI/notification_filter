@@ -20,7 +20,7 @@
     <string name="on_preference_change_toast_message">onPreferenceChange: key = %1$s, newValue = %2$s</string>
 
     <string name="filiter_name">规则名称</string>
-    <string name="filter_ID">规则处理顺序（数值越大的越先被处理）</string>
+    <string name="filter_ID">规则ID</string>
     <string name="start_service">开启服务</string>
     <string-array name="array_position_entries">
         <item>向上</item>
@@ -40,6 +40,25 @@
         <item>content</item>
     </string-array>
 
+    <string-array name="notification_patter_item">
+        <item>标题</item>
+        <item>内容</item>
+    </string-array>
+    <string-array name="notification_patter_item_value">
+        <item>title</item>
+        <item>content</item>
+    </string-array>
+
+    <string-array name="notification_patter_mode">
+        <item>包含</item>
+        <item>不包含</item>
+        <item>正则表达式</item>
+    </string-array>
+    <string-array name="notification_patter_mode_value">
+        <item>contain</item>
+        <item>nocontain</item>
+        <item>regex</item>
+    </string-array>
 
     <string-array name="notification_actioner">
         <item>悬浮通知</item>
@@ -51,6 +70,13 @@
         <item>播放提示音</item>
         <item>通知组件悬浮</item>
     </string-array>
+
+    <string-array name="notification_sceen_status_on">
+        <item>横竖屏同时启用</item>
+        <item>仅横屏启用</item>
+        <item>仅竖屏启用</item>
+    </string-array>
+
     <string name="check_float_window_permission">检查悬浮窗权限</string>
     <string name="stop_service">停止服务,关闭所有窗口</string>
     <string name="has_float_permission">可以添加悬浮窗</string>
@@ -64,13 +90,14 @@
     <string name="service_start">通知处理器服务正在运行</string>
     <string name="service_stop">通知处理器服务已关闭</string>
     <string name="close">点击关闭</string>
-    <string name="select_app_filiter">选择匹配应用</string>
+    <string name="select_app_filiter">点击选择匹配应用</string>
 
 
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="launch_name" >应用图标</string>
-<!--    <string name="new_title" />-->
+    <string name="filter_content">规则内容</string>
+    <!--    <string name="new_title" />-->
 
 </resources>

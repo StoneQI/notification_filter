@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -36,12 +35,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
+import com.stone.notificationfilter.fragment.FloatTileCustomView;
 import com.stone.notificationfilter.util.DialogUtil;
 import com.stone.notificationfilter.util.NotificationCollectorMonitorService;
-import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
 import com.stone.notificationfilter.actioner.TileObject;
 import com.stone.notificationfilter.util.SpUtil;
+import com.stone.notificationfilter.notificationhandler.FiliterActivity;
 
 import java.util.Set;
 import java.util.Timer;
@@ -147,7 +148,7 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
                             public void onClick(DialogInterface dialog, int which) {
                                 String newPackageNameList = SpUtil.set2String(packageNames);
                                 Log.e(TAG,"newPackageNameList:"+newPackageNameList);
-                                SpUtil.getSp(getContext(), "appSettings").edit().putString("select_applists", newPackageNameList).apply();
+                                SpUtil.putString(getContext(), "appSettings","select_applists", newPackageNameList);
                             }
                         })
                         .setNegativeButton("取消", null)
@@ -328,6 +329,19 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
 //                MainActivity mainActivity = (MainActivity)getActivity();
 //                mainActivity.replaceFragment(new FiliterActivity());
                 Intent intent = new Intent(getActivity(), FiliterActivity.class);
+                startActivity(intent);
+//
+                return false;
+            }
+        });
+
+
+        findPreference("floattitle_custom_view").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+//                MainActivity mainActivity = (MainActivity)getActivity();
+//                mainActivity.replaceFragment(new FiliterActivity());
+                Intent intent = new Intent(getActivity(), FloatTileCustomView.class);
                 startActivity(intent);
 //
                 return false;

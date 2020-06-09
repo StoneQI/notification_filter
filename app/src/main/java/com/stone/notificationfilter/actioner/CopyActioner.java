@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.StringUtils;
-import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.util.SpUtil;
 
 public class CopyActioner {
@@ -21,7 +21,7 @@ public class CopyActioner {
         this.context = context;
     }
     public void  run(){
-        String mode = SpUtil.getSp(context,"appSettings").getString("copyactioner_select_mode","title");
+        String mode = SpUtil.getString(context,"appSettings","copyactioner_select_mode","title");
         ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         Log.e(TAG,TAG);
         String content = "";

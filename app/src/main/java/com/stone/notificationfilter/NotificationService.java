@@ -10,10 +10,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Icon;
-import android.media.session.MediaSession;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,7 +19,6 @@ import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import androidx.core.app.NotificationCompat;
-import android.app.PendingIntent;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,13 +31,17 @@ import com.stone.notificationfilter.actioner.NotificationSoundActioner;
 import com.stone.notificationfilter.actioner.RunIntentActioner;
 import com.stone.notificationfilter.actioner.SaveToFileActioner;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
-import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.notificationhandler.NotificationHandlerJudge;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItem;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItemFileStorage;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
+import com.stone.notificationfilter.notificationhandler.databases.SystemBaseHandler;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
 
 
-import java.lang.reflect.Field;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +59,13 @@ public class NotificationService extends NotificationListenerService {
     public static boolean isStartListener = true;
     public static  boolean isCancalSystemNotification = false;
 
+    private NotificationHandlerItemFileStorage notificationHandlerItemFileStorage;
+
     private ArrayList<NotificationFilterEntity> systemNotificationMatchers= new ArrayList<NotificationFilterEntity>();
+
+    private ArrayList<NotificationHandlerItem> systemNotificationHandler;
+    private ArrayList<NotificationHandlerItem> notificationHandlerItems;
+
     private List<NotificationFilterEntity> customNotificationMatchers= null;
     public static Set<String> selectAppList = null;
 //    True为白名单， false为黑名单
@@ -72,8 +78,8 @@ public class NotificationService extends NotificationListenerService {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            setSystemNotificationMatchers();
-            customNotificationMatchers.addAll(systemNotificationMatchers);
+//            setSystemNotificationMatchers();
+            notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule());
             Log.e(TAG,"------------> msg.what = " + msg.what);
         }
     };
@@ -81,14 +87,14 @@ public class NotificationService extends NotificationListenerService {
     public void onCreate() {
         super.onCreate();
         isStartListener = true;
-        if (SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("notification_show", true)){
+        if (SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_show", true)){
             addForegroundNotification();
         }
 
-        String packageNamestring = SpUtil.getSp(getApplicationContext(),"appSettings").getString("select_applists", "");
+        String packageNamestring = SpUtil.getString(getApplicationContext(),"appSettings","select_applists", "");
         selectAppList = SpUtil.string2Set(packageNamestring);
 
-        appListMode = SpUtil.getSp(getApplicationContext(),"appSettings").getBoolean("applist_mode", false);
+        appListMode = SpUtil.getBoolean(getApplicationContext(),"appSettings","applist_mode", false);
         Log.e(TAG,"service create");
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
@@ -98,9 +104,15 @@ public class NotificationService extends NotificationListenerService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                NotificationFilterDataBase db =NotificationFilterDataBase.getInstance(getApplicationContext());
-                customNotificationMatchers = db.NotificationFilterDao().loadAllDESC();
-                db.close();
+//                NotificationFilterDataBase db =NotificationFilterDataBase.getInstance(getApplicationContext());
+//                customNotificationMatchers = db.NotificationFilterDao().loadAllDESC();
+                try {
+                    notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),true);
+                    notificationHandlerItems = notificationHandlerItemFileStorage.getAllAsArrayList();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 mHandler.sendEmptyMessage(0);
             }
         }).start();
@@ -204,7 +216,7 @@ public class NotificationService extends NotificationListenerService {
         if (isSceenLock) {
             return;
         }
-        try {
+
 
 //            PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
             notificationInfo = getNotificationInfo(sbn);
@@ -213,97 +225,46 @@ public class NotificationService extends NotificationListenerService {
 //            Log.e(TAG, "notifi_id"+String.valueOf(notificationInfo.ID));
 //            Log.e(TAG, "notifi_key"+notificationInfo.key);
 //            Log.e(TAG, "notifi_id"+String.valueOf(notificationInfo.getContent()));
-            for(NotificationFilterEntity notificationMatcher:customNotificationMatchers){
+            for(NotificationHandlerItem notificationHandlerItem:notificationHandlerItems){
 
-//                Log.e(TAG, notificationMatcher.name);
-                if(  notificationMatcher.packageNames !=null && !notificationMatcher.packageNames.isEmpty()){
-                    if (!notificationMatcher.packageNames.contains(notificationInfo.getPackageName())){
+                try {
+                    NotificationHandlerJudge notificationHandlerJudge = new NotificationHandlerJudge(notificationInfo, notificationHandlerItem);
+                    if (!notificationHandlerJudge.isMatch()){
+                        Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is fail");
                         continue;
                     }
-                }
-                if (!TextUtils.isEmpty(notificationInfo.getTitle())){
-                    if(!TextUtils.isEmpty(notificationMatcher.titlePattern) ){
-                        Pattern p =  Pattern.compile(notificationMatcher.titlePattern);
-                        if (!p.matcher(notificationInfo.getTitle()).find()) continue;
+                    Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is match");
+                    notificationInfo.title = notificationHandlerJudge.titleReplace(notificationInfo.title);
+                    notificationInfo.content =notificationHandlerJudge.contentReplace(notificationInfo.content);
+                    switch (notificationHandlerItem.actioner){
+                        case 0:cancelNotification(notificationInfo.key);floatingTileAction(notificationInfo); break;
+                        case 1:break;
+                        case 2:isCancalSystemNotification =true; break;
+                        case 3:new CopyActioner(notificationInfo,NotificationService.this).run();break;
+                        case 4:new RunIntentActioner(notificationInfo,NotificationService.this).run();break;
+                        case 5:new SaveToFileActioner(notificationInfo,NotificationService.this).run();break;
+                        case 6:new NotificationSoundActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
+                        case 7:new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
                     }
-                    if( !TextUtils.isEmpty(notificationMatcher.titleFiliter)){
-                        String new_title = "";
-                        if (!TextUtils.isEmpty(notificationMatcher.titleFiliterReplace)){
-                            try {
-                                new_title = notificationInfo.getTitle();
-                                new_title = new_title.replaceAll(notificationMatcher.titleFiliter,notificationMatcher.titleFiliterReplace);
-                            }catch (PatternSyntaxException e){
-                                new_title = "";
-                                e.printStackTrace();
-                            }
-                        }else {
-                            Pattern p =  Pattern.compile(notificationMatcher.titleFiliter);
-                            Matcher m = p.matcher(notificationInfo.getTitle());
-                            while(m.find()){
-                                Log.e(TAG,m.group());
-                                new_title = new_title +m.group();
-                            }
-                        }
-                        notificationInfo.setTitle(new_title);
-
+                    if(notificationHandlerItem.breakDown){
+                        break;
                     }
-                }
-
-                if (!TextUtils.isEmpty(notificationInfo.getContent())) {
-                    if (!TextUtils.isEmpty(notificationMatcher.contextPatter)) {
-                        Pattern p = Pattern.compile(notificationMatcher.contextPatter);
-                        if (!p.matcher(notificationInfo.getContent()).find()) continue;
-                    }
-                    if(!TextUtils.isEmpty(notificationMatcher.contextFiliter)){
-                        String new_Content = "";
-                        if (!TextUtils.isEmpty(notificationMatcher.contextFiliterReplace )){
-                            try {
-                                new_Content = notificationInfo.getTitle();
-                                new_Content.replaceAll(notificationMatcher.contextFiliter,notificationMatcher.contextFiliterReplace);
-                            }catch (PatternSyntaxException e){
-                                new_Content ="";
-                                e.printStackTrace();
-                            }
-                        }else {
-                            Pattern p = Pattern.compile(notificationMatcher.contextFiliter);
-                            Matcher m = p.matcher(notificationInfo.getContent());
-                            while (m.find()) {
-                                Log.e(TAG, m.group());
-                                new_Content = new_Content + m.group();
-                            }
-                        }
-                        notificationInfo.setContent(new_Content);
-                    }
-                }
-
-                switch (notificationMatcher.actioner){
-                    case 0:cancelNotification(notificationInfo.key);floatingTileAction(notificationInfo); break;
-                    case 1:break;
-                    case 2:isCancalSystemNotification =true; break;
-                    case 3:new CopyActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
-                    case 4:new RunIntentActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
-                    case 5:new SaveToFileActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
-                    case 6:new NotificationSoundActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
-                    case 7:new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
-
-//                default:
-//                default: cancelAllNotifications();floatingTileAction(notificationInfo); break;
-                }
-                if(notificationMatcher.breakDown){
-                    break;
+                }catch (Exception e){
+                    isCancalSystemNotification =false;
+                    e.printStackTrace();
                 }
             }
-        }catch (Exception e){
-            isCancalSystemNotification =false;
-            e.printStackTrace();
-        }finally {
-            if (isCancalSystemNotification){
-                if (notificationInfo!=null){
-                    cancelNotification(notificationInfo.key);
-                }
 
+        if (isCancalSystemNotification){
+            if (notificationInfo!=null){
+                cancelNotification(notificationInfo.key);
+                Log.i(TAG,notificationInfo.title+" is cancel notification");
             }
+
+        }else {
+            super.onNotificationPosted(sbn);
         }
+
     }
 
     @Override
@@ -366,6 +327,15 @@ public class NotificationService extends NotificationListenerService {
 //        RemoteViews remoteView = sbn.getNotification().contentView;
 
 //        if (notification == null) return;
+
+        Configuration mConfiguration = getApplicationContext().getResources().getConfiguration(); //获取设置的配置信息
+        int ori = mConfiguration.orientation; //获取屏幕方向
+        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+            notificationInfo.sceenStatus =2;
+        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
+            notificationInfo.sceenStatus =1;
+        }
+
         RemoteViews remoteViews = getBigContentView(getApplicationContext(), notification);
         if(remoteViews == null)
             remoteViews = getContentView(getApplicationContext(), notification);
@@ -430,7 +400,7 @@ public class NotificationService extends NotificationListenerService {
                 msgIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_launcher)
                 .setOngoing(true)
                 .setCustomContentView(mRemoteViews)
                 .setWhen(System.currentTimeMillis())

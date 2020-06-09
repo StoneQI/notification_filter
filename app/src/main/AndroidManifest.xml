@@ -26,7 +26,12 @@
 
         </activity>
 
+        <activity android:name="com.stone.notificationfilter.notificationhandler.FiliterActivity"></activity>
+        <activity android:name="com.stone.notificationfilter.notificationhandler.AddFiliterActivity"></activity>
+
         <activity android:name="com.stone.notificationfilter.FiliterActivity"></activity>
+
+        <activity android:name="com.stone.notificationfilter.fragment.FloatTileCustomView"></activity>
         <activity android:name="com.stone.notificationfilter.AddFiliterActivity"></activity>
         <activity android:name="com.stone.notificationfilter.CheckNotificationLogActivity"></activity>
         <activity android:name="com.stone.notificationfilter.Donate" />
@@ -40,6 +45,17 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
 <!--            <intent-filter android:priority="1000" />-->
+        </service>
+        <service
+            android:name=".NotificationTileService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:description="@string/app_name"
+            android:splitName="@string/app_name"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
         </service>
         <service android:name=".util.NotificationCollectorMonitorService"/>
     </application>

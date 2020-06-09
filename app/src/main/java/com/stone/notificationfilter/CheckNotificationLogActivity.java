@@ -14,6 +14,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -149,7 +150,9 @@ public class CheckNotificationLogActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_notificarion_log_activity);
-        setTitle("查看记录日志");
+        Toolbar mToolBar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(mToolBar);
+        getSupportActionBar().setTitle("日志记录");
         mRecyclerView = findViewById(R.id.recycler_view);
 
     }

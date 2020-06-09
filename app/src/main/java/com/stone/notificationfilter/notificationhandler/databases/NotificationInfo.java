@@ -1,4 +1,4 @@
-package com.stone.notificationfilter.util;
+package com.stone.notificationfilter.notificationhandler.databases;
 
 import android.app.PendingIntent;
 import android.graphics.drawable.Icon;
@@ -97,6 +97,7 @@ public class NotificationInfo {
     public Boolean isInteractive =false;
     public PendingIntent intent =null;
     public RemoteViews remoteViews;
+    public int sceenStatus;
 
     public Boolean getInteractive() {
         return isInteractive;
@@ -104,6 +105,15 @@ public class NotificationInfo {
 
     public void setInteractive(Boolean interactive) {
         isInteractive = interactive;
+    }
+
+    public String getAttribute(String attributeName){
+        switch (attributeName){
+            case "title": return title;
+            case "content":return content;
+
+        }
+        return "";
     }
 
 

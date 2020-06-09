@@ -101,6 +101,10 @@
                     android:key="floattitle_tilePosition"
                     android:title="修改磁贴位置" />
 
+            <Preference
+                android:key="floattitle_custom_view"
+                android:title="磁贴样式自定义" />
+
                 <ListPreference
                     android:key="floattitle_tileDirection"
                     android:defaultValue="content"

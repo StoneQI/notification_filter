@@ -3,7 +3,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.util.Log;
 
-import com.stone.notificationfilter.util.NotificationInfo;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.util.SpUtil;
 
 import java.util.Timer;
@@ -22,7 +22,7 @@ public class RunIntentActioner {
     public void  run(){
         Log.e(TAG,TAG);
 
-        long time = Long.parseLong(SpUtil.getSp(context,"appSettings").getString("runintenactioner_time","100"));
+        long time = Long.parseLong(SpUtil.getString(context,"appSettings","runintenactioner_time","100"));
         if (time <= 0 ) time=0;
         if(notificationInfo.intent !=null){
             TimerTask task = new TimerTask() {

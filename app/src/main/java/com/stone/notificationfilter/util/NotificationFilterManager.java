@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItem;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -23,7 +23,7 @@ import java.util.Comparator;
 public class NotificationFilterManager{
 
     private  final String TAG ="NotifiFilterManager" ;
-    private  static ArrayList<NotificationFilterEntity> notificationMatcherList = null;
+    private  static ArrayList<NotificationHandlerItem> notificationMatcherList = null;
     private  String filePath = "filter.json";
     private  int nextID = 0;
     private  boolean isRead =false;
@@ -46,12 +46,12 @@ public class NotificationFilterManager{
         return singleton;
     }
 
-    public  ArrayList<NotificationFilterEntity> getData(Context ctext){
+    public  ArrayList<NotificationHandlerItem> getData(Context ctext){
         if (ctext != null){
             notificationMatcherList = readNotificationMatcher(ctext);
         }
         if (notificationMatcherList==null){
-            notificationMatcherList = new ArrayList<NotificationFilterEntity>();
+            notificationMatcherList = new ArrayList<NotificationHandlerItem>();
         }else {
             setNextID();
         }
@@ -65,9 +65,9 @@ public class NotificationFilterManager{
     }
     private void setNextID() {
         if (notificationMatcherList != null){
-            Collections.sort(notificationMatcherList, new Comparator<NotificationFilterEntity>() {
+            Collections.sort(notificationMatcherList, new Comparator<NotificationHandlerItem>() {
                 @Override
-                public int compare(NotificationFilterEntity o1, NotificationFilterEntity o2) {
+                public int compare(NotificationHandlerItem o1, NotificationHandlerItem o2) {
                     int diff = o1.orderID -o2.orderID;
                     if(o1.orderID >= o2.orderID){
                         return -1;
@@ -81,7 +81,7 @@ public class NotificationFilterManager{
         }
     }
 
-    public boolean addNotificationMatch(NotificationFilterEntity value, Context context){
+    public boolean addNotificationMatch(NotificationHandlerItem value, Context context){
         if(context == null && value== null){
             return false;
         }
@@ -98,12 +98,12 @@ public class NotificationFilterManager{
         return  true;
     }
 
-    public  boolean updateNotificationMatch(int key, NotificationFilterEntity value, Context context){
+    public  boolean updateNotificationMatch(int key, NotificationHandlerItem value, Context context){
 
         if(context == null && value==null){
             return false;
         }
-        NotificationFilterEntity temp = null;
+        NotificationHandlerItem temp = null;
         try{
             temp = notificationMatcherList.set(key,value);
         }catch (Exception e){
@@ -122,7 +122,7 @@ public class NotificationFilterManager{
         return  notificationMatcherList.size();
     }
 
-    public NotificationFilterEntity getNotificationMatcher(int key, Context context){
+    public NotificationHandlerItem getNotificationMatcher(int key, Context context){
         if (notificationMatcherList == null || context!=null){
             getData(context);
         }
@@ -140,7 +140,7 @@ public class NotificationFilterManager{
         if(context == null){
             return false;
         }
-        NotificationFilterEntity temp=null;
+        NotificationHandlerItem temp=null;
         try{
             temp = notificationMatcherList.remove(key);
         }catch (Exception e){
@@ -154,15 +154,15 @@ public class NotificationFilterManager{
         setNextID();
         return true;
     }
-    private  ArrayList<NotificationFilterEntity> readNotificationMatcher(Context context){
+    private  ArrayList<NotificationHandlerItem> readNotificationMatcher(Context context){
         String content = readFilterFile(context);
         if (content.isEmpty()){
             return null;
         }
         Gson gson = new Gson();
-        ArrayList<NotificationFilterEntity> notificationMatchers;
+        ArrayList<NotificationHandlerItem> notificationMatchers;
         try {
-            notificationMatchers = gson.fromJson(content,new TypeToken<ArrayList<NotificationFilterEntity>>(){}.getType());
+            notificationMatchers = gson.fromJson(content,new TypeToken<ArrayList<NotificationHandlerItem>>(){}.getType());
         }catch (JsonParseException e){
             e.printStackTrace();
             return null;

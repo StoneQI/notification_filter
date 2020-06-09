@@ -1,7 +1,7 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 <!--        <item name="android:ambientShadowAlpha">0.08</item>-->
 <!--        <item name="android:spotShadowAlpha">0.08</item>-->
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
@@ -9,7 +9,11 @@
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="android:statusBarColor">@color/colorPrimaryBlue</item>
 
-
+        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?android:attr/colorBackground</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">?attr/colorControlHighlight</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
 
     </style>

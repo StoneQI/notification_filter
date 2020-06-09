@@ -4,8 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="15dp">
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/toolbar_main" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
         android:id="@+id/no_filiter"
@@ -19,13 +25,13 @@
         android:visibility="gone" />
 
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/filiters_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="100">
 
-    </ListView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/new_filiter"

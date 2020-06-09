@@ -16,8 +16,8 @@ android {
         applicationId "com.stone.notificationfilter"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 20200607
-        versionName "0.9.5"
+        versionCode 20200609
+        versionName "0.9.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "releaseTime", "\"" + new Date().format("yyyy-MM-dd HH:mm:ss") + "\"")
         javaCompileOptions {
@@ -43,6 +43,7 @@ dependencies {
 //    def room_version = "2.2.3"
 //    implementation 'com.thefrenchtouch.lib:pbdialogapppicker:1.0.0'
     implementation 'com.blankj:utilcode:1.22.7'
+//    implementation 'com.couchbase.lite:couchbase-lite-android:2.7.1'
     implementation("moe.shizuku.preference:preference-appcompat:4.0.0")
     implementation("moe.shizuku.preference:preference-simplemenu-appcompat:4.0.0")
     implementation 'com.github.xujiaji:dmlib2:0.0.6'
@@ -50,8 +51,11 @@ dependencies {
     implementation "androidx.room:room-runtime:2.2.3"
     annotationProcessor "androidx.room:room-compiler:2.2.3" // For Kotlin use kapt instead of annotationProcessor
     api 'com.google.guava:guava:27.0.1-android'
+
+
 //    implementation 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'
     implementation 'com.google.code.gson:gson:2.8.6'
+//    implementation 'io.jsondb:jsondb-core:1.0.115-j11'
 //    implementation 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:1.0.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
 
