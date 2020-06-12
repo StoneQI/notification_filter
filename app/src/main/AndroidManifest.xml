@@ -31,7 +31,7 @@
 
         <activity android:name="com.stone.notificationfilter.FiliterActivity"></activity>
 
-        <activity android:name="com.stone.notificationfilter.fragment.FloatTileCustomView"></activity>
+        <activity android:name="com.stone.notificationfilter.fragment.FloatTileCustomViewActivity"></activity>
         <activity android:name="com.stone.notificationfilter.AddFiliterActivity"></activity>
         <activity android:name="com.stone.notificationfilter.CheckNotificationLogActivity"></activity>
         <activity android:name="com.stone.notificationfilter.Donate" />

@@ -65,6 +65,7 @@ public class MainActivity extends BaseActivity {
 
         boolean isFirstBoot = SpUtil.getBoolean(this,"appSettings","isFirstBoot", true);
         if (isFirstBoot) {
+//            NotificationHandlerItemFileStorage notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext())
             new AlertDialog.Builder(this)
                     .setTitle("欢迎使用 " + getString(R.string.app_name))
                     .setMessage("在使用之前，您需要了解一些内容：" +

@@ -37,9 +37,10 @@
         android:id="@+id/new_filiter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
         android:padding="6dp"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:text="@string/new_filiter" />

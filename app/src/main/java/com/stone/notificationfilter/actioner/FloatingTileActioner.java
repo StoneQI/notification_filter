@@ -2,8 +2,11 @@ package com.stone.notificationfilter.actioner;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
@@ -291,7 +294,7 @@ public class FloatingTileActioner {
                     public void run() {
                         try {
                             windowManager.addView(view, layoutParams);
-                            long floattitle_time = Long.parseLong(SpUtil.getString(context,"appSettings","floattitle_time", "6"));
+                            long floattitle_time = Long.parseLong(SpUtil.getString(context,"appSettings","floattitle_time", "8"));
                             if(!isEditPos || floattitle_time <=0){
                                 TimerTask timerTask = new TimerTask(){
                                     @Override
@@ -432,6 +435,9 @@ public class FloatingTileActioner {
                 if (isOpen){
                     try {
                         if(intent !=null){
+//                            ActivityManager.getService().getIntentForIntentSender(mTarget)
+//                            IntentSender intentCusom = intent.getIntentSender();
+//                            intentCusom.sendIntent();
                             intent.send();
                             removeTile();
                         }

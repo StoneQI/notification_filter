@@ -46,18 +46,26 @@
 
     </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/float_custom_view_right"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="3dp"
-        android:clickable="true"
-        android:layout_margin="4dp"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:focusable="true">
+        >
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/float_custom_view_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            android:clickable="true"
+            android:layout_margin="4dp"
+            android:theme="@style/Theme.MaterialComponents.DayNight"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:focusable="true">
 
-    </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </RelativeLayout>
 
 
 </LinearLayout>

@@ -85,7 +85,7 @@ public class AddNotificationPatterView {
             Spinner patterItemView = (Spinner) view.findViewById(R.id.patter_item);
             if (!TextUtils.isEmpty(notificationPatterItemHashMap.get(viewID).PatternItem)){
                 List<String> strings = Arrays.asList(context.getResources().getStringArray(R.array.notification_patter_item_value));
-                patterItemView.setSelection(strings.indexOf(notificationPatterItemHashMap.get(viewID).PatternItem));
+                patterItemView.setSelection(strings.indexOf(notificationPatterItemHashMap.get(viewID).PatternItem),true);
             }
             patterItemView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -104,13 +104,13 @@ public class AddNotificationPatterView {
             Spinner patterModeView = (Spinner) view.findViewById(R.id.patter_mode);
 
             if (!TextUtils.isEmpty(notificationPatterItemHashMap.get(viewID).PatternMode)){
-                List<String> strings = Arrays.asList(context.getResources().getStringArray(R.array.array_copyactioner_select_mode_values));
-                patterModeView.setSelection(strings.indexOf(notificationPatterItemHashMap.get(viewID).PatternMode));
+                List<String> strings = Arrays.asList(context.getResources().getStringArray(R.array.notification_patter_mode_value));
+                patterModeView.setSelection(strings.indexOf(notificationPatterItemHashMap.get(viewID).PatternMode),true);
             }
             patterModeView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    notificationPatterItemHashMap.get(viewID).PatternMode = context.getResources().getStringArray(R.array.array_copyactioner_select_mode_values)[position];
+                    notificationPatterItemHashMap.get(viewID).PatternMode = context.getResources().getStringArray(R.array.notification_patter_mode_value)[position];
 
                 }
 

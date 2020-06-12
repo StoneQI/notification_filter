@@ -25,6 +25,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
+import com.stone.notificationfilter.BaseActivity;
 import com.stone.notificationfilter.notificationhandler.AddFiliterActivity;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDao;
@@ -48,7 +49,7 @@ import java.util.List;
 //import android.support.annotation.Nullable;
 //import android.support.v7.app.AppCompatActivity;
 
-public class FiliterActivity extends AppCompatActivity {
+public class FiliterActivity extends BaseActivity {
     private final static  String TAG ="FiliterActivity";
 //    private NotificationFilterDao notificationFilterDao =null;
 //    private String filiter_path = "";

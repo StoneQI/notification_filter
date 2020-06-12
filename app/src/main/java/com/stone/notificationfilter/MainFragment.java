@@ -35,7 +35,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
-import com.stone.notificationfilter.fragment.FloatTileCustomView;
+import com.stone.notificationfilter.fragment.FloatTileCustomViewActivity;
 import com.stone.notificationfilter.util.DialogUtil;
 import com.stone.notificationfilter.util.NotificationCollectorMonitorService;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
@@ -43,6 +43,7 @@ import com.stone.notificationfilter.actioner.FloatingTileActioner;
 import com.stone.notificationfilter.actioner.TileObject;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.notificationhandler.FiliterActivity;
+import com.stone.notificationfilter.util.ToolUtils;
 
 import java.util.Set;
 import java.util.Timer;
@@ -117,6 +118,7 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
 //                        getActivity().startService(intent);
                         NotificationService.isStartListener=true;
                         getActivity().startService(new Intent(getActivity(), NotificationCollectorMonitorService.class));
+                        getActivity().startService(new Intent(getActivity(), NotificationService.class));
 //                        startNotificationListenerService();
                         Toast.makeText(getContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
                         return true;
@@ -330,7 +332,7 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
 //                mainActivity.replaceFragment(new FiliterActivity());
                 Intent intent = new Intent(getActivity(), FiliterActivity.class);
                 startActivity(intent);
-                return false;
+                return true;
             }
         });
 
@@ -340,10 +342,10 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
             public boolean onPreferenceClick(Preference preference) {
 //                MainActivity mainActivity = (MainActivity)getActivity();
 //                mainActivity.replaceFragment(new FiliterActivity());
-                Intent intent = new Intent(getActivity(), FloatTileCustomView.class);
+                Intent intent = new Intent(getActivity(), FloatTileCustomViewActivity.class);
                 startActivity(intent);
 //
-                return false;
+                return true;
             }
         });
 
@@ -353,7 +355,7 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
 
                 Intent intent = new Intent(getActivity(), CheckNotificationLogActivity.class);
                 startActivity(intent);
-                return false;
+                return true;
             }
         });
 

@@ -111,7 +111,6 @@ public class NotificationInfo {
         switch (attributeName){
             case "title": return title;
             case "content":return content;
-
         }
         return "";
     }

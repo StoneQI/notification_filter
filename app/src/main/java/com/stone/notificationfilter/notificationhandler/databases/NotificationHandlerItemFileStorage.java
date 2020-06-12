@@ -7,6 +7,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
+import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.util.filestore.Crypter.DecryptionFailedException;
 
 import java.io.BufferedReader;
@@ -61,6 +62,11 @@ public class NotificationHandlerItemFileStorage {
   public NotificationHandlerItemFileStorage(Context context) throws IOException, IllegalArgumentException {
     this.context = context;
     storageMap = new HashMap<String, NotificationHandlerItem>();
+    boolean isFirstBoot = SpUtil.getBoolean(context,"appSettings","isFirstIntitHandler", true);
+    if (isFirstBoot){
+      save();
+      SpUtil.putBoolean(context,"appSettings","isFirstIntitHandler", false);
+    }
     load();
   }
 

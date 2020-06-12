@@ -1,31 +1,23 @@
 package com.stone.notificationfilter.fragment;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.cbman.roundimageview.RoundImageView;
+import com.stone.notificationfilter.BaseActivity;
 import com.stone.notificationfilter.R;
-import com.stone.notificationfilter.util.PackageUtil;
 import com.stone.notificationfilter.util.SpUtil;
-import com.stone.notificationfilter.util.ToolUtils;
 
-import java.util.Arrays;
-import java.util.List;
-
-public class FloatTileCustomView extends AppCompatActivity {
+public class FloatTileCustomViewActivity extends BaseActivity {
     private LinearLayout layout;
     private View view;
 
@@ -37,7 +29,6 @@ public class FloatTileCustomView extends AppCompatActivity {
     private int rootPaddingValue=-1;
     private  int rootElevationValue=-1;
 
-    @SuppressLint("ResourceAsColor")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.float_window_tile_style_custom);
@@ -63,18 +54,6 @@ public class FloatTileCustomView extends AppCompatActivity {
         titleText.setText("调整样式");
         contentText.setText("根据下列选项调整磁贴样式");
 
-//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-////        layoutParams.width = (int) ToolUtils.dp2Px(200,getApplicationContext());
-//        messageLay.setLayoutParams(layoutParams);
-//        titleText.setTextSize(18);
-//        imageIconLayoutParams.width=80;
-//        imageIconLayoutParams.height =80;
-//        imageIcon.setBackgroundColor(R.color.greyColor);
-
-//        imageIcon.setDisplayType();
-//        imageIcon.setRadius();
-
-//        imageIcon.setLayoutParams(imageIconLayoutParams);
         SeekBar iconWIdthHeigtSeekBar = findViewById(R.id.icon_widthHeight);
         iconWIdthHeigtSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -238,7 +217,7 @@ public class FloatTileCustomView extends AppCompatActivity {
                     SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootElevationValue",iconWidthHeightValue);
                 }
 
-                new AlertDialog.Builder(FloatTileCustomView.this)
+                new AlertDialog.Builder(FloatTileCustomViewActivity.this)
                         .setTitle("提示")
                         .setMessage("修改成功")
                         .show();
@@ -256,7 +235,7 @@ public class FloatTileCustomView extends AppCompatActivity {
                     SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootPaddingValue",-1);
                     SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootElevationValue",-1);
 
-                new AlertDialog.Builder(FloatTileCustomView.this)
+                new AlertDialog.Builder(FloatTileCustomViewActivity.this)
                         .setTitle("提示")
                         .setMessage("重置成功")
                         .show();
