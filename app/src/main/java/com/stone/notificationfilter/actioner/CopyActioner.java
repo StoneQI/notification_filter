@@ -23,7 +23,7 @@ public class CopyActioner {
     public void  run(){
         String mode = SpUtil.getString(context,"appSettings","copyactioner_select_mode","title");
         ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        Log.e(TAG,TAG);
+//        Log.e(TAG,TAG);
         String content = "";
         if(mode.equals("title")){
             content = notificationInfo.title;

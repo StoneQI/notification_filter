@@ -23,6 +23,7 @@ import android.provider.Settings;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.FileProvider;
 
 //import android.support.v7.app.AlertDialog;
 //import android.support.v7.preference.Preference;
@@ -45,6 +46,7 @@ import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.notificationhandler.FiliterActivity;
 import com.stone.notificationfilter.util.ToolUtils;
 
+import java.io.File;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -176,43 +178,56 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
         });
 
 
-//        findPreference("todoNotification").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            //            @RequiresApi(api = Build.VERSION_CODES.M)
-//            @Override
-//            public boolean onPreferenceClick(Preference preference) {
-//                onResume();
-//                if (!isCanDrawWindow) {
-//                    Toast.makeText(preference.getContext(), "无悬浮窗权限", Toast.LENGTH_SHORT).show();
-//                    return false;
-//                }
-//
-//                createNotificationChannel();
-//
-//                NotificationManager notificationManager =
-//                        (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-//                Intent intent = new Intent(getContext(),MainActivity.class);
-//                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 1, intent, PendingIntent.FLAG_ONE_SHOT);
-//                Notification  notification = new NotificationCompat.Builder(getContext(),NOTIFICATION_CHANNEL_ID)
-//                        //指定通知的标题内容
-//                        .setContentTitle("测试标题")
-//                        //设置通知的内容
-//                        .setContentText("测试内容：这是一条内容")
-//                        //指定通知被创建的时间
-//                        .setWhen(System.currentTimeMillis())
-//                        //设置通知的小图标
-//                        .setSmallIcon(R.drawable.ic_launcher_foreground)
-//                        //设置通知的大图标
-//                        .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-//                                R.drawable.ic_launcher_background))
-//                        //添加点击跳转通知跳转
-//                        .setContentIntent(pendingIntent)
-//                        //实现点击跳转后关闭通知
-//                        .setAutoCancel(true)
-//                        .build();
-//                notificationManager.notify(1,notification);
-//                return false;
-//            }
-//        });
+        findPreference("message_replay").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                boolean isClicked = (boolean)o;
+
+                if(isClicked){
+                    if (!ToolUtils.checkAppInstalled(getContext(),"com.google.android.projection.gearhead")){
+                        if(ToolUtils.copyApkFromRaws(getContext(),R.raw.messageauto)){
+                            AlertDialog.Builder m = new AlertDialog.Builder(getContext())
+                                    .setIcon(R.drawable.ic_launcher).setMessage(R.string.message_reply_tip)
+                                    .setIcon(R.drawable.ic_launcher)
+                                    .setPositiveButton("安装", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            File f = new File(getContext().getFilesDir().getAbsolutePath()+ "/messageauto.apk");
+                                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            Uri apkUri;
+
+                                            // Android 7.0 以上不支持 file://协议 需要通过 FileProvider 访问 sd卡 下面的文件，所以 Uri 需要通过 FileProvider 构造，协议为 content://
+                                            if (Build.VERSION.SDK_INT >= 24) {
+                                                // content:// 协议
+                                                apkUri = FileProvider.getUriForFile(getContext(), "com.stone.notificationfilter.fileProvider", f);
+                                                //Granting Temporary Permissions to a URI
+                                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                            } else {
+                                                // file:// 协议
+                                                apkUri = Uri.fromFile(f);
+                                            }
+
+                                            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+
+                                            try {
+                                                getContext().startActivity(intent);
+
+//                                                return true;
+                                            }catch(Exception e){
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                            m.show();
+                        }
+
+                    }
+                    return true;
+                }
+                return true;
+            }
+        });
 
         findPreference("sendNotification").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             //            @RequiresApi(api = Build.VERSION_CODES.M)
@@ -283,9 +298,9 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
                             @Override
                             public void run() {
                                 NotificationInfo notificationInfo = new NotificationInfo(1, "234", System.currentTimeMillis());
-                                notificationInfo.setPackageName(getContext().getPackageName());
-                                notificationInfo.setTitle("设置竖屏位置");
-                                notificationInfo.setContent("上下移动设置竖屏初始位置");
+                                notificationInfo.packageName = getContext().getPackageName();
+                                notificationInfo.title = "设置竖屏位置";
+                                notificationInfo.content = "上下移动设置竖屏初始位置";
                                 FloatingTileActioner floatingTile = new FloatingTileActioner(notificationInfo, getContext(), true);
                                 floatingTile.run(getActivity());
                             }
@@ -309,9 +324,9 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
                             @Override
                             public void run() {
                                 NotificationInfo notificationInfo = new NotificationInfo(1, "234", System.currentTimeMillis());
-                                notificationInfo.setPackageName(getContext().getPackageName());
-                                notificationInfo.setTitle("设置横屏位置");
-                                notificationInfo.setContent("上下移动设置横屏初始位置");
+                                notificationInfo.packageName = getContext().getPackageName();
+                                notificationInfo.title = "设置横屏位置";
+                                notificationInfo.content = "上下移动设置横屏初始位置";
                                 FloatingTileActioner floatingTile = new FloatingTileActioner(notificationInfo, getContext(), true);
                                 floatingTile.run(getActivity());
                             }

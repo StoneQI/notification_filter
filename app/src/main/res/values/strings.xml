@@ -22,6 +22,7 @@
     <string name="filiter_name">规则名称</string>
     <string name="filter_ID">规则ID</string>
     <string name="start_service">开启服务</string>
+    <string name="message_reply_tip">微信快捷回复功能需要安装插件Google Auto 插件才能生效,原版程序体积过大,特做了精简版,仅13KB \n 小窗模式安卓 10需要开发者选项里开启强制将活动设为可调整的大小,安卓8 9需要adb执行adb shell settings put global enable_freeform_support 1</string>
     <string-array name="array_position_entries">
         <item>向上</item>
         <item>向下</item>

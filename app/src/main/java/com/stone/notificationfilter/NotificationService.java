@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.media.session.MediaSession;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.RemoteInput;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,6 +40,7 @@ import com.stone.notificationfilter.notificationhandler.databases.NotificationHa
 import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
 import com.stone.notificationfilter.notificationhandler.databases.SystemBaseHandler;
+import com.stone.notificationfilter.util.Actioner;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
 
@@ -237,31 +240,33 @@ public class NotificationService extends NotificationListenerService {
         Notification notification = sbn.getNotification();
         Bundle extras = sbn.getNotification().extras;
         NotificationInfo notificationInfo = new NotificationInfo(sbn.getId(),sbn.getKey(),sbn.getPostTime());
-        notificationInfo.setClearable(sbn.isClearable());
-        notificationInfo.setOnGoing(sbn.isOngoing());
-        notificationInfo.setTag(sbn.getTag());
-        notificationInfo.setPackageName(sbn.getPackageName());
-        notificationInfo.setLargeIcon(sbn.getNotification().getLargeIcon());
-        notificationInfo.setSmallIcon(sbn.getNotification().getSmallIcon());
-        notificationInfo.setTitle(extras.getString(android.app.Notification.EXTRA_TITLE));
-        notificationInfo.setContent(extras.getString(android.app.Notification.EXTRA_TEXT));
-//        notification.getBubbleMetadata();
-//        extras.getString(android.app.Notification.EX);
-//        extras.getString(Notification.DEFAULT_SOUND);
-        notificationInfo.setIntent(sbn.getNotification().contentIntent);
+        notificationInfo.notification = notification;
+        notificationInfo.isClearable = sbn.isClearable();
+        notificationInfo.isOnGoing = sbn.isOngoing();
+        notificationInfo.Tag = sbn.getTag();
+        notificationInfo.packageName = sbn.getPackageName();
+        notificationInfo.largeIcon = sbn.getNotification().getLargeIcon();
+        notificationInfo.smallIcon = sbn.getNotification().getSmallIcon();
+        notificationInfo.title = extras.getString(android.app.Notification.EXTRA_TITLE);
+        notificationInfo.content = extras.getString(android.app.Notification.EXTRA_TEXT);
+        notificationInfo.intent = sbn.getNotification().contentIntent;
+
         PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-//        String audioContentsURI = extras.getString(Notification.EXTRA_AUDIO_CONTENTS_URI);
+        Notification.Action[] action = notification.actions;
+
+        //        String audioContentsURI = extras.getString(Notification.EXTRA_AUDIO_CONTENTS_URI);
 //        String backgoundImageURI = extras.getString(Notification.EXTRA_BACKGROUND_IMAGE_URI);
 //        String audioContentsUri = extras.getString(Notification.EXTRA_AUDIO_CONTENTS_URI);
 //        String bigText = extras.getString(Notification.EXTRA_BIG_TEXT);
+//        String bigText = extras.getString();
 //        String channelGroupID = extras.getString(Notification.EXTRA_CHANNEL_GROUP_ID);
 //        String channelID = extras.getString(Notification.EXTRA_CHANNEL_ID);
 ////        String EXTRA_CONTAINS_CUSTOM_VIEW = extras.getString(Notification.EXTRA_CONTAINS_CUSTOM_VIEW);
 //
-//        String EXTRA_TEMPLATE = extras.getString(Notification.EXTRA_TEMPLATE);
+        String EXTRA_TEMPLATE = extras.getString(Notification.EXTRA_TEMPLATE);
 //        Log.e(TAG,"TEMPLATE"+EXTRA_TEMPLATE);
 //        String textLines = extras.getString(Notification.EXTRA_TEXT_LINES);
-//        MediaSession.Token EXTRA_MEDIA_SESSION = extras.getParcelable(Notification.EXTRA_MEDIA_SESSION);
+        MediaSession.Token EXTRA_MEDIA_SESSION = extras.getParcelable(Notification.EXTRA_MEDIA_SESSION);
 ////        String EXTRA_COMPACT_ACTIONS = extras.getString(Notification.EXTRA_COMPACT_ACTIONS);
 //        String EXTRA_SUMMARY_TEXT = extras.getString(Notification.EXTRA_SUMMARY_TEXT);
 //        String EXTRA_TITLE_BIG = extras.getString(Notification.EXTRA_TITLE_BIG);
@@ -281,13 +286,39 @@ public class NotificationService extends NotificationListenerService {
         RemoteViews remoteViews = getBigContentView(getApplicationContext(), notification);
         if(remoteViews == null)
             remoteViews = getContentView(getApplicationContext(), notification);
-
         if (remoteViews != null)
         {
             notificationInfo.remoteViews = remoteViews;
         }
 
-        notificationInfo.setInteractive(powerManager.isInteractive());
+
+
+//        if (notification != null) {
+//            NotificationCompat.CarExtender mCarExtender = new NotificationCompat.CarExtender(notification);
+//            if (mCarExtender != null) {
+//                NotificationCompat.CarExtender.UnreadConversation conversation = mCarExtender.getUnreadConversation();
+//                if (conversation != null) {
+//                    PendingIntent pendingReply = conversation.getReplyPendingIntent();
+//                    RemoteInput remoteInput = conversation.getRemoteInput();
+//                    String key = remoteInput.getResultKey();
+//
+//                    if (pendingReply != null) {
+//                        Intent localIntent = new Intent();
+//                        Bundle resultBundle = new Bundle();
+//                        resultBundle.putString(key, "回复的内容");
+//                        RemoteInput.addResultsToIntent(new RemoteInput[]{new RemoteInput.Builder(key).build()}, localIntent, resultBundle);
+//                        try {
+//                            pendingReply.send(getApplicationContext(), 0, localIntent);
+//                        } catch (Exception e) {
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
+
+
+        notificationInfo.isInteractive = powerManager.isInteractive();
         return notificationInfo;
     }
 

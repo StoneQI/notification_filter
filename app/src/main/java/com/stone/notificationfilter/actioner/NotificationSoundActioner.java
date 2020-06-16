@@ -32,7 +32,7 @@ public class NotificationSoundActioner {
         if (!notificationInfo.isClearable){
             return;
         }
-        if (notificationInfo.getContent() == null && notificationInfo.getTitle()==null) {
+        if (notificationInfo.content == null && notificationInfo.title==null) {
             return;
         }
         soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {

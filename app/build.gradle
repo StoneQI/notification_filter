@@ -8,7 +8,7 @@ android {
         release {
             keyAlias 'notification'
             keyPassword '124421'
-            storeFile file('D:\\OneDrive - University of Leeds\\03-124421\\notification.keystore')
+            storeFile file('/home/stone/01-project/notification_filter/app/notification.keystore')
             storePassword '124421'
         }
     }
@@ -16,8 +16,8 @@ android {
         applicationId "com.stone.notificationfilter"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 20200610
-        versionName "0.9.6"
+        versionCode 20200616
+        versionName "0.9.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "releaseTime", "\"" + new Date().format("yyyy-MM-dd HH:mm:ss") + "\"")
         javaCompileOptions {
@@ -49,8 +49,8 @@ dependencies {
     implementation("moe.shizuku.preference:preference-simplemenu-appcompat:4.0.0")
     implementation 'com.github.xujiaji:dmlib2:0.0.6'
     implementation 'com.noober.floatmenu:common:1.0.4'
-    implementation "androidx.room:room-runtime:2.2.3"
-    annotationProcessor "androidx.room:room-compiler:2.2.3" // For Kotlin use kapt instead of annotationProcessor
+    implementation "androidx.room:room-runtime:2.2.5"
+    annotationProcessor "androidx.room:room-compiler:2.2.5" // For Kotlin use kapt instead of annotationProcessor
     api 'com.google.guava:guava:27.0.1-android'
 
 
@@ -60,7 +60,7 @@ dependencies {
 //    implementation 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:1.0.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
 
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 //    implementation 'androidx.preference:preference:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
@@ -71,8 +71,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
-    implementation 'androidx.navigation:navigation-fragment:2.0.0'
-    implementation 'androidx.navigation:navigation-ui:2.0.0'
+    implementation 'androidx.navigation:navigation-fragment:2.2.2'
+    implementation 'androidx.navigation:navigation-ui:2.2.2'
 
 
 }

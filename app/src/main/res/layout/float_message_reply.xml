@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/m"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="25dp"
+    android:elevation="5dp"
+    android:theme="@style/Theme.MaterialComponents.DayNight"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:focusable="true"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="6dp">
+
+            <com.cbman.roundimageview.RoundImageView
+                android:id="@+id/notification_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="top"
+                android:layout_marginEnd="6dp"
+                android:scaleType="centerCrop"
+                app:borderWidth="0dp"
+                app:displayBorder="false"
+                app:displayType="round_rect"
+                app:radius="7dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/notification_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColorDrak"
+                    android:layout_marginBottom="5dp"
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/notification_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/notification_reply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:gravity="start"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:inputType="textMultiLine" />
+
+<!--            <com.google.android.material.button.MaterialButton-->
+<!--                android:id="@+id/notification_reply_button"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:theme="@style/Widget.MaterialComponents.Button.TextButton"-->
+<!--                android:background="#FFFFFFFF"-->
+<!--                android:text="回复" />-->
+
+            <Button
+                android:id="@+id/notification_reply_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="回复"
+                android:background="#FFFFFFFF"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

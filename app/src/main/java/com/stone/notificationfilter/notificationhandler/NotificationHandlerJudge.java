@@ -102,7 +102,7 @@ public class NotificationHandlerJudge {
                 }
             } else {
                 Pattern p = Pattern.compile(notificationHandlerItem.titleFiliter);
-                Matcher m = p.matcher(notificationInfo.getTitle());
+                Matcher m = p.matcher(notificationInfo.title);
                 while (m.find()) {
 //                        Log.e(TAG,m.group());
                     new_title = new_title + m.group();
@@ -125,7 +125,7 @@ public class NotificationHandlerJudge {
                 }
             }else {
                 Pattern p = Pattern.compile(notificationHandlerItem.contextFiliter);
-                Matcher m = p.matcher(notificationInfo.getContent());
+                Matcher m = p.matcher(notificationInfo.content);
                 while (m.find()) {
 //                        Log.e(TAG, m.group());
                     new_Content = new_Content + m.group();
