@@ -22,7 +22,13 @@
     <string name="filiter_name">规则名称</string>
     <string name="filter_ID">规则ID</string>
     <string name="start_service">开启服务</string>
-    <string name="message_reply_tip">微信快捷回复功能需要安装插件Google Auto 插件才能生效,原版程序体积过大,特做了精简版,仅13KB \n 小窗模式安卓 10需要开发者选项里开启强制将活动设为可调整的大小,安卓8 9需要adb执行adb shell settings put global enable_freeform_support 1</string>
+    <string name="donate_list">
+        业余时间开发此软件,虽费时费力,但方便自己方便他人,在这里感谢下列用户的支持:\n
+    z*j,*细、我就是冲天总司的老总、yaeason、*吼、坂田井川。
+    </string>
+
+
+    <string name="message_reply_tip">微信快捷回复功能需要安装插件Google Auto 插件才能生效,原版程序体积过大,特做了精简版,仅13KB \n 小窗模式请手动开启软件后台显示界面权限,安卓10需要开发者选项里开启强制将活动设为可调整的大小,安卓8 9需要adb执行adb shell settings put global enable_freeform_support 1</string>
     <string-array name="array_position_entries">
         <item>向上</item>
         <item>向下</item>
@@ -92,6 +98,9 @@
     <string name="service_stop">通知处理器服务已关闭</string>
     <string name="close">点击关闭</string>
     <string name="select_app_filiter">点击选择匹配应用</string>
+
+    <string name="freeform_mode_start">小窗模式已开启</string>
+    <string name="freeform_mode_stop">小窗模式已关闭</string>
 
 
 

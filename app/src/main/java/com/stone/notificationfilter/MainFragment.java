@@ -184,15 +184,28 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
                 boolean isClicked = (boolean)o;
 
                 if(isClicked){
-                    if (!ToolUtils.checkAppInstalled(getContext(),"com.google.android.projection.gearhead")){
-                        if(ToolUtils.copyApkFromRaws(getContext(),R.raw.messageauto)){
                             AlertDialog.Builder m = new AlertDialog.Builder(getContext())
                                     .setIcon(R.drawable.ic_launcher).setMessage(R.string.message_reply_tip)
                                     .setIcon(R.drawable.ic_launcher)
-                                    .setPositiveButton("安装", new DialogInterface.OnClickListener() {
+                                    .setNegativeButton("小窗模式开关", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            File f = new File(getContext().getFilesDir().getAbsolutePath()+ "/messageauto.apk");
+                                            if(SpUtil.getBoolean(getContext(), "appSettings","freeform_mode_switch", true)){
+                                                SpUtil.putBoolean(getContext(), "appSettings","freeform_mode_switch", false);
+                                                Toast.makeText(getContext(), R.string.freeform_mode_stop, Toast.LENGTH_SHORT).show();
+                                            }else{
+                                                SpUtil.putBoolean(getContext(), "appSettings","freeform_mode_switch", true);
+                                                Toast.makeText(getContext(), R.string.freeform_mode_start, Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        }
+                                    });
+                            if (!ToolUtils.checkAppInstalled(getContext(),"com.google.android.projection.gearhead")){
+                                if(ToolUtils.copyApkFromRaws(getContext(),R.raw.messageauto)) {
+                                    m.setPositiveButton("安装", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            File f = new File(getContext().getFilesDir().getAbsolutePath() + "/messageauto.apk");
                                             Intent intent = new Intent(Intent.ACTION_VIEW);
                                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                             Uri apkUri;
@@ -214,17 +227,18 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
                                                 getContext().startActivity(intent);
 
 //                                                return true;
-                                            }catch(Exception e){
+                                            } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
                                         }
                                     });
+                                }
+                            }else{
+                                m.setPositiveButton("插件已安装",null);
+                            }
                             m.show();
                         }
 
-                    }
-                    return true;
-                }
                 return true;
             }
         });

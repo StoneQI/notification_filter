@@ -9,6 +9,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
@@ -16,9 +17,9 @@ import com.cbman.roundimageview.RoundImageView;
 import com.stone.notificationfilter.BaseActivity;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.util.SpUtil;
+import com.tencent.bugly.crashreport.CrashReport;
 
 public class FloatTileCustomViewActivity extends BaseActivity {
-    private LinearLayout layout;
     private View view;
 
     private int iconWidthHeightValue=-1;
@@ -29,15 +30,18 @@ public class FloatTileCustomViewActivity extends BaseActivity {
     private int rootPaddingValue=-1;
     private  int rootElevationValue=-1;
 
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.float_window_tile_style_custom);
+
+//        CrashReport.testJavaCrash();
 
         Toolbar mToolBar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("磁贴样式自定义");
 
-        layout= findViewById(R.id.float_window_tile_view);
+        LinearLayout layout = findViewById(R.id.float_window_tile_view);
         view = View.inflate(getApplicationContext(), R.layout.window_lay_right, null);
 
         layout.addView(view);
@@ -248,4 +252,5 @@ public class FloatTileCustomViewActivity extends BaseActivity {
 
 
     }
+
 }

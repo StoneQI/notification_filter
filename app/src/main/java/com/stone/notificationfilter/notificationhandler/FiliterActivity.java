@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -60,8 +61,8 @@ public class FiliterActivity extends BaseActivity {
 //    private static ArrayAdapter<String> adapter = null;
     private RecyclerView mRecyclerView;
 //    private View view =null;
-
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filiter_fragment);
 

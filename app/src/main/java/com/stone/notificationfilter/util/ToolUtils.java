@@ -5,6 +5,7 @@ import android.app.ActivityOptions;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
@@ -70,6 +71,17 @@ public class ToolUtils {
         return false;
     }
 
+
+    public static boolean isGame(Context context, String packageName) {
+            PackageManager pm = context.getPackageManager();
+            try {
+                ApplicationInfo info = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+                return (info.flags & ApplicationInfo.FLAG_IS_GAME) != 0 || (info.metaData != null && info.metaData.getBoolean("isGame", false));
+            } catch (PackageManager.NameNotFoundException e) {
+                return false;
+            }
+    }
+
     public static boolean copyApkFromRaws(Context context, int resourceID) {
         try {
             InputStream is = context.getResources().openRawResource(resourceID);
@@ -111,12 +123,14 @@ public class ToolUtils {
         try {
             context.startActivity(intent,
                     getActivityOptionsBundle(context, ToolUtils.ApplicationType.FREEFORM_HACK, null,
-                            mScreenWidth,
-                            mScreenHeight,
-                            mScreenWidth + 1,
-                            mScreenHeight + 1
+                            20,
+                            20,
+                            mScreenWidth-20 ,
+                            mScreenHeight-50
                     ));
-        } catch (IllegalArgumentException | SecurityException e) { /* Gracefully fail */ }
+        } catch (IllegalArgumentException | SecurityException e) {
+            e.printStackTrace();
+        }
 
     }
 

@@ -49,7 +49,7 @@ import java.util.TimerTask;
 public class FloatMessageReply {
 
     private static String TAG ="FloatMessageReply";
-    private NotificationInfo notificationInfo;
+    private  NotificationInfo notificationInfo;
     private Context context;
     private PendingIntent intent = null;
 
@@ -60,14 +60,16 @@ public class FloatMessageReply {
     public boolean isRemove;
     private int viewWidth;
     private int viewHeight;
-    private int mScreenHeight;
-    private int mScreenWidth;
-    public  int showID = -1;
     private View view;
     private Timer mtimer =null;
-    private  boolean isLeft=true;
-    private  boolean isVert =false;
-    private  boolean isRefuse =false;
+    private boolean isRefuse = false;
+    private boolean isReply = false;
+    private int mScreenWidth;
+    private int mScreenHeight;
+
+    private static String preTitle = "";
+    private static String preContent = "";
+
     private InputMethodManager inputManager;
     private  NotificationCompat.CarExtender.UnreadConversation conversation;
 
@@ -79,31 +81,6 @@ public class FloatMessageReply {
         windowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         WindowInit(context);
-    }
-
-    private void setSceneOrientation(Context context){
-        Configuration mConfiguration = context.getResources().getConfiguration(); //获取设置的配置信息
-        int ori = mConfiguration.orientation; //获取屏幕方向
-        int floattitle_x=0;
-        getScreenSize();
-        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
-            isVert =false;
-            floattitle_x = SpUtil.getInt(context,"appSettings","floattitle_landscape_x",mScreenHeight);
-        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
-            floattitle_x = SpUtil.getInt(context,"appSettings","floattitle_portrait_x",mScreenWidth);
-            isVert =true;
-        }
-        Log.e(TAG, "floattitle_x:"+String.valueOf(floattitle_x));
-//        if (Math.abs(floattitle_x) < Math.abs(floattitle_x - mScreenWidth)){
-//            layoutParams.gravity= Gravity.START;
-////            view = View.inflate(context, R.layout.window_lay_left, null);
-//            isLeft =true;
-//
-//        }else{
-//            layoutParams.gravity =Gravity.END;
-////            view = View.inflate(context, R.layout.window_lay_right, null);
-//            isLeft =false;
-//        }
     }
 
     private void  ViewInit(){
@@ -149,7 +126,12 @@ public class FloatMessageReply {
         replayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               replayAndClose(true,replyEditText.getText().toString());
+                Log.e(TAG,"click replay");
+                if (!isRefuse){
+                    isRefuse =true;
+                    replayAndClose(true,replyEditText.getText().toString());
+                }
+
 
 
             }
@@ -162,7 +144,11 @@ public class FloatMessageReply {
 
                 Log.e("wytings", String.valueOf(keyCode));
                 if (keyCode == KeyEvent.KEYCODE_ENTER){
-                    replayAndClose(true,replyEditText.getText().toString());
+                    Log.e(TAG,"enter replay");
+                    if (!isRefuse){
+                        isRefuse =true;
+                        replayAndClose(true,replyEditText.getText().toString());
+                    }
                 }
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK
                         || event.getKeyCode() == KeyEvent.KEYCODE_SETTINGS) {
@@ -233,6 +219,11 @@ public class FloatMessageReply {
             isRefuse = true;
             return;
         }
+        if (preContent.equals(notificationInfo.content) && preTitle.equals(notificationInfo.title)){
+            isRefuse = true;
+            return;
+        }
+
         layoutParams.gravity =Gravity.TOP;
         layoutParams.y =30;
 
@@ -270,6 +261,7 @@ public class FloatMessageReply {
         //        mCurrentIconAlpha = 70 / 100f;
     }
     public void run(){
+        if (isRefuse)return;
         Notification notification = notificationInfo.notification;
         if (notification != null) {
             NotificationCompat.CarExtender mCarExtender = new NotificationCompat.CarExtender(notification);

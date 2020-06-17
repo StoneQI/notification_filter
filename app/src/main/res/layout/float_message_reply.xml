@@ -88,7 +88,7 @@
 
             <Button
                 android:id="@+id/notification_reply_button"
-                android:layout_width="wrap_content"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:text="回复"
                 android:background="#FFFFFFFF"

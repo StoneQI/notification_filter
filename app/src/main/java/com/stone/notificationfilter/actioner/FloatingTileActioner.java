@@ -279,7 +279,7 @@ public class FloatingTileActioner {
                         try {
                             windowManager.addView(view, layoutParams);
                             long floattitle_time = Long.parseLong(SpUtil.getString(context,"appSettings","floattitle_time", "8"));
-                            if(!isEditPos || floattitle_time <=0){
+                            if(!isEditPos && floattitle_time >0){
                                 TimerTask timerTask = new TimerTask(){
                                     @Override
                                     public void run() {
@@ -440,7 +440,13 @@ public class FloatingTileActioner {
 
             @Override
             public void onLongPress(MotionEvent e) {
-                return;
+                if(SpUtil.getBoolean(context,"appSettings","message_replay",false)){
+                        Log.e(TAG,"小窗打开");
+                        if (SpUtil.getBoolean(context, "appSettings","freeform_mode_switch", true)){
+                            openActivity(notificationInfo.packageName);
+                        }
+
+                }
             }
 
             @Override
@@ -481,20 +487,15 @@ public class FloatingTileActioner {
                 if (e2.getY() - e1.getY() > 30) {
                     if(isOpen){
                         removeTile();
-                        if(SpUtil.getBoolean(context,"appSettings","message_replay",true))
-                        if (notificationInfo.packageName.contains("com.tencent.mm")){
-                            //快捷回复
-                            Log.e(TAG,"快捷回复");
-                            if (ToolUtils.checkAppInstalled(context,"com.google.android.projection.gearhead")){
-                                FloatMessageReply floatMessageReply = new FloatMessageReply(notificationInfo,context);
-                                floatMessageReply.run();
+                        if(SpUtil.getBoolean(context,"appSettings","message_replay",false))
+                            if (notificationInfo.packageName.contains("com.tencent.mm")){
+                                //快捷回复
+                                Log.e(TAG,"快捷回复");
+                                if (ToolUtils.checkAppInstalled(context,"com.google.android.projection.gearhead")){
+                                    FloatMessageReply floatMessageReply = new FloatMessageReply(notificationInfo,context);
+                                    floatMessageReply.run();
+                                }
                             }
-
-                        }else{
-                            //小窗打开
-                            Log.e(TAG,"小窗打开");
-                            openActivity(notificationInfo.packageName);
-                        }
                     }
                     Log.i(TAG, "向上滑...");
                     return true;

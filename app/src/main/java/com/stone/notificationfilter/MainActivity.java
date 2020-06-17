@@ -1,10 +1,14 @@
 package com.stone.notificationfilter;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 //import android.support.v7.app.AlertDialog;
 //import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -12,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDataBase;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItem;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItemFileStorage;
 import com.stone.notificationfilter.util.SpUtil;
@@ -120,18 +125,25 @@ public class MainActivity extends BaseActivity {
 //            supportActionBar?.setDisplayShowTitleEnabled(false)
 //        }
 //    }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu, menu);
-//        return true;
-//    }
-//
-//    public boolean showMenu(View anchor) {
-//        PopupMenu popup = new PopupMenu(this, anchor);
-//        popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
-//        popup.show();
-//        return true;
-//    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_main, menu);
+    return true;
+}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //对菜单项点击内容进行设置
+        int id = item.getItemId();
+        if (id == R.id.donate_list) {
+            AlertDialog.Builder m = new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.ic_launcher).setMessage(R.string.donate_list)
+                    .setIcon(R.drawable.ic_launcher);
+//                    .setPositiveButton("确认",null);
+            m.show();
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }
