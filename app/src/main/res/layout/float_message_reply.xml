@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/m"
-    android:layout_width="match_parent"
+    android:id="@+id/message_reply_content"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="25dp"
+    android:background="@drawable/bg_radius_white"
+    android:layout_marginTop="70dp"
+    android:layout_gravity="center_horizontal"
     android:elevation="5dp"
+    android:padding="10dp"
     android:theme="@style/Theme.MaterialComponents.DayNight"
     android:foreground="?android:attr/selectableItemBackground"
     android:focusable="true"
-    app:cardCornerRadius="8dp">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="vertical">
+
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="6dp">
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
 
             <com.cbman.roundimageview.RoundImageView
                 android:id="@+id/notification_icon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_gravity="top"
+                android:layout_gravity="center"
                 android:layout_marginEnd="6dp"
                 android:scaleType="centerCrop"
                 app:borderWidth="0dp"
@@ -36,21 +35,21 @@
                 app:radius="7dp" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/notification_title"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/textColorDrak"
                     android:layout_marginBottom="5dp"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@color/textColorDrak" />
 
                 <TextView
                     android:id="@+id/notification_content"
-                    android:layout_width="match_parent"
+                    android:layout_width="270dp"
                     android:layout_height="wrap_content"
                     android:text="TextView" />
             </LinearLayout>
@@ -65,36 +64,28 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/notification_reply"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.8"
                 android:ems="10"
-                android:gravity="start"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
+                android:layout_gravity="start"
                 android:inputType="textMultiLine" />
-
-<!--            <com.google.android.material.button.MaterialButton-->
-<!--                android:id="@+id/notification_reply_button"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:theme="@style/Widget.MaterialComponents.Button.TextButton"-->
-<!--                android:background="#FFFFFFFF"-->
-<!--                android:text="回复" />-->
 
             <Button
                 android:id="@+id/notification_reply_button"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:text="回复"
-                android:background="#FFFFFFFF"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                />
+                android:layout_width="50dp"
+                android:layout_gravity="end"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFFFF"
+                android:text="回复" />
         </LinearLayout>
-    </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</LinearLayout>

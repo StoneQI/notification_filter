@@ -142,7 +142,7 @@
                         android:layout_width="30dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|end"
-                        android:background="@drawable/bg_swipe_log_item"
+                        android:background="@drawable/bg_radius_white"
                         android:src="@drawable/ic_arrow_drop_down_black_24dp" />
                 </LinearLayout>
 

@@ -95,7 +95,7 @@ public class MainActivity extends BaseActivity {
                     })
                     .show();
         }
-        replaceFragment(new MainFragment());
+//        replaceFragment(new MainFragment());
 
 //        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 //        fragmentTransaction.replace(R.id.fl, new MyFragment()).commit();
@@ -105,13 +105,13 @@ public class MainActivity extends BaseActivity {
 //        startService(new Intent(this, NotificationCollectorMonitorService.class));
     }
 
-    public void replaceFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.fragment,fragment);
-//        transaction.addToBackStack(null);
-        transaction.commit();
-    }
+//    public void replaceFragment(Fragment fragment){
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.replace(R.id.fragment,fragment);
+////        transaction.addToBackStack(null);
+//        transaction.commit();
+//    }
 
 //    private void initToolbar(showHomeAsUp: Boolean) {
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);

@@ -75,6 +75,13 @@
             android:key="select_applist"
             android:title="选择匹配应用"
             android:summary="修改后，重新关闭开启服务才能生效"/>
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="portrait_danmu_mode"
+        android:dependency="start_service"
+        android:summary="横屏时，以弹幕模式展示通知，不可点击"
+        android:title="横屏弹幕模式" />
 <!--        <Preference-->
 <!--            android:key="todoNotification"-->
 <!--            android:title="通知栏待办" />-->

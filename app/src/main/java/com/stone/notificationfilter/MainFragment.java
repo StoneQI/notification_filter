@@ -24,6 +24,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragment;
 
 //import android.support.v7.app.AlertDialog;
 //import android.support.v7.preference.Preference;
@@ -51,13 +53,13 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import moe.shizuku.preference.Preference;
-import moe.shizuku.preference.PreferenceFragment;
+//import moe.shizuku.preference.Preference;
+//import moe.shizuku.preference.PreferenceFragment;
 
 /**
  * Create by LingC on 2019/8/4 21:54
  */
-public class MainFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
+public class MainFragment extends PreferenceFragment {
     private static final String TAG = "MainFragment";
     private boolean isCanDrawWindow;
     private boolean isNotificationListenerEnable;
@@ -100,6 +102,12 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
             }
         }
 
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+//        addPreferencesFromResource(R.xml.pref_lay);//加载xml文件
     }
 
     @Override
@@ -467,15 +475,4 @@ public class MainFragment extends PreferenceFragment implements SharedPreference
         super.onStop();
     }
 
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.d(TAG, "onSharedPreferenceChanged " + key);
-    }
-
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        Log.d(TAG, getString(R.string.on_preference_change_toast_message, preference.getKey(), newValue.toString()));
-        return true;
-    }
 }

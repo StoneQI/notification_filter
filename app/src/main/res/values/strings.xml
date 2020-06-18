@@ -76,6 +76,7 @@
         <item>保存到日记记录</item>
         <item>播放提示音</item>
         <item>通知组件悬浮</item>
+        <item>弹幕通知</item>
     </string-array>
 
     <string-array name="notification_sceen_status_on">

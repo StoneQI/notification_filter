@@ -80,6 +80,7 @@ public class FloatMessageReply {
         this.notificationInfo = notificationInfo;
         windowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        getScreenSize();
         WindowInit(context);
     }
 
@@ -87,6 +88,15 @@ public class FloatMessageReply {
 //        setSceneOrientation(context);
 
         view = View.inflate(context, R.layout.float_message_reply, null);
+
+//        LinearLayout linearLayout = view.findViewById(R.id.message_reply_content);
+//
+//        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//
+//
+//        layoutParams.width = (int)0.8*mScreenWidth;
+//
+//        linearLayout.setLayoutParams(layoutParams);
 
         RoundImageView imageView = view.findViewById(R.id.notification_icon);
         if (this.notificationInfo.largeIcon ==null){

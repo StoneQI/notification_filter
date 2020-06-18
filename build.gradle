@@ -9,6 +9,8 @@ buildscript {
         maven {
             url "https://dl.bintray.com/rikkaw/MaterialPreference"
         }
+
+        maven { url "http://lib.gcssloop.com:8081/repository/gcssloop-central/" }
 //
 
 
@@ -31,6 +33,10 @@ allprojects {
         maven { url 'http://maven.aliyun.com/nexus/content/repositories/google' }
 
         maven { url 'https://jitpack.io' }
+
+        maven { url "http://lib.gcssloop.com:8081/repository/gcssloop-central/" }
+
+
 //        google()
 //        jcenter()
 //        maven { url 'https://jitpack.io' }

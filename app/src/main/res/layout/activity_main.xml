@@ -18,7 +18,12 @@
             <include layout="@layout/toolbar_main" />
         </com.google.android.material.appbar.AppBarLayout>
 
-        <FrameLayout android:id="@+id/fragment" android:tag="MainFragment" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>
+        <fragment
+            android:id="@+id/setting_fragment"
+            android:layout_width="match_parent"
+            class="com.stone.notificationfilter.MainFragment"
+            android:layout_height="match_parent"/>
+<!--        <FrameLayout android:id="@+id/fragment" android:tag="MainFragment" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>-->
 <!--        <android.support.design.widget.BottomNavigationView android:id="@+id/main_bottom_nav" android:background="?unknown_attr_ref: 1010054" android:layout_width="match_parent" android:layout_height="wrap_content" app:menu="@menu/menu_main_bottom_nav"/>-->
     </LinearLayout>
 <!--    <android.support.design.widget.FloatingActionButton android:layout_gravity="bottom|right|center_vertical|center_horizontal|center|end" android:id="@+id/fab" android:background="#fff" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="19dp" android:layout_marginBottom="85dp" app:srcCompat="@drawable/ic_favorite_white_24dp"/>-->

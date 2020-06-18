@@ -29,6 +29,7 @@ import android.widget.RemoteViews;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.stone.notificationfilter.actioner.CopyActioner;
+import com.stone.notificationfilter.actioner.DanMuActioner;
 import com.stone.notificationfilter.actioner.FloatCustomViewActioner;
 import com.stone.notificationfilter.actioner.NotificationSoundActioner;
 import com.stone.notificationfilter.actioner.RunIntentActioner;
@@ -127,7 +128,7 @@ public class NotificationService extends NotificationListenerService {
                     appListMode = SpUtil.getBoolean(getApplicationContext(),"appSettings","applist_mode", false);
                     notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),true);
                     notificationHandlerItems = notificationHandlerItemFileStorage.getAllAsArrayList();
-                    notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule());
+                    notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule(getApplicationContext()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -182,13 +183,14 @@ public class NotificationService extends NotificationListenerService {
 
                 switch (notificationHandlerItem.actioner){
                     case 0:floatingTileAction(notificationInfo); isCancalSystemNotification =true;break;
-                    case 1:break;
+                    case 1:isCancalSystemNotification =false; break;
                     case 2:isCancalSystemNotification =true; break;
                     case 3:new CopyActioner(notificationInfo,NotificationService.this).run();break;
                     case 4:new RunIntentActioner(notificationInfo,NotificationService.this).run();break;
                     case 5:new SaveToFileActioner(notificationInfo,NotificationService.this).run();break;
                     case 6:new NotificationSoundActioner(notificationInfo,NotificationService.this).run();break;
                     case 7:new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
+                    case 8:new DanMuActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
                 }
 
                 if(notificationHandlerItem.breakDown){

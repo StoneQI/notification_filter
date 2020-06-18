@@ -151,6 +151,9 @@ public class FloatingTileActioner {
         int rootPaddingValue = SpUtil.getInt(context,"floatTileCustonView","rootPaddingValue",-1);
         int rootElevationValue = SpUtil.getInt(context,"floatTileCustonView","rootElevationValue",-1);
 
+        int titleTextColorValue = SpUtil.getInt(context,"floatTileCustonView","titleTextColorValue",-1);
+        int contentTextColorValue = SpUtil.getInt(context,"floatTileCustonView","contentTextColorValue",-1);
+
         if (iconWidthHeightValue != -1){
             imageIconLayoutParams.width=iconWidthHeightValue;
             imageIconLayoutParams.height =iconWidthHeightValue;
@@ -171,6 +174,13 @@ public class FloatingTileActioner {
         if (contentTextSizeValue != -1){
             contentText.setTextSize(contentTextSizeValue);
         }
+        if (titleTextColorValue != -1){
+            titleText.setTextColor(titleTextColorValue);
+        }
+        if (contentTextColorValue != -1){
+            contentText.setTextColor(contentTextColorValue);
+        }
+
         if (rootPaddingValue != -1){
             view.setPadding(rootPaddingValue,rootPaddingValue,rootPaddingValue,rootPaddingValue);
         }

@@ -1,12 +1,15 @@
 package com.stone.notificationfilter.notificationhandler.databases;
 
+import android.content.Context;
+
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
+import com.stone.notificationfilter.util.SpUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class SystemBaseHandler {
-    public  static ArrayList<NotificationHandlerItem> getSystemHandlerRule(){
+    public  static ArrayList<NotificationHandlerItem> getSystemHandlerRule(Context content){
 
         ArrayList<NotificationHandlerItem> notificationHandlerItems = new ArrayList<>();
 
@@ -76,14 +79,25 @@ public class SystemBaseHandler {
         notificationHandlerItem4.breakDown =false;
         notificationHandlerItems.add(notificationHandlerItem4);
 
+        if ( SpUtil.getBoolean(content,"appSettings","portrait_danmu_mode", false)){
+            NotificationHandlerItem notificationHandlerItem5 = new NotificationHandlerItem();
+            notificationHandlerItem5.orderID = 5;
+            notificationHandlerItem5.name = "横屏弹幕通知";
+            notificationHandlerItem5.sceen_status_on =2 ;
+            notificationHandlerItem5.actioner = 8;
+            notificationHandlerItem5.breakDown =true;
+            notificationHandlerItems.add(notificationHandlerItem5);
+        }
 
 
-        NotificationHandlerItem notificationHandlerItem5 = new NotificationHandlerItem();
-        notificationHandlerItem5.orderID = 5;
-        notificationHandlerItem5.name = "默认悬浮通知";
-        notificationHandlerItem5.actioner = 0;
-        notificationHandlerItem5.breakDown =true;
-        notificationHandlerItems.add(notificationHandlerItem5);
+
+
+        NotificationHandlerItem notificationHandlerItem6 = new NotificationHandlerItem();
+        notificationHandlerItem6.orderID = 5;
+        notificationHandlerItem6.name = "默认悬浮通知";
+        notificationHandlerItem6.actioner = 0;
+        notificationHandlerItem6.breakDown =true;
+        notificationHandlerItems.add(notificationHandlerItem6);
 
 
         return  notificationHandlerItems;
