@@ -44,6 +44,10 @@
         <item name="android:windowExitAnimation">@anim/pop_alpha_slide_left_exit</item>
     </style>
 
+    <style name="DanMuMoveTiltAnim">
+        <item name="android:windowEnterAnimation">@anim/danmu_move</item>
+    </style>
+
     <style name="myRecyclerViewStyle">
         <!-- NOTE: clipChildren should be false on API level 11 or later -->
         <item name="android:clipChildren">false</item>

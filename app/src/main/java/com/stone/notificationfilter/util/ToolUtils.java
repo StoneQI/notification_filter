@@ -54,6 +54,18 @@ public class ToolUtils {
 
     }
 
+    public static CharSequence getApplicationLabel(Context context, String pkgName){
+        try {
+            PackageManager pm = context.getPackageManager();
+            ApplicationInfo appInfo = pm.getApplicationInfo(pkgName, PackageManager.GET_META_DATA);
+            return pm.getApplicationLabel(appInfo);
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static boolean checkAppInstalled( Context context, String pkgName) {
         if (pkgName== null || pkgName.isEmpty()) {
             return false;

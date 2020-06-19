@@ -7,7 +7,7 @@ public class CrashReciverApplication extends Application {
 
     @Override
     public void onCreate() {
-//        CrashReport.initCrashReport(getApplicationContext(), "e1a21830b6", false);
+        CrashReport.initCrashReport(getApplicationContext(), "e1a21830b6", false);
         super.onCreate();
 
     }

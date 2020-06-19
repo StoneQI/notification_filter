@@ -42,8 +42,10 @@ import com.stone.notificationfilter.notificationhandler.databases.NotificationIn
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
 import com.stone.notificationfilter.notificationhandler.databases.SystemBaseHandler;
 import com.stone.notificationfilter.util.Actioner;
+import com.stone.notificationfilter.util.PackageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
+import com.stone.notificationfilter.util.ToolUtils;
 
 
 import java.io.IOException;
@@ -61,22 +63,25 @@ import java.util.regex.PatternSyntaxException;
 public class NotificationService extends NotificationListenerService {
     private final static  String TAG ="NotificationService";
 
+    private static String GROUP_KEY_NOTIFI_STROE = "com.stone.GROUP_KEY_NOTIFI_STROE";
+
+
     public static boolean isStartListener = true;
     public static  boolean isCancalSystemNotification = false;
 
     private NotificationHandlerItemFileStorage notificationHandlerItemFileStorage;
 
-    private ArrayList<NotificationFilterEntity> systemNotificationMatchers= new ArrayList<NotificationFilterEntity>();
 
-    private ArrayList<NotificationHandlerItem> systemNotificationHandler;
     private ArrayList<NotificationHandlerItem> notificationHandlerItems;
 
-    private List<NotificationFilterEntity> customNotificationMatchers= null;
+
     public static Set<String> selectAppList = null;
 //    True为白名单， false为黑名单
     public static  boolean appListMode = false;
     private boolean isSceenLock =false;
     private NotificationInfo notificationInfo=null;
+
+    private static int NOTIFICATIONID = 0;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler(){
@@ -90,6 +95,11 @@ public class NotificationService extends NotificationListenerService {
     public void onCreate() {
         super.onCreate();
         isStartListener = true;
+        reloadData();
+        createNotificationChannel();
+        if (SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_show", true)){
+            addForegroundNotification();
+        }
         Log.e(TAG,"service create");
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
@@ -104,6 +114,7 @@ public class NotificationService extends NotificationListenerService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG,"onStartCommand create");
         reloadData();
+        createNotificationChannel();
         if (SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_show", true)){
             addForegroundNotification();
         }
@@ -142,8 +153,9 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(final StatusBarNotification sbn) {
         Log.i(TAG,"onNotificationPosted:"+isStartListener);
+
         if (!isStartListener){
-            super.onNotificationPosted(sbn);
+//            super.onNotificationPosted(sbn);
             return;
         }
         if(selectAppList.size()>1){
@@ -168,6 +180,14 @@ public class NotificationService extends NotificationListenerService {
         }catch (Exception e){
             e.printStackTrace();
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            if (!TextUtils.isEmpty(notificationInfo.ChannelID) && notificationInfo.ChannelID.equals(NOTIFICATION_CHANNEL_ID)) {
+//            super.onNotificationPosted(sbn);
+                return;
+            }
+        }
+        notificationRestore(notificationInfo);
         isCancalSystemNotification =false;
         for(NotificationHandlerItem notificationHandlerItem:notificationHandlerItems){
             try {
@@ -249,9 +269,14 @@ public class NotificationService extends NotificationListenerService {
         notificationInfo.packageName = sbn.getPackageName();
         notificationInfo.largeIcon = sbn.getNotification().getLargeIcon();
         notificationInfo.smallIcon = sbn.getNotification().getSmallIcon();
-        notificationInfo.title = extras.getString(android.app.Notification.EXTRA_TITLE);
-        notificationInfo.content = extras.getString(android.app.Notification.EXTRA_TEXT);
+        notificationInfo.title = extras.getString(Notification.EXTRA_TITLE);
+        notificationInfo.content = extras.getString(Notification.EXTRA_TEXT);
         notificationInfo.intent = sbn.getNotification().contentIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationInfo.ChannelID = notification.getChannelId();
+        }
+//        notificationInfo.ChannelID = extras.getString(Notification.EXTRA_CHANNEL_ID);
+        notificationInfo.ChannelGROUPID = extras.getString(Notification.EXTRA_CHANNEL_GROUP_ID);
 
         PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
         Notification.Action[] action = notification.actions;
@@ -349,8 +374,47 @@ public class NotificationService extends NotificationListenerService {
                 floatingTile.run();
     }
 
+    public  void notificationRestore(NotificationInfo notificationInfo){
+
+        if (!notificationInfo.isClearable){
+            return;
+        }
+        if (notificationInfo.content == null && notificationInfo.title==null) {
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (!TextUtils.isEmpty(notificationInfo.packageName) && notificationInfo.packageName.equals("com.stone.notificationfilter")){
+                return;
+            }
+        }
+        NotificationManager notificationManager =
+                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (NOTIFICATIONID > 8){
+            notificationManager.cancel(NOTIFICATIONID-8);
+        }
+
+
+
+
+        String AppName = (String) ToolUtils.getApplicationLabel(getApplicationContext(),notificationInfo.packageName);
+        Notification newMessageNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(AppName+":"+notificationInfo.title)
+                .setLargeIcon(PackageUtil.drawable2Bitmap(notificationInfo.smallIcon.loadDrawable(getApplicationContext())))
+                .setContentText(notificationInfo.content)
+                .setContentIntent(notificationInfo.intent)
+                .setGroup(GROUP_KEY_NOTIFI_STROE)
+                .build();
+//        notify();
+        notificationManager.notify(NOTIFICATIONID++,newMessageNotification);
+
+    }
+
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
+
         super.onNotificationRemoved(sbn);
     }
     private RemoteViews mRemoteViews;
@@ -361,29 +425,38 @@ public class NotificationService extends NotificationListenerService {
 
 
     private void addForegroundNotification() {
-        createNotificationChannel();
 
-        mRemoteViews = new RemoteViews(getPackageName(),R.layout.notification_custom_layout);
-        notificationCustomRemoteVIew();
+//        mRemoteViews = new RemoteViews(getPackageName(),R.layout.notification_custom_layout);
+//        notificationCustomRemoteVIew();
 
-        PendingIntent homeIntent = PendingIntent.getBroadcast(this,1,new Intent(NOTIFICATION_FILTER_START_INTENT),PendingIntent.FLAG_UPDATE_CURRENT);
-        mRemoteViews.setOnClickPendingIntent(R.id.notification_filter_start,homeIntent);
+//        PendingIntent homeIntent = PendingIntent.getBroadcast(this,1,new Intent(NOTIFICATION_FILTER_START_INTENT),PendingIntent.FLAG_UPDATE_CURRENT);
+//        mRemoteViews.setOnClickPendingIntent(R.id.notification_filter_start,homeIntent);
 
         String contentText = "通知处理器开启运行中...";
 
-        Intent msgIntent = getStartAppIntent(getApplicationContext());
-        PendingIntent mainPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                msgIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        Intent msgIntent = getStartAppIntent(getApplicationContext());
+//        PendingIntent mainPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+//                msgIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setOngoing(true)
-                .setCustomContentView(mRemoteViews)
+                .setContentTitle("当前没有存储的通知")
+                //set content text to support devices running API level < 24
+
+//                .setCustomContentView(mRemoteViews)
                 .setWhen(System.currentTimeMillis())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setTicker(contentText)
-                .setContentIntent(mainPendingIntent)
+//                .setTicker(contentText)
+//                .setContentIntent(mainPendingIntent)
+                .setGroup(GROUP_KEY_NOTIFI_STROE)
+                .setGroupSummary(true)
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .setSummaryText(contentText))
                 .setAutoCancel(false);
+
+
+
 
         startForeground(MANAGER_NOTIFICATION_ID, mBuilder.build());
     }

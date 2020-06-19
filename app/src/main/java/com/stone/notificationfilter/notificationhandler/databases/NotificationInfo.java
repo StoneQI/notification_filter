@@ -6,6 +6,8 @@ import android.graphics.drawable.Icon;
 import android.widget.RemoteViews;
 
 public class NotificationInfo {
+
+
     public NotificationInfo(int ID, String key, long postTime) {
         this.ID = ID;
         this.key = key;
@@ -27,6 +29,8 @@ public class NotificationInfo {
     public RemoteViews remoteViews;
     public Notification notification=null;
     public int sceenStatus;
+    public String ChannelID;
+    public String ChannelGROUPID;
 
 
     public String getAttribute(String attributeName){

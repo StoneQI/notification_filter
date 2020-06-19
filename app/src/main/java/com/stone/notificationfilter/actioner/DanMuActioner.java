@@ -2,6 +2,7 @@ package com.stone.notificationfilter.actioner;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,9 +23,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.view.animation.Interpolator;
+import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +99,13 @@ public class DanMuActioner {
 //        setSceneOrientation(context);
 
         view = View.inflate(context, R.layout.window_float_danmu, null);
+
+//        RelativeLayout relativeLayout = new RelativeLayout(null);
+//        RelativeLayout.LayoutParams = new
+//        relativeLayout.addView(view);
+
+
+
 //        layoutParams.windowAnimations =R.style.PopupFloatTiltAnimLeft;
 
 
@@ -220,23 +232,28 @@ public class DanMuActioner {
 
     }
     public void addViewToWindow() {
-//        String showDirection = SpUtil.getString(context,"appSettings","floattitle_tileDirection","down");
-//        String showDirection = SpUtil.getSp(context,"appSettings").getString("floattitle_tileDirection", "down");
-//        int tempPosttion =-1;
-
         Random random = new Random();
-//        random.nextFloat();
-        layoutParams.y = random.nextInt(3)*(viewHeight+9)+20;
+        layoutParams.y = random.nextInt(4)*(viewHeight+9)+60;
         layoutParams.x = mScreenWidth;
-//        int mostShowNum = Integer.parseInt(SpUtil.getString(context,"appSettings","floattitle_tileShowNum", "4"));
-//        if(TileObject.showTileNum < mostShowNum){
-//            showID = TileObject.getNextPosition();
-//            if(showID != -1){
-//                if (showDirection.equals("up")) {
-//                    layoutParams.y = layoutParams.y - (viewHeight + 18)*showID;
-//                } else {
-//                    layoutParams.y = layoutParams.y + (viewHeight + 18)*showID;
-//                }
+
+        layoutParams.windowAnimations = R.style.DanMuMoveTiltAnim;
+
+//        Animation translateAnimation = new TranslateAnimation( mScreenWidth,-viewWidth,layoutParams.y,layoutParams.y);
+//        // 步骤2：创建平移动画的对象：平移动画对应的Animation子类为TranslateAnimation
+//        // 参数分别是：
+//        // 1. fromXDelta ：视图在水平方向x 移动的起始值
+//        // 2. toXDelta ：视图在水平方向x 移动的结束值
+//        // 3. fromYDelta ：视图在竖直方向y 移动的起始值
+//        // 4. toYDelta：视图在竖直方向y 移动的结束值
+//
+//        translateAnimation.setDuration(5000);
+//        // 固定属性的设置都是在其属性前加“set”，如setDuration（）
+//
+//        view.startAnimation(translateAnimation);
+
+        view.setLayerType(View.LAYER_TYPE_HARDWARE,null);
+//        layoutParams.layoutAnimationParameters = controller;
+//        w
 
 
 
@@ -246,24 +263,44 @@ public class DanMuActioner {
                         try {
                             windowManager.addView(view, layoutParams);
 
-                            valueAnimator = ValueAnimator.ofInt(0,mScreenWidth+viewWidth);
-                            valueAnimator.setDuration(8000);
-                            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            TimerTask timerTask = new TimerTask(){
                                 @Override
-                                public void onAnimationUpdate(ValueAnimator animation) {
-                                    mResetUpdateX = (int) animation.getAnimatedValue();
-                                    mHandler.post(updatePositionRunnable);
-
+                                public void run() {
+                                    if (isOpen){
+                                        removeTile();
+                                    }
                                 }
-                            });
-                            valueAnimator.addListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    mHandler.post(removeViewRunnable);
-                                    super.onAnimationEnd(animation);
-                                }
-                            });
-                            valueAnimator.start();
+                            };
+                            mtimer =new Timer();
+                            mtimer.schedule(timerTask,10000);
+//                            valueAnimator = ValueAnimator.ofInt(0,mScreenWidth+viewWidth);
+////                            valueAnimator.setInterpolator(TimeInterpolator);
+//                            valueAnimator.setDuration(8000);
+////                            valueAnimator.setPersistentDrawingCache（PERSISTENT_ANIMATION_CACHE）
+//                            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                                @Override
+//                                public void onAnimationUpdate(ValueAnimator animation) {
+//                                    mResetUpdateX = (int) animation.getAnimatedValue();
+//                                    layoutParams.x = mScreenWidth-mResetUpdateX;
+//                                    if (layoutParams.x == -viewWidth){
+//                                        removeTile();
+//                                        valueAnimator.cancel();
+//                                        return;
+//                                    }
+//                                    windowManager.updateViewLayout(view,layoutParams);
+//
+////                                    mHandler.post(updatePositionRunnable);
+//
+//                                }
+//                            });
+//                            valueAnimator.addListener(new AnimatorListenerAdapter() {
+//                                @Override
+//                                public void onAnimationEnd(Animator animation) {
+//                                    mHandler.post(removeViewRunnable);
+//                                    super.onAnimationEnd(animation);
+//                                }
+//                            });
+//                            valueAnimator.start();
                         } catch (WindowManager.BadTokenException e) {
                             // 无悬浮窗权限
                             e.printStackTrace();
@@ -292,11 +329,6 @@ public class DanMuActioner {
     private void updateView(){
 //        Log.e(TAG, "mResetUpdateX : "+mResetUpdateX);
 //        Log.e(TAG, "x : "+String.valueOf(layoutParams.x));
-            layoutParams.x = mScreenWidth-mResetUpdateX;
-            if (layoutParams.x == -viewWidth){
-                removeTile();
-                return;
-            }
 
             try {
                 windowManager.updateViewLayout(view,layoutParams);

@@ -55,7 +55,7 @@
         android:defaultValue="false"
         android:key="notification_show"
         android:dependency="start_service"
-        android:summary="在通知栏显示一条通知以防止进程关闭"
+        android:summary="在通知栏显示一条通知以防止进程关闭,并显示最近8条通知"
         android:title="通知栏保活" />
         <SwitchPreference
             android:defaultValue="false"
