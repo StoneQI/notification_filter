@@ -20,6 +20,8 @@ android {
         versionName "0.9.7.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "releaseTime", "\"" + new Date().format("yyyy-MM-dd HH:mm:ss") + "\"")
+        multiDexEnabled true
+        signingConfig signingConfigs.release
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -84,5 +86,10 @@ dependencies {
 //    implementation 'me.codego.view:round-layout:1.0@aar'
     implementation 'skin.support:skin-support:3.1.4'
     implementation 'com.github.Corey-Jia:RCLayout:1.0.5'
+
+    //gif 播放
+//    implementation 'com.github.nguyenhoanglam:ImagePicker:1.4.2'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
 }

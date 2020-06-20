@@ -28,7 +28,7 @@ public class SystemBaseHandler {
                 "下载",false));
 
         notificationHandlerItem.notificationPatterItems = notificationPatterItems;
-        notificationHandlerItem.actioner = 2;
+        notificationHandlerItem.actioner = 1;
         notificationHandlerItem.breakDown =true;
 
         notificationHandlerItems.add(notificationHandlerItem);
@@ -43,7 +43,7 @@ public class SystemBaseHandler {
         strings.add("com.netease.cloudmusic");
         strings.add("com.tencent.qqmusic");
         notificationHandlerItem2.packageNames =strings;
-        notificationHandlerItem2.actioner = 7;
+        notificationHandlerItem2.actioner = 6;
         notificationHandlerItem2.breakDown =true;
         notificationHandlerItems.add(notificationHandlerItem2);
 
@@ -56,7 +56,7 @@ public class SystemBaseHandler {
         strings2.add("com.tencent.tim");
         strings2.add("com.tencent.mm");
         notificationHandlerItem3.packageNames =strings2;
-        notificationHandlerItem3.actioner = 6;
+        notificationHandlerItem3.actioner = 5;
         notificationHandlerItem3.breakDown =false;
         notificationHandlerItems.add(notificationHandlerItem3);
 
@@ -75,7 +75,7 @@ public class SystemBaseHandler {
                 "regex",
                 "^(?!.*?个联系人给你发过来).*$",true));
         notificationHandlerItem4.notificationPatterItems = notificationPatterItems4;
-        notificationHandlerItem4.actioner = 6;
+        notificationHandlerItem4.actioner = 5;
         notificationHandlerItem4.breakDown =false;
         notificationHandlerItems.add(notificationHandlerItem4);
 
@@ -84,7 +84,7 @@ public class SystemBaseHandler {
             notificationHandlerItem5.orderID = 5;
             notificationHandlerItem5.name = "横屏弹幕通知";
             notificationHandlerItem5.sceen_status_on =2 ;
-            notificationHandlerItem5.actioner = 8;
+            notificationHandlerItem5.actioner = 7;
             notificationHandlerItem5.breakDown =true;
             notificationHandlerItems.add(notificationHandlerItem5);
         }
