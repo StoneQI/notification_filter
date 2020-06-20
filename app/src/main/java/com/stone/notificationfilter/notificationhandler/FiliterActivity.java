@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
+import com.stone.notificationfilter.BaseActivity;
 import com.stone.notificationfilter.notificationhandler.AddFiliterActivity;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDao;
@@ -48,7 +50,7 @@ import java.util.List;
 //import android.support.annotation.Nullable;
 //import android.support.v7.app.AppCompatActivity;
 
-public class FiliterActivity extends AppCompatActivity {
+public class FiliterActivity extends BaseActivity {
     private final static  String TAG ="FiliterActivity";
 //    private NotificationFilterDao notificationFilterDao =null;
 //    private String filiter_path = "";
@@ -59,8 +61,8 @@ public class FiliterActivity extends AppCompatActivity {
 //    private static ArrayAdapter<String> adapter = null;
     private RecyclerView mRecyclerView;
 //    private View view =null;
-
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filiter_fragment);
 

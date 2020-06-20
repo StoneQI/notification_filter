@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/window_root_lay"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="#eeFFFFFF"
+    app:cardElevation="3dp"
+    app:cardCornerRadius="7dp"
+    android:theme="@style/Theme.MaterialComponents.DayNight"
+    android:gravity="center_vertical">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="2dp"
+>             <com.cbman.roundimageview.RoundImageView
+                    android:id="@+id/window_icon_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:scaleType="centerCrop"
+                    app:borderWidth="0dp"
+                    android:alpha="0.8"
+                    app:displayBorder="false"
+                    app:displayType="round_rect"
+                    app:radius="7dp" />
+
+                <LinearLayout
+                    android:id="@+id/window_messgae_lay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|start"
+                    android:orientation="vertical"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="3dp"
+                    android:visibility="visible">
+
+                        <com.stone.notificationfilter.widget.ScrollTextView
+                            android:id="@+id/window_title_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="#000000" />
+
+                        <com.stone.notificationfilter.widget.ScrollTextView
+                            android:id="@+id/window_content_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="#FF757575"
+                             />
+
+
+                </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

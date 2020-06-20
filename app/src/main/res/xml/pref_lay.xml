@@ -55,7 +55,7 @@
         android:defaultValue="false"
         android:key="notification_show"
         android:dependency="start_service"
-        android:summary="在通知栏显示一条通知以防止进程关闭"
+        android:summary="在通知栏显示一条通知以防止进程关闭,并显示最近8条通知"
         android:title="通知栏保活" />
         <SwitchPreference
             android:defaultValue="false"
@@ -75,6 +75,13 @@
             android:key="select_applist"
             android:title="选择匹配应用"
             android:summary="修改后，重新关闭开启服务才能生效"/>
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="portrait_danmu_mode"
+        android:dependency="start_service"
+        android:summary="横屏时，以弹幕模式展示通知，不可点击"
+        android:title="横屏弹幕模式" />
 <!--        <Preference-->
 <!--            android:key="todoNotification"-->
 <!--            android:title="通知栏待办" />-->
@@ -89,6 +96,12 @@
 
     <PreferenceCategory
                 android:title="浮动通知处理器设置"/>
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="message_replay"
+                android:summary="开启后可下划微信快捷回复和长按打开小窗模式,小窗模式由于系统原因不一定生效"
+                android:title="微信快捷回复" />
 
                 <EditTextPreference
                     android:key="floattitle_tileShowNum"

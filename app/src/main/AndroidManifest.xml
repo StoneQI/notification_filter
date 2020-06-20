@@ -4,60 +4,77 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERNET" />
+<!--    <uses-permission android:name="android.permission.READ_LOGS" />-->
 
     <application
+        android:name=".CrashReciverApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/network_security_config" />
 
-
-        <activity android:name="com.stone.notificationfilter.MainActivity"
-            android:configChanges = "keyboardHidden|orientation|screenSize">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
-        <activity android:name="com.stone.notificationfilter.notificationhandler.FiliterActivity"></activity>
-        <activity android:name="com.stone.notificationfilter.notificationhandler.AddFiliterActivity"></activity>
-
-        <activity android:name="com.stone.notificationfilter.FiliterActivity"></activity>
-
-        <activity android:name="com.stone.notificationfilter.fragment.FloatTileCustomView"></activity>
-        <activity android:name="com.stone.notificationfilter.AddFiliterActivity"></activity>
-        <activity android:name="com.stone.notificationfilter.CheckNotificationLogActivity"></activity>
-        <activity android:name="com.stone.notificationfilter.Donate" />
+        <activity android:name=".notificationhandler.FiliterActivity" />
+        <activity android:name=".notificationhandler.AddFiliterActivity" />
+        <activity android:name=".FiliterActivity" />
+        <activity android:name=".fragment.FloatTileCustomViewActivity" />
+        <activity android:name=".AddFiliterActivity" />
+        <activity android:name=".CheckNotificationLogActivity" />
+        <activity android:name=".Donate" />
 
         <service
-            android:name="com.stone.notificationfilter.NotificationService"
+            android:name=".NotificationService"
             android:label="@string/app_name"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            >
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
-<!--            <intent-filter android:priority="1000" />-->
+            <!-- <intent-filter android:priority="1000" /> -->
         </service>
         <service
             android:name=".NotificationTileService"
+            android:description="@string/app_name"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
-            android:description="@string/app_name"
-            android:splitName="@string/app_name"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:splitName="@string/app_name">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
-        <service android:name=".util.NotificationCollectorMonitorService"/>
+        <service android:name=".util.NotificationCollectorMonitorService" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.stone.notificationfilter.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
     </application>
 
 </manifest>

@@ -36,18 +36,18 @@ public class FloatNotificationItem {
         this.contextWeakReference = new WeakReference<>(context);
         final LinearLayout messageLay = view.findViewById(R.id.window_messgae_lay);
         ImageView imageView = view.findViewById(R.id.window_icon_img);
-        if (this.notificationInfo.getLargeIcon() ==null){
-            imageView.setImageDrawable(PackageUtil.getAppIconFromPackname(context, this.notificationInfo.getPackageName()));
+        if (this.notificationInfo.largeIcon ==null){
+            imageView.setImageDrawable(PackageUtil.getAppIconFromPackname(context, this.notificationInfo.packageName));
         } else {
-            imageView.setImageIcon(this.notificationInfo.getLargeIcon());
+            imageView.setImageIcon(this.notificationInfo.largeIcon);
         }
 
         final TextView titleText = view.findViewById(R.id.window_title_text);
         final TextView contentText = view.findViewById(R.id.window_content_text);
-        titleText.setText(this.notificationInfo.getTitle());
-        contentText.setText(this.notificationInfo.getContent());
+        titleText.setText(this.notificationInfo.title);
+        contentText.setText(this.notificationInfo.content);
 
-        intent = this.notificationInfo.getIntent();
+        intent = this.notificationInfo.intent;
         int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         view.measure(width, height);

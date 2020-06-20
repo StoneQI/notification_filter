@@ -32,7 +32,7 @@ import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilte
 import java.util.ArrayList;
 import java.util.List;
 
-public class FiliterActivity extends AppCompatActivity {
+public class FiliterActivity extends BaseActivity {
     private final static  String TAG ="FiliterActivity";
     private NotificationFilterDao notificationFilterDao =null;
 //    private String filiter_path = "";

@@ -122,8 +122,8 @@ public class AddFiliterActivity extends BaseActivity {
             filter_content_replace.setText(notificationFiliter.contextFiliterReplace);
             packageNames  = (notificationFiliter.packageNames);
             isBreak.setChecked(notificationFiliter.breakDown);
-            actioner.setSelection(notificationFiliter.actioner);
-            sceen_status_on.setSelection(notificationFiliter.sceen_status_on);
+            actioner.setSelection(notificationFiliter.actioner,true);
+            sceen_status_on.setSelection(notificationFiliter.sceen_status_on,true);
 
         }else {
             update_notification.setText("添加");
