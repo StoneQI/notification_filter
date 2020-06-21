@@ -1,29 +1,32 @@
-package com.stone.notificationfilter;
+package com.stone.notificationfilter.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
+import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDao;
 import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDataBase;
 import com.stone.notificationfilter.entitys.notificationitem.NotificationItemEntity;
-//import com.lingc.nfloatingtile.notificationlog.adapters.NotificationLogAdapter;
 import com.stone.notificationfilter.notificationlog.adapters.NotificationLogSwipeAdapter;
 import com.stone.notificationfilter.notificationlog.objects.NotificationLogItem;
 import com.stone.notificationfilter.util.PackageUtil;
@@ -32,7 +35,13 @@ import com.stone.notificationfilter.util.TimeUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CheckNotificationLogActivity extends BaseActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link NotificationLogFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class NotificationLogFragment extends Fragment {
+
     private final static  String TAG ="CheckNotificActivity";
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
     private RecyclerView mRecyclerView;
@@ -41,6 +50,16 @@ public class CheckNotificationLogActivity extends BaseActivity {
 
 
     private NotificationItemDao notificationItemDao;
+
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+    private View view;
 
     @SuppressLint("HandlerLeak")
     private Handler handler =new Handler(){
@@ -51,12 +70,12 @@ public class CheckNotificationLogActivity extends BaseActivity {
             super.handleMessage(msg);
             pd.dismiss();
             if(notificationItemEntities ==null || notificationItemEntities.size()==0){
-                findViewById(R.id.no_log_data).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.no_log_data).setVisibility(View.VISIBLE);
                 return;
             }else
             {
                 mRecyclerView.removeAllViews();
-                findViewById(R.id.no_log_data).setVisibility(View.GONE);
+                view.findViewById(R.id.no_log_data).setVisibility(View.GONE);
             }
             final ArrayList<NotificationLogItem> notificationLogItemList = new ArrayList<>();
             for (NotificationItemEntity notificationItemEntity: notificationItemEntities) {
@@ -67,10 +86,10 @@ public class CheckNotificationLogActivity extends BaseActivity {
                 notificationLogItem.mContent = notificationItemEntity.content;
                 notificationLogItem.mPostTime = TimeUtil.getStrTime(notificationItemEntity.postTime);
                 notificationLogItem.mTitle = notificationItemEntity.title;
-                Drawable appicon = PackageUtil.getAppIconFromPackname(getApplicationContext(),notificationItemEntity.packageName);
+                Drawable appicon = PackageUtil.getAppIconFromPackname(getContext(),notificationItemEntity.packageName);
                 if (appicon ==null)
                 {
-                    appicon = getDrawable(R.drawable.ic_launcher_foreground);
+                    appicon = getActivity().getDrawable(R.drawable.ic_launcher_foreground);
                 }
                 notificationLogItem.setAppIcon(appicon);
                 notificationLogItemList.add(notificationLogItem);
@@ -81,7 +100,7 @@ public class CheckNotificationLogActivity extends BaseActivity {
                 public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
                     Log.e(TAG,String.valueOf(pos));
                     if(notificationItemDao ==null){
-                        NotificationItemDataBase db =NotificationItemDataBase.getInstance(getApplicationContext());
+                        NotificationItemDataBase db =NotificationItemDataBase.getInstance(getContext());
                         notificationItemDao = db.NotificationItemDao();
                     }
                     datele_id = notificationLogItemList.get(pos).id;
@@ -121,21 +140,68 @@ public class CheckNotificationLogActivity extends BaseActivity {
             NotificationLogSwipeAdapter notificationLogSwipeAdapter = new NotificationLogSwipeAdapter(notificationLogItemList);
             notificationLogSwipeAdapter.getDraggableModule().setOnItemSwipeListener(onItemSwipeListener);
             notificationLogSwipeAdapter.getDraggableModule().setOnItemDragListener(onItemDragListener);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             mRecyclerView.setAdapter(notificationLogSwipeAdapter);
-            
+
         }
     };
 
+
+    public NotificationLogFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment NotificationLogFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static NotificationLogFragment newInstance(String param1, String param2) {
+        NotificationLogFragment fragment = new NotificationLogFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    protected void onResume() {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        view = inflater.inflate(R.layout.fragment_notification_log, container, false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
         if(notificationItemDao ==null){
-            NotificationItemDataBase db =NotificationItemDataBase.getInstance(getApplicationContext());
+            NotificationItemDataBase db =NotificationItemDataBase.getInstance(getContext());
             notificationItemDao = db.NotificationItemDao();
         }
 
-        pd= ProgressDialog.show(CheckNotificationLogActivity.this, "加载数据", "Loading…");
+        pd= ProgressDialog.show(getActivity(), "加载数据", "Loading…");
         new Thread(){
             public void run(){
                 notificationItemEntities = notificationItemDao.loadAllDESC();
@@ -146,20 +212,9 @@ public class CheckNotificationLogActivity extends BaseActivity {
 
     }
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.check_notificarion_log_activity);
-        Toolbar mToolBar = (Toolbar) findViewById(R.id.toolbar_main);
-        setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("日志记录");
-        mRecyclerView = findViewById(R.id.recycler_view);
 
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.check_log_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.check_log_menu, menu);
         return true;
     }
     @Override
@@ -169,11 +224,11 @@ public class CheckNotificationLogActivity extends BaseActivity {
         int id = item.getItemId();
         if (id == R.id.delete_all_notification) {
             if(notificationItemDao ==null){
-                NotificationItemDataBase db =NotificationItemDataBase.getInstance(getApplicationContext());
+                NotificationItemDataBase db =NotificationItemDataBase.getInstance(getContext());
                 notificationItemDao = db.NotificationItemDao();
             }
 
-            pd= ProgressDialog.show(CheckNotificationLogActivity.this, "删除数据", "Loading…");
+            pd= ProgressDialog.show(getActivity(), "删除数据", "Loading…");
             new Thread(){
                 public void run(){
                     notificationItemDao.deleteAll();

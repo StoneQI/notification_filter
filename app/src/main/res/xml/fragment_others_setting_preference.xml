@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="复制通知处理器设置"/>
+
+    <ListPreference
+        android:key="copyactioner_select_mode"
+        android:defaultValue="up"
+        android:entries="@array/array_copyactioner_select_mode"
+        android:entryValues="@array/array_copyactioner_select_mode_values"
+        android:title="复制内容" />
+
+    <PreferenceCategory
+        android:title="立即运行通知处理器设置"/>
+
+    <EditTextPreference
+        android:key="runintenactioner_time"
+        android:summary="多久后触发点击事件"
+        android:inputType="number"
+        android:defaultValue="1"
+        android:title="延时时长(毫秒)" />
+
+
+    <PreferenceCategory
+        android:title="声音提醒通知处理器设置"/>
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="on_sound_message"
+        android:summary="声音提醒总开关，开启后规则中的声音提醒通知处理器才生效，默认开启微信通知和TIM通知"
+        android:title="声音提醒" />
+    <PreferenceCategory
+        android:title="通知悬浮处理器设置"/>
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="on_notification_float_message"
+        android:summary="通知悬浮处理器总开关，开启后规则中的通知悬浮处理器才生效，一般用于音乐控制，默认开启网易云音乐和QQ音乐"
+        android:title="通知悬浮处理器" />
+
+</PreferenceScreen>

@@ -27,6 +27,7 @@
             android:name="com.google.android.actions"
             android:resource="@xml/network_security_config" />
 
+
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
@@ -36,13 +37,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".notificationhandler.FiliterActivity" />
-        <activity android:name=".notificationhandler.AddFiliterActivity" />
-        <activity android:name=".FiliterActivity" />
-        <activity android:name=".fragment.FloatTileCustomViewActivity" />
-        <activity android:name=".AddFiliterActivity" />
-        <activity android:name=".CheckNotificationLogActivity" />
-        <activity android:name=".Donate" />
+
+<!--        <activity-->
+<!--            android:name=".MainActivity"-->
+<!--            android:configChanges="keyboardHidden|orientation|screenSize">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
 
         <service
             android:name=".NotificationService"

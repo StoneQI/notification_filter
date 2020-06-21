@@ -1,34 +1,42 @@
 package com.stone.notificationfilter.fragment;
 
 import android.graphics.Color;
-import android.graphics.Outline;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-
 import com.cbman.roundimageview.RoundImageView;
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
-import com.stone.notificationfilter.BaseActivity;
 import com.stone.notificationfilter.R;
-import com.stone.notificationfilter.actioner.floatmessagereply.FloatMessageReply;
 import com.stone.notificationfilter.util.SpUtil;
-import com.tencent.bugly.crashreport.CrashReport;
 
-//import me.codego.view.RoundLayout;
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link FloatTileCustomViewFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class FloatTileCustomViewFragment extends Fragment implements ColorPickerDialogListener {
 
-public class FloatTileCustomViewActivity extends BaseActivity implements ColorPickerDialogListener{
-    private View view;
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+
+    private View floatTileView;
 
     private int iconWidthHeightValue=-1;
     private int iconTypeValue=-1;
@@ -43,54 +51,80 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
     private int rootLayRidusValue=-1;
     private int rootLayColorValue=-1;
 
-//    private RoundLayout rootLayout;
+    //    private RoundLayout rootLayout;
     private TextView titleText;
     private TextView contentText;
     private RoundImageView imageIcon;
     private ViewGroup.LayoutParams imageIconLayoutParams;
 
-    public FloatTileCustomViewActivity() {
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
+    public FloatTileCustomViewFragment() {
+        // Required empty public constructor
     }
 
-
-
-
-
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment FloatTileCustomViewFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static FloatTileCustomViewFragment newInstance(String param1, String param2) {
+        FloatTileCustomViewFragment fragment = new FloatTileCustomViewFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.float_window_tile_style_custom);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
 
-//        CrashReport.testJavaCrash();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_float_tile_custom_view, container, false);
+    }
 
-        Toolbar mToolBar = (Toolbar) findViewById(R.id.toolbar_main);
-        setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("磁贴样式自定义");
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+        LinearLayout layout = view.findViewById(R.id.float_window_tile_view);
+        floatTileView = View.inflate(getContext(), R.layout.window_lay_right, null);
 
-        LinearLayout layout = findViewById(R.id.float_window_tile_view);
-        view = View.inflate(getApplicationContext(), R.layout.window_lay_right, null);
+        layout.addView(floatTileView);
 
-        layout.addView(view);
-
-//        rootLayout = view.findViewById(R.id.window_root_lay);
-        final LinearLayout messageLay = view.findViewById(R.id.window_messgae_lay);
-//        final LinearLayout message_content = view.findViewById(R.id.message_content);
-        imageIcon = view.findViewById(R.id.window_icon_img);
+//        rootLayout = view.view.findViewById(R.id.window_root_lay);
+        final LinearLayout messageLay = floatTileView.findViewById(R.id.window_messgae_lay);
+//        final LinearLayout message_content = view.view.findViewById(R.id.message_content);
+        imageIcon = floatTileView.findViewById(R.id.window_icon_img);
 //        rootLayout
         imageIcon.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher_gray,null));
         imageIconLayoutParams = imageIcon.getLayoutParams();
 
 
-        titleText = view.findViewById(R.id.window_title_text);
-        contentText = view.findViewById(R.id.window_content_text);
+        titleText = floatTileView.findViewById(R.id.window_title_text);
+        contentText = floatTileView.findViewById(R.id.window_content_text);
         titleText.setText("调整样式");
         contentText.setText("根据下列选项调整磁贴样式");
         initView();
 
-        SeekBar iconWIdthHeigtSeekBar = findViewById(R.id.icon_widthHeight);
-        iconWIdthHeigtSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        SeekBar iconWidthHeigtSeekBar = view.findViewById(R.id.icon_widthHeight);
+        iconWidthHeigtSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 imageIconLayoutParams.width=progress;
@@ -110,7 +144,7 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
             }
         });
 
-        SeekBar titleTextSizeSeekBar = findViewById(R.id.titleTextSize);
+        SeekBar titleTextSizeSeekBar = view.findViewById(R.id.titleTextSize);
         titleTextSizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -124,12 +158,12 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                    titleTextSizeValue = seekBar.getProgress();
+                titleTextSizeValue = seekBar.getProgress();
             }
         });
 
 
-        final Spinner icon_type = (Spinner) findViewById(R.id.icon_type);
+        final Spinner icon_type = (Spinner) view.findViewById(R.id.icon_type);
 
         icon_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -150,7 +184,7 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
         });
 
 
-        TextView titleTextColor = findViewById(R.id.title_text_color);
+        TextView titleTextColor = view.findViewById(R.id.title_text_color);
         titleTextColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,12 +193,12 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
                         .setDialogId(R.id.title_text_color)
                         .setColor(Color.BLACK)
                         .setShowAlphaSlider(true)
-                        .show(FloatTileCustomViewActivity.this);
+                        .show(getActivity());
             }
         });
 
 
-        TextView contentTextColor = findViewById(R.id.content_text_color);
+        TextView contentTextColor = view.findViewById(R.id.content_text_color);
         contentTextColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,12 +207,12 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
                         .setDialogId(R.id.content_text_color)
                         .setColor(Color.BLACK)
                         .setShowAlphaSlider(true)
-                        .show(FloatTileCustomViewActivity.this);
+                        .show(getActivity());
 
             }
         });
 
-////        TextView rootLayColor = findViewById(R.id.root_lay_color);
+////        TextView rootLayColor = view.findViewById(R.id.root_lay_color);
 //        rootLayColor.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -187,12 +221,12 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
 //                        .setDialogId(R.id.root_lay_color)
 //                        .setColor(Color.BLACK)
 //                        .setShowAlphaSlider(true)
-//                        .show(FloatTileCustomViewActivity.this);
+//                        .show(getActivity());
 //
 //            }
 //        });
 
-        SeekBar icon_ridas = findViewById(R.id.icon_ridas);
+        SeekBar icon_ridas = view.findViewById(R.id.icon_ridas);
         icon_ridas.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -211,7 +245,7 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
             }
         });
 
-        SeekBar contextTextSizeSeekBar = findViewById(R.id.contextTextSize);
+        SeekBar contextTextSizeSeekBar = view.findViewById(R.id.contextTextSize);
         contextTextSizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -230,11 +264,11 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
             }
         });
 
-        final SeekBar contextPaddingSeekBar = findViewById(R.id.contextPadding);
+        final SeekBar contextPaddingSeekBar = view.findViewById(R.id.contextPadding);
         contextPaddingSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                view.setPadding(progress,progress,progress,progress);
+                floatTileView.setPadding(progress,progress,progress,progress);
             }
 
             @Override
@@ -250,11 +284,11 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
             }
         });
 
-        final SeekBar rootElevation = findViewById(R.id.rootElevation);
+        final SeekBar rootElevation = view.findViewById(R.id.rootElevation);
         rootElevation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                view.setElevation(progress);
+                floatTileView.setElevation(progress);
             }
 
             @Override
@@ -270,94 +304,88 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
             }
         });
 
-        findViewById(R.id.submit_custom_view).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.submit_custom_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (iconWidthHeightValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconWidthHeightValue",iconWidthHeightValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","iconWidthHeightValue",iconWidthHeightValue);
                 }
                 if (iconTypeValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconTypeValue",iconTypeValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","iconTypeValue",iconTypeValue);
                 }
                 if (iconRidusValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconRidusValue",iconRidusValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","iconRidusValue",iconRidusValue);
                 }
                 if (titleTextSizeValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","titleTextSizeValue",titleTextSizeValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","titleTextSizeValue",titleTextSizeValue);
                 }
                 if (contentTextSizeValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","contentTextSizeValue",contentTextSizeValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","contentTextSizeValue",contentTextSizeValue);
                 }
                 if (rootPaddingValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootPaddingValue",rootPaddingValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","rootPaddingValue",rootPaddingValue);
                 }
                 if (rootElevationValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootElevationValue",iconWidthHeightValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","rootElevationValue",iconWidthHeightValue);
                 }
 
                 if (titleTextColorValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","titleTextColorValue",titleTextColorValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","titleTextColorValue",titleTextColorValue);
                 }
                 if (contentTextColorValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","contentTextColorValue",contentTextColorValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","contentTextColorValue",contentTextColorValue);
                 }
 
                 if (titleTextColorValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayRidusValue",rootLayRidusValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","rootLayRidusValue",rootLayRidusValue);
                 }
                 if (contentTextColorValue != -1){
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayColorValue",rootLayColorValue);
+                    SpUtil.putInt(getContext(),"floatTileCustonView","rootLayColorValue",rootLayColorValue);
                 }
 
-                new AlertDialog.Builder(FloatTileCustomViewActivity.this)
+                new AlertDialog.Builder(getActivity())
                         .setTitle("提示")
                         .setMessage("修改成功")
                         .show();
             }
         });
 
-        findViewById(R.id.reset_custom_view).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.reset_custom_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconWidthHeightValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconTypeValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconRidusValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","titleTextSizeValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","contentTextSizeValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootPaddingValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootElevationValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","titleTextColorValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","contentTextColorValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayRidusValue",-1);
-                    SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayColorValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","iconWidthHeightValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","iconTypeValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","iconRidusValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","titleTextSizeValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","contentTextSizeValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","rootPaddingValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","rootElevationValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","titleTextColorValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","contentTextColorValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","rootLayRidusValue",-1);
+                SpUtil.putInt(getContext(),"floatTileCustonView","rootLayColorValue",-1);
 
 
-                new AlertDialog.Builder(FloatTileCustomViewActivity.this)
+                new AlertDialog.Builder(getActivity())
                         .setTitle("提示")
                         .setMessage("重置成功")
                         .show();
             }
         });
-
-
-
-
-
-
+        super.onViewCreated(view, savedInstanceState);
     }
 
-
     private  void initView(){
-        int iconWidthHeightValue = SpUtil.getInt(this,"floatTileCustonView","iconWidthHeightValue",-1);
-        int iconTypeValue = SpUtil.getInt(this,"floatTileCustonView","iconTypeValue",-1);
-        int iconRidusValue = SpUtil.getInt(this,"floatTileCustonView","iconRidusValue",-1);
-        int titleTextSizeValue = SpUtil.getInt(this,"floatTileCustonView","titleTextSizeValue",-1);
-        int contentTextSizeValue = SpUtil.getInt(this,"floatTileCustonView","contentTextSizeValue",-1);
-        int rootPaddingValue = SpUtil.getInt(this,"floatTileCustonView","rootPaddingValue",-1);
-        int rootElevationValue = SpUtil.getInt(this,"floatTileCustonView","rootElevationValue",-1);
+        int iconWidthHeightValue = SpUtil.getInt(getContext(),"floatTileCustonView","iconWidthHeightValue",-1);
+        int iconTypeValue = SpUtil.getInt(getContext(),"floatTileCustonView","iconTypeValue",-1);
+        int iconRidusValue = SpUtil.getInt(getContext(),"floatTileCustonView","iconRidusValue",-1);
+        int titleTextSizeValue = SpUtil.getInt(getContext(),"floatTileCustonView","titleTextSizeValue",-1);
+        int contentTextSizeValue = SpUtil.getInt(getContext(),"floatTileCustonView","contentTextSizeValue",-1);
+        int rootPaddingValue = SpUtil.getInt(getContext(),"floatTileCustonView","rootPaddingValue",-1);
+        int rootElevationValue = SpUtil.getInt(getContext(),"floatTileCustonView","rootElevationValue",-1);
 
-        int titleTextColorValue = SpUtil.getInt(this,"floatTileCustonView","titleTextColorValue",-1);
-        int contentTextColorValue = SpUtil.getInt(this,"floatTileCustonView","contentTextColorValue",-1);
+        int titleTextColorValue = SpUtil.getInt(getContext(),"floatTileCustonView","titleTextColorValue",-1);
+        int contentTextColorValue = SpUtil.getInt(getContext(),"floatTileCustonView","contentTextColorValue",-1);
 
         if (iconWidthHeightValue != -1){
             imageIconLayoutParams.width=iconWidthHeightValue;
@@ -387,10 +415,10 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
         }
 
         if (rootPaddingValue != -1){
-            view.setPadding(rootPaddingValue,rootPaddingValue,rootPaddingValue,rootPaddingValue);
+            floatTileView.setPadding(rootPaddingValue,rootPaddingValue,rootPaddingValue,rootPaddingValue);
         }
         if (rootElevationValue != -1){
-            view.setElevation(rootElevationValue);
+            floatTileView.setElevation(rootElevationValue);
         }
     }
     @Override
@@ -417,6 +445,4 @@ public class FloatTileCustomViewActivity extends BaseActivity implements ColorPi
     public void onDialogDismissed(int dialogId) {
 
     }
-
-
 }

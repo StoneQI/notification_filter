@@ -11,7 +11,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
@@ -38,14 +37,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
-import com.stone.notificationfilter.fragment.FloatTileCustomViewActivity;
 import com.stone.notificationfilter.util.DialogUtil;
 import com.stone.notificationfilter.util.NotificationCollectorMonitorService;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
 import com.stone.notificationfilter.actioner.TileObject;
 import com.stone.notificationfilter.util.SpUtil;
-import com.stone.notificationfilter.notificationhandler.FiliterActivity;
 import com.stone.notificationfilter.util.ToolUtils;
 
 import java.io.File;
@@ -263,7 +260,7 @@ public class MainFragment extends PreferenceFragment {
                 createNotificationChannel();
                 NotificationManager notificationManager =
                         (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                Intent intent = new Intent(getContext(),MainActivity.class);
+                Intent intent = new Intent(getContext(), MainActivity3.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 1, intent, PendingIntent.FLAG_ONE_SHOT);
                 Notification  notification = new NotificationCompat.Builder(getContext(),NOTIFICATION_CHANNEL_ID)
                         //指定通知的标题内容
@@ -367,8 +364,8 @@ public class MainFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
 //                MainActivity mainActivity = (MainActivity)getActivity();
 //                mainActivity.replaceFragment(new FiliterActivity());
-                Intent intent = new Intent(getActivity(), FiliterActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), FiliterActivity.class);
+//                startActivity(intent);
                 return true;
             }
         });
@@ -379,8 +376,8 @@ public class MainFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
 //                MainActivity mainActivity = (MainActivity)getActivity();
 //                mainActivity.replaceFragment(new FiliterActivity());
-                Intent intent = new Intent(getActivity(), FloatTileCustomViewActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), FloatTileCustomViewActivity.class);
+//                startActivity(intent);
 //
                 return true;
             }
@@ -390,8 +387,8 @@ public class MainFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
 
-                Intent intent = new Intent(getActivity(), CheckNotificationLogActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), CheckNotificationLogActivity.class);
+//                startActivity(intent);
                 return true;
             }
         });
@@ -415,8 +412,8 @@ public class MainFragment extends PreferenceFragment {
         findPreference("donate").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(getActivity(), Donate.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), Donate.class);
+//                startActivity(intent);
                 return false;
             }
         });

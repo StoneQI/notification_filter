@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="设置" />
+
+
+    <Preference
+        android:key="showFiliter"
+        android:title="通知规则" />
+    <Preference
+        android:key="checkFiliter"
+        android:title="查看记录日志" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="save_log_to_file"
+        android:summary="记录日志总开关，开启后规则中的记录日志通知处理器才生效"
+        android:title="记录日志" />
+
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="notification_show"
+        android:summary="在通知栏显示一条通知以防止进程关闭,并显示最近8条通知"
+        android:title="通知栏保活" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="hideInBackground"
+        android:summary="退出软件后隐藏该应用在多任务栏的显示，请确保应用已加入白名单"
+        android:title="隐藏任务后台显示" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="applist_mode"
+        android:summaryOff="当前为黑名单模式，选中的应用屏蔽通知"
+        android:summaryOn="当前为白名单模式，选中的应用才通知"
+        android:summary="默认黑名单，选中的应用屏蔽通知"
+        android:title="应用模式切换" />
+    <Preference
+        android:key="select_applist"
+        android:title="选择匹配应用"
+        android:summary="修改后，重新关闭开启服务才能生效"/>
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="portrait_danmu_mode"
+        android:summary="横屏时，以弹幕模式展示通知，不可点击"
+        android:title="横屏弹幕模式" />
+    <!--        <Preference-->
+    <!--            android:key="todoNotification"-->
+    <!--            android:title="通知栏待办" />-->
+</PreferenceScreen>

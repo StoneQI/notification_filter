@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="浮动通知处理器设置"/>
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="message_replay"
+        android:summary="开启后可下划微信快捷回复和长按打开小窗模式,小窗模式由于系统原因不一定生效"
+        android:title="微信快捷回复" />
+
+    <EditTextPreference
+        android:key="floattitle_tileShowNum"
+        android:summary="在屏幕内最多可显示的磁贴数量"
+        android:inputType="number"
+        android:defaultValue="4"
+        android:title="磁贴数量" />
+
+    <Preference
+        android:key="floattitle_tilePosition"
+        android:title="修改磁贴位置" />
+
+    <Preference
+        android:key="floattitle_custom_view"
+        android:title="磁贴样式自定义" />
+
+    <ListPreference
+        android:key="floattitle_tileDirection"
+        android:defaultValue="content"
+        android:entries="@array/array_position_entries"
+        android:entryValues="@array/array_position_entries_values"
+        android:title="磁贴方向" />
+    <EditTextPreference
+        android:key="floattitle_time"
+        android:summary="设置延时多久通知自动消失（仅在通知展开情况下，小于等于0则不消失）"
+        android:inputType="number"
+        android:defaultValue="6"
+        android:title="延时时长(秒)" />
+
+</PreferenceScreen>

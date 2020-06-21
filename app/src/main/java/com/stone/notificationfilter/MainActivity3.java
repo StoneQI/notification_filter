@@ -1,21 +1,16 @@
 package com.stone.notificationfilter;
 
 import android.content.DialogInterface;
+//import android.support.v7.app.AlertDialog;
+//import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.stone.notificationfilter.util.SpUtil;
-
-//import android.support.v7.app.AlertDialog;
-//import android.support.v7.app.AppCompatActivity;
 //import com.stone.notificationfilter.util.filestore.FileStorage;
 
 
@@ -32,21 +27,35 @@ import com.stone.notificationfilter.util.SpUtil;
  * 1.2.190813
  * 加入了 输入法防挡 功能
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity3 extends BaseActivity {
     public final String TAG ="MainActivity";
     private Toolbar mToolBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_nav_host);
-
-        NavController navController =  Navigation.findNavController(this,R.id.nav_host_fragment);
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-
+        setContentView(R.layout.activity_main);
 
         mToolBar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(mToolBar);
+        //设置标题
+        getSupportActionBar().setTitle(R.string.app_name);
 
-        NavigationUI.setupWithNavController(mToolBar,navController);
+
+//        NotificationHandlerItem notificationHandlerItem = new NotificationHandlerItem();
+//        try {
+//            NotificationHandlerItemFileStorage fileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),"notificationHandles.json",true);
+//            notificationHandlerItem.orderID=2;
+//            notificationHandlerItem.name="weqwe";
+//            notificationHandlerItem.notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("123","contain","sada",true));
+//            notificationHandlerItem.notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("123","contain","sada",true));
+//            fileStorage.store(String.valueOf(System.currentTimeMillis()), notificationHandlerItem);
+//            ArrayList<NotificationHandlerItem> notificationHandlerItems =fileStorage.getAllAsArrayList();
+//            Log.i(TAG,String.valueOf(fileStorage.getSize()));
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
 
         boolean isFirstBoot = SpUtil.getBoolean(this,"appSettings","isFirstBoot", true);
         if (isFirstBoot) {
@@ -70,22 +79,41 @@ public class MainActivity extends BaseActivity {
                     .setPositiveButton("了解", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            SpUtil.putBoolean(MainActivity.this,"appSettings","isFirstBoot", false);
+                            SpUtil.putBoolean(MainActivity3.this,"appSettings","isFirstBoot", false);
                         }
                     })
                     .show();
         }
+//        replaceFragment(new MainFragment());
 
+//        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//        fragmentTransaction.replace(R.id.fl, new MyFragment()).commit();
+
+
+
+//        startService(new Intent(this, NotificationCollectorMonitorService.class));
     }
 
+//    public void replaceFragment(Fragment fragment){
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.replace(R.id.fragment,fragment);
+////        transaction.addToBackStack(null);
+//        transaction.commit();
+//    }
 
-
-    @Override
-    public boolean onSupportNavigateUp() {
-
-//        Navigation.findNavController(this,R.navigation.nav_graph).navigateUp();
-        return super.onSupportNavigateUp();
-    }
+//    private void initToolbar(showHomeAsUp: Boolean) {
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+//        if (toolbar != null) {
+//            setSupportActionBar(toolbar)
+//            tvTitle = toolbar.findViewById(R.id.tv_toolbar_title)
+//        }
+//        supportActionBar?.setDisplayHomeAsUpEnabled(showHomeAsUp)
+//        supportActionBar?.setDisplayShowHomeEnabled(showHomeAsUp)
+//        if (tvTitle != null) {
+//            supportActionBar?.setDisplayShowTitleEnabled(false)
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="权限"/>
+
+    <Preference
+        android:key="notificatListen"
+        android:title="通知使用权" />
+
+    <Preference
+        android:key="flotatingWindow"
+        android:title="悬浮窗权限" />
+
+</PreferenceScreen>

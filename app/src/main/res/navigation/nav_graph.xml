@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainNavHastFragment">
+    <fragment
+        android:id="@+id/mainNavHastFragment"
+        android:name="com.stone.notificationfilter.fragment.MainNavHastFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_main_nav_hast" >
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_globlSetting"
+            app:destination="@id/globlSetting" />
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_permissionSettingFragment"
+            app:destination="@id/permissionSettingFragment" />
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_notificationHanlderFragment"
+            app:destination="@id/notificationHanlderFragment" />
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_notificationLogFragment"
+            app:destination="@id/notificationLogFragment" />
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_floatTilesSettingFragment"
+            app:destination="@id/floatTilesSettingFragment" />
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_floatDanMuSettingFragment"
+            app:destination="@id/floatDanMuSettingFragment" />
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_otherSettingFragment"
+            app:destination="@id/otherSettingFragment" />
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_donateFragment"
+            app:destination="@id/donateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/globlSetting"
+        android:name="com.stone.notificationfilter.fragment.GlobalSettingFragment"
+        android:label="@string/nav_global_setting"
+        />
+
+    <fragment
+        android:id="@+id/permissionSettingFragment"
+        android:name="com.stone.notificationfilter.fragment.PermissionSettingFragment"
+        android:label="@string/nav_permisson_setting"
+        tools:layout="@layout/fragment_permission_setting" />
+    <fragment
+        android:id="@+id/notificationHanlderFragment"
+        android:name="com.stone.notificationfilter.fragment.NotificationHanlderFragment"
+        android:label="@string/nav_notification_handler"
+        tools:layout="@layout/fragment_notification_hanlder" >
+        <action
+            android:id="@+id/action_notificationHanlderFragment_to_addNotificationHandlerFragment"
+            app:destination="@id/addNotificationHandlerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/notificationLogFragment"
+        android:name="com.stone.notificationfilter.fragment.NotificationLogFragment"
+        android:label="@string/nav_notification_log"
+        tools:layout="@layout/fragment_notification_log" />
+    <fragment
+        android:id="@+id/floatTilesSettingFragment"
+        android:name="com.stone.notificationfilter.fragment.FloatTilesSettingFragment"
+        android:label="@string/nav_float_tile_setting" >
+        <action
+            android:id="@+id/action_floatTilesSettingFragment_to_floatTileCustomViewFragment"
+            app:destination="@id/floatTileCustomViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/floatDanMuSettingFragment"
+        android:name="com.stone.notificationfilter.fragment.FloatDanMuSettingFragment"
+        android:label="@string/nav_danmu_tile_setting"
+        tools:layout="@layout/fragment_float_dan_mu_setting" />
+    <fragment
+        android:id="@+id/otherSettingFragment"
+        android:name="com.stone.notificationfilter.fragment.OtherSettingFragment"
+        android:label="@string/nav_other_actioner_setting" />
+    <fragment
+        android:id="@+id/addNotificationHandlerFragment"
+        android:name="com.stone.notificationfilter.fragment.AddNotificationHandlerFragment"
+        android:label="@string/nav_add_notification_handler"
+        tools:layout="@layout/fragment_add_notification_handler" >
+        <argument
+            android:name="notificationHandlerID"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
+    <fragment
+        android:id="@+id/donateFragment"
+        android:name="com.stone.notificationfilter.fragment.DonateFragment"
+        android:label="@string/nav_donate"
+        tools:layout="@layout/fragment_donate" />
+    <fragment
+        android:id="@+id/floatTileCustomViewFragment"
+        android:name="com.stone.notificationfilter.fragment.FloatTileCustomViewFragment"
+        android:label="@string/nav_float_tile_custom_view"
+        tools:layout="@layout/fragment_float_tile_custom_view" />
+</navigation>

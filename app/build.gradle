@@ -42,29 +42,25 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-//    implementation 'com.github.didikee:AndroidDonate:0.1.0'
-//    def room_version = "2.2.3"
-//    implementation 'com.thefrenchtouch.lib:pbdialogapppicker:1.0.0'
+    def nav_version = "2.3.0-alpha05"
+
+    // Java language implementation
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
+    // Dynamic Feature Module Support
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+
+
     implementation 'com.jaredrummler:colorpicker:1.1.0'
     implementation 'com.blankj:utilcode:1.22.7'
-//    implementation 'com.couchbase.lite:couchbase-lite-android:2.7.1'
-//    implementation("moe.shizuku.preference:preference-appcompat:4.0.0")
-//    implementation("moe.shizuku.preference:preference-simplemenu-appcompat:4.0.0")
-//    implementation 'com.github.xujiaji:dmlib2:0.0.6'
-//    implementation 'com.noober.floatmenu:common:1.0.4'
     implementation "androidx.room:room-runtime:2.2.5"
-    annotationProcessor "androidx.room:room-compiler:2.2.5" // For Kotlin use kapt instead of annotationProcessor
+    annotationProcessor "androidx.room:room-compiler:2.2.5"
     api 'com.google.guava:guava:27.0.1-android'
 
-
-//    implementation 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'
     implementation 'com.google.code.gson:gson:2.8.6'
-//    implementation 'io.jsondb:jsondb-core:1.0.115-j11'
-//    implementation 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:1.0.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
-//    implementation 'androidx.preference:preference:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

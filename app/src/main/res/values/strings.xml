@@ -16,7 +16,20 @@
     <string name="replace">替换规则</string>
     <string name="match">匹配规则</string>
 
-    <string name="checker">通知处理器</string>
+    <string name="nav_permisson_setting">权限设置</string>
+    <string name="nav_notification_handler">通知拦截规则设置</string>
+    <string name="nav_notification_log">通知日志记录</string>
+    <string name="nav_global_setting">全局设置</string>
+    <string name="nav_float_tile_setting">悬浮通知处理器设置</string>
+    <string name="nav_danmu_tile_setting">弹幕通知处理器设置</string>
+    <string name="nav_other_actioner_setting">其他通知处理器设置</string>
+    <string name="nav_donate">捐赠</string>
+    <string name="nav_about_me">关于</string>
+    <string name="nav_add_notification_handler">通知拦截规则</string>
+
+    <string name="nav_float_tile_custom_view">悬浮通知视图自定义</string>
+
+
     <string name="on_preference_change_toast_message">onPreferenceChange: key = %1$s, newValue = %2$s</string>
 
     <string name="filiter_name">规则名称</string>
@@ -103,11 +116,11 @@
     <string name="freeform_mode_stop">小窗模式已关闭</string>
 
 
-
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="launch_name" >应用图标</string>
+    <string name="launch_name">应用图标</string>
     <string name="filter_content">规则内容</string>
+    <string name="selectActioner">通知处理器设置</string>
     <!--    <string name="new_title" />-->
 
 </resources>
