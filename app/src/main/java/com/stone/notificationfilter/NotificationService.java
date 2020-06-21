@@ -265,7 +265,7 @@ public class NotificationService extends NotificationListenerService {
                 .setGroup(GROUP_KEY_NOTIFI_STROE)
                 .setAutoCancel(true)
                 .build();
-//        notify();
+
         notificationManager.notify(NOTIFICATIONID++,newMessageNotification);
 
     }
@@ -361,37 +361,10 @@ public class NotificationService extends NotificationListenerService {
         }
 
 
-
-//        if (notification != null) {
-//            NotificationCompat.CarExtender mCarExtender = new NotificationCompat.CarExtender(notification);
-//            if (mCarExtender != null) {
-//                NotificationCompat.CarExtender.UnreadConversation conversation = mCarExtender.getUnreadConversation();
-//                if (conversation != null) {
-//                    PendingIntent pendingReply = conversation.getReplyPendingIntent();
-//                    RemoteInput remoteInput = conversation.getRemoteInput();
-//                    String key = remoteInput.getResultKey();
-//
-//                    if (pendingReply != null) {
-//                        Intent localIntent = new Intent();
-//                        Bundle resultBundle = new Bundle();
-//                        resultBundle.putString(key, "回复的内容");
-//                        RemoteInput.addResultsToIntent(new RemoteInput[]{new RemoteInput.Builder(key).build()}, localIntent, resultBundle);
-//                        try {
-//                            pendingReply.send(getApplicationContext(), 0, localIntent);
-//                        } catch (Exception e) {
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-
-
         notificationInfo.isInteractive = powerManager.isInteractive();
         return notificationInfo;
     }
 
-//    #TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static RemoteViews getBigContentView(Context context, Notification notification)
     {
         if(notification.bigContentView != null)
@@ -416,9 +389,6 @@ public class NotificationService extends NotificationListenerService {
                 floatingTile.run();
     }
 
-
-
-
     private RemoteViews mRemoteViews;
     private NotificationCompat.Builder mBuilder;
     private static final String NOTIFICATION_CHANNEL_ID = "FloatWindowService";
@@ -428,37 +398,19 @@ public class NotificationService extends NotificationListenerService {
 
     private void addForegroundNotification() {
 
-//        mRemoteViews = new RemoteViews(getPackageName(),R.layout.notification_custom_layout);
-//        notificationCustomRemoteVIew();
-
-//        PendingIntent homeIntent = PendingIntent.getBroadcast(this,1,new Intent(NOTIFICATION_FILTER_START_INTENT),PendingIntent.FLAG_UPDATE_CURRENT);
-//        mRemoteViews.setOnClickPendingIntent(R.id.notification_filter_start,homeIntent);
-
         String contentText = "通知处理器开启运行中...";
-
-//        Intent msgIntent = getStartAppIntent(getApplicationContext());
-//        PendingIntent mainPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-//                msgIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setOngoing(true)
-                .setContentTitle("当前没有存储的通知")
-                //set content text to support devices running API level < 24
-
-//                .setCustomContentView(mRemoteViews)
+                .setContentTitle(contentText)
                 .setWhen(System.currentTimeMillis())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//                .setTicker(contentText)
-//                .setContentIntent(mainPendingIntent)
                 .setGroup(GROUP_KEY_NOTIFI_STROE)
                 .setGroupSummary(true)
                 .setStyle(new NotificationCompat.InboxStyle()
                         .setSummaryText(contentText))
                 .setAutoCancel(false);
-
-
-
 
         startForeground(MANAGER_NOTIFICATION_ID, mBuilder.build());
     }
