@@ -45,6 +45,7 @@ public class MainActivity extends BaseActivity {
 
 
         mToolBar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(mToolBar);
 
         NavigationUI.setupWithNavController(mToolBar,navController);
 
@@ -87,24 +88,24 @@ public class MainActivity extends BaseActivity {
         return super.onSupportNavigateUp();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_main, menu);
-    return true;
-}
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //对菜单项点击内容进行设置
-        int id = item.getItemId();
-        if (id == R.id.donate_list) {
-            AlertDialog.Builder m = new AlertDialog.Builder(this)
-                    .setIcon(R.drawable.ic_launcher).setMessage(R.string.donate_list)
-                    .setIcon(R.drawable.ic_launcher);
-//                    .setPositiveButton("确认",null);
-            m.show();
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        //对菜单项点击内容进行设置
+//        int id = item.getItemId();
+//        if (id == R.id.donate_list) {
+//            AlertDialog.Builder m = new AlertDialog.Builder(this)
+//                    .setIcon(R.drawable.ic_launcher).setMessage(R.string.donate_list)
+//                    .setIcon(R.drawable.ic_launcher);
+////                    .setPositiveButton("确认",null);
+//            m.show();
+//
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 }

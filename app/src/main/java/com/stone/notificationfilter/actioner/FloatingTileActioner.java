@@ -15,9 +15,14 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,10 +42,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.SPUtils;
+import com.bumptech.glide.Glide;
 import com.cbman.roundimageview.RoundImageView;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.actioner.floatmessagereply.FloatMessageReply;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
+import com.stone.notificationfilter.util.ImageUtil;
 import com.stone.notificationfilter.util.PackageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.util.ToolUtils;
@@ -122,6 +129,7 @@ public class FloatingTileActioner {
             layoutParams.windowAnimations = R.style.PopupFloatTiltAnimright;
 
         }
+        final LinearLayout rootLayout = view.findViewById(R.id.window_root_lay);
 
         final LinearLayout messageLay = view.findViewById(R.id.window_messgae_lay);
 //        final LinearLayout message_content = view.findViewById(R.id.message_content);
@@ -148,11 +156,13 @@ public class FloatingTileActioner {
         int iconRidusValue = SpUtil.getInt(context,"floatTileCustonView","iconRidusValue",-1);
         int titleTextSizeValue = SpUtil.getInt(context,"floatTileCustonView","titleTextSizeValue",-1);
         int contentTextSizeValue = SpUtil.getInt(context,"floatTileCustonView","contentTextSizeValue",-1);
-        int rootPaddingValue = SpUtil.getInt(context,"floatTileCustonView","rootPaddingValue",-1);
+        int rootPaddingTopAndBottomValue = SpUtil.getInt(context,"floatTileCustonView","rootPaddingTopAndBottomValue",-1);
         int rootElevationValue = SpUtil.getInt(context,"floatTileCustonView","rootElevationValue",-1);
 
         int titleTextColorValue = SpUtil.getInt(context,"floatTileCustonView","titleTextColorValue",-1);
         int contentTextColorValue = SpUtil.getInt(context,"floatTileCustonView","contentTextColorValue",-1);
+        int rootLayBackGroundValue = SpUtil.getInt(context,"floatTileCustonView","rootBackGround",-1);
+
 
         if (iconWidthHeightValue != -1){
             imageIconLayoutParams.width=iconWidthHeightValue;
@@ -181,11 +191,40 @@ public class FloatingTileActioner {
             contentText.setTextColor(contentTextColorValue);
         }
 
-        if (rootPaddingValue != -1){
-            view.setPadding(rootPaddingValue,rootPaddingValue,rootPaddingValue,rootPaddingValue);
+        if (rootPaddingTopAndBottomValue != -1){
+            if (isLeft){
+                view.setPadding(3,rootPaddingTopAndBottomValue,rootPaddingTopAndBottomValue,rootPaddingTopAndBottomValue);
+            }else{
+                view.setPadding(rootPaddingTopAndBottomValue,rootPaddingTopAndBottomValue,3,rootPaddingTopAndBottomValue);
+            }
+
         }
         if (rootElevationValue != -1){
             view.setElevation(rootElevationValue);
+        }
+
+        if (rootLayBackGroundValue != -1){
+            if (isLeft) {
+
+                Bitmap bitmapBackGround = ImageUtil.getImageFromData(context, "float_tile_background.9.png");
+                Bitmap modBm = Bitmap.createBitmap(bitmapBackGround.getWidth(),bitmapBackGround.getHeight(),bitmapBackGround.getConfig());
+
+                Canvas canvas = new Canvas(modBm);
+                Paint paint = new Paint();
+                Matrix matrix = new Matrix();
+
+                matrix.setScale(-1,1);//翻转
+                matrix.postTranslate(bitmapBackGround.getWidth(),0);
+
+                canvas.drawBitmap(bitmapBackGround,matrix,paint);
+                rootLayout.setBackground(ImageUtil.BitmapToDrawable(modBm,context));
+
+
+            }else{
+
+                Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(context, "float_tile_background.9.png"), context);
+                rootLayout.setBackground(drawable);
+            }
         }
 
 
@@ -230,16 +269,11 @@ public class FloatingTileActioner {
     }
 
     private void getScreenSize() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            Point point = new Point();
-            windowManager.getDefaultDisplay().getSize(point);
-            mScreenWidth = point.x;
-            mScreenHeight = point.y;
-        } else {
-            mScreenWidth = windowManager.getDefaultDisplay().getWidth();
-            mScreenHeight = windowManager.getDefaultDisplay().getHeight();
-        }
-//        mCurrentIconAlpha = 70 / 100f;
+        Point point = new Point();
+        windowManager.getDefaultDisplay().getSize(point);
+        mScreenWidth = point.x;
+        mScreenHeight = point.y;
+        //        mCurrentIconAlpha = 70 / 100f;
     }
     public void run(){
         if (isRefuse){

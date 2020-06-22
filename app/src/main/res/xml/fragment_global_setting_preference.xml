@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:title="设置" />
-
-
-    <Preference
-        android:key="showFiliter"
-        android:title="通知规则" />
-    <Preference
-        android:key="checkFiliter"
-        android:title="查看记录日志" />
-
     <SwitchPreference
         android:defaultValue="false"
         android:key="save_log_to_file"
@@ -22,8 +11,14 @@
     <SwitchPreference
         android:defaultValue="false"
         android:key="notification_show"
-        android:summary="在通知栏显示一条通知以防止进程关闭,并显示最近8条通知"
+        android:summary="在通知栏显示一条通知以防止进程关闭"
         android:title="通知栏保活" />
+    <EditTextPreference
+        android:key="notification_store_number"
+        android:summary="在状态栏保存最近的信息，防止通知错过后找不到入口,默认存储8条，为0表示不存储"
+        android:inputType="number"
+        android:defaultValue="8"
+        android:title="存储最近通知" />
     <SwitchPreference
         android:defaultValue="false"
         android:key="hideInBackground"

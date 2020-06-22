@@ -17,6 +17,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -176,6 +177,7 @@ public class NotificationLogFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setHasOptionsMenu(true);
 
     }
 
@@ -212,11 +214,16 @@ public class NotificationLogFragment extends Fragment {
 
     }
 
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getActivity().getMenuInflater().inflate(R.menu.check_log_menu, menu);
-        return true;
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.check_log_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
+
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getActivity().getMenuInflater().inflate(R.menu.check_log_menu, menu);
+//        return true;
+//    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i("dayang","选择列表项时执行------------");

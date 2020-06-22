@@ -8,17 +8,21 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
 
 import com.stone.notificationfilter.NotificationService;
@@ -28,11 +32,15 @@ import com.stone.notificationfilter.helper.GlobalHelper;
 import com.stone.notificationfilter.helper.LauncherHelper;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 public class ToolUtils {
 
@@ -44,6 +52,16 @@ public class ToolUtils {
                 dp,
                 mContext.getResources().getDisplayMetrics());
     }
+    public static boolean isNotificationListenerEnable(Context context) {
+        if (TextUtils.isEmpty(context.getPackageName())) {
+            return false;
+        }
+        Set<String> packagenameSet = NotificationManagerCompat.getEnabledListenerPackages(context);
+        return packagenameSet.contains(context.getPackageName());
+    }
+
+
+
 
     public static void toggleNotificationListenerService(Context context) {
 //        Log.d(TAG, "toggleNotificationListenerService() called");
@@ -54,17 +72,7 @@ public class ToolUtils {
 
     }
 
-    public static CharSequence getApplicationLabel(Context context, String pkgName){
-        try {
-            PackageManager pm = context.getPackageManager();
-            ApplicationInfo appInfo = pm.getApplicationInfo(pkgName, PackageManager.GET_META_DATA);
-            return pm.getApplicationLabel(appInfo);
-        }
-        catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+
 
     public static boolean checkAppInstalled( Context context, String pkgName) {
         if (pkgName== null || pkgName.isEmpty()) {

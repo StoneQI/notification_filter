@@ -46,17 +46,17 @@
             <!--        </LinearLayout>-->
 
 
-            <!--        <TextView-->
-            <!--            android:id="@+id/root_lay_color"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:orientation="horizontal"-->
-            <!--            android:layout_marginBottom="12dp"-->
-            <!--            android:foreground="?android:attr/selectableItemBackground"-->
-            <!--            android:focusable="true"-->
-            <!--            android:textSize="@dimen/sp_18"-->
-            <!--            android:layout_gravity="start"-->
-            <!--            android:text="点击设置悬浮通知背景颜色"/>-->
+            <TextView
+                android:id="@+id/root_background_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:focusable="true"
+                android:textSize="@dimen/sp_18"
+                android:layout_gravity="start"
+                android:text="点击设置背景图片"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -182,6 +182,27 @@
                 android:layout_gravity="start"
                 android:text="点击设置内容文字颜色"/>
 
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:layout_marginBottom="12dp"-->
+<!--                android:gravity="center">-->
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textSize="@dimen/sp_18"-->
+<!--                    android:text="内容间距"/>-->
+<!--                <SeekBar-->
+<!--                    android:id="@+id/contextPaddingLeftOrRight"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:max="100"-->
+<!--                    android:min="10"-->
+<!--                    />-->
+<!--            </LinearLayout>-->
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -194,13 +215,14 @@
                     android:textSize="@dimen/sp_18"
                     android:text="内容间距"/>
                 <SeekBar
-                    android:id="@+id/contextPadding"
+                    android:id="@+id/contextPaddingTopAndBottom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="100"
                     android:min="10"
                     />
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"

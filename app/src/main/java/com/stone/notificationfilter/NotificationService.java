@@ -42,6 +42,7 @@ import com.stone.notificationfilter.notificationhandler.databases.NotificationIn
 import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
 import com.stone.notificationfilter.notificationhandler.databases.SystemBaseHandler;
 import com.stone.notificationfilter.util.Actioner;
+import com.stone.notificationfilter.util.ImageUtil;
 import com.stone.notificationfilter.util.PackageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
@@ -77,6 +78,7 @@ public class NotificationService extends NotificationListenerService {
 
 
     public static Set<String> selectAppList = null;
+    public static int notification_store_number;
 //    True为白名单， false为黑名单
     public static  boolean appListMode = false;
     private boolean isSceenLock =false;
@@ -104,8 +106,6 @@ public class NotificationService extends NotificationListenerService {
         registerReceiver(mBroadcastReceiver, new IntentFilter(NOTIFICATION_FILTER_START_INTENT));
 
     }
-
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -138,6 +138,9 @@ public class NotificationService extends NotificationListenerService {
                     String packageNamestring = SpUtil.getString(getApplicationContext(),"appSettings","select_applists", "");
                     selectAppList = SpUtil.string2Set(packageNamestring);
                     appListMode = SpUtil.getBoolean(getApplicationContext(),"appSettings","applist_mode", false);
+
+                    notification_store_number = Integer.parseInt(SpUtil.getString(getApplicationContext(),"appSettings","notification_store_number", "8"));
+
                     notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),true);
                     notificationHandlerItems = notificationHandlerItemFileStorage.getAllAsArrayList();
                     notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule(getApplicationContext()));
@@ -188,7 +191,10 @@ public class NotificationService extends NotificationListenerService {
                 return;
             }
         }else{
-            notificationRestore(notificationInfo);
+            if (notification_store_number > 0){
+                notificationRestore(notificationInfo);
+            }
+
         }
 
         cancelNotification(notificationInfo.key);
@@ -208,7 +214,6 @@ public class NotificationService extends NotificationListenerService {
 
                 switch (notificationHandlerItem.actioner){
                     case 0:floatingTileAction(notificationInfo); isCancalSystemNotification =true;break;
-//                    case 1:isCancalSystemNotification =false; break;
                     case 1:isCancalSystemNotification =true; break;
                     case 2:new CopyActioner(notificationInfo,NotificationService.this).run();break;
                     case 3:new RunIntentActioner(notificationInfo,NotificationService.this).run();break;
@@ -251,15 +256,15 @@ public class NotificationService extends NotificationListenerService {
         NotificationManager notificationManager =
                 (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (NOTIFICATIONID > 8){
-            notificationManager.cancel(NOTIFICATIONID-8);
+        if (NOTIFICATIONID > notification_store_number){
+            notificationManager.cancel(NOTIFICATIONID-notification_store_number);
         }
 
-        String AppName = (String) ToolUtils.getApplicationLabel(getApplicationContext(),notificationInfo.packageName);
+        String AppName = (String) PackageUtil.getAppNameFromPackname(getApplicationContext(),notificationInfo.packageName);
         Notification newMessageNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(AppName+": "+notificationInfo.title)
-                .setLargeIcon(PackageUtil.drawable2Bitmap(notificationInfo.smallIcon.loadDrawable(getApplicationContext())))
+                .setLargeIcon(ImageUtil.drawable2Bitmap(notificationInfo.smallIcon.loadDrawable(getApplicationContext())))
                 .setContentText(notificationInfo.content)
                 .setContentIntent(notificationInfo.intent)
                 .setGroup(GROUP_KEY_NOTIFI_STROE)
@@ -419,7 +424,7 @@ public class NotificationService extends NotificationListenerService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "通知处理器";
             String description = "防止通知处理器被后台关闭";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
             channel.setDescription(description);
             channel.setShowBadge(false);

@@ -26,6 +26,7 @@ import com.stone.notificationfilter.NotificationService;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.util.NotificationCollectorMonitorService;
 import com.stone.notificationfilter.util.SpUtil;
+import com.stone.notificationfilter.util.ToolUtils;
 
 import java.util.Set;
 
@@ -86,7 +87,7 @@ public class PermissionSettingFragment extends PreferenceFragmentCompat {
         Log.i(TAG,"onResume is runing");
         isNotificationListenerEnable = true;
         isCanDrawWindow = true;
-        if (!isNotificationListenerEnable(getContext())) {
+        if (!ToolUtils.isNotificationListenerEnable(getContext())) {
             isNotificationListenerEnable = false;
             findPreference("notificatListen").setIcon(R.drawable.ic_warning_black_24dp);
         } else {
@@ -137,13 +138,6 @@ public class PermissionSettingFragment extends PreferenceFragmentCompat {
         });
     }
 
-    private boolean isNotificationListenerEnable(Context context) {
-        if (TextUtils.isEmpty(context.getPackageName())) {
-            return false;
-        }
-        Set<String> packagenameSet = NotificationManagerCompat.getEnabledListenerPackages(context);
-        return packagenameSet.contains(context.getPackageName());
-    }
 
     private boolean gotoNotificationAccessSetting() {
         try {

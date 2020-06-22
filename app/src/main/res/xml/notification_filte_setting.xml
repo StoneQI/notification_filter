@@ -2,33 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <PreferenceCategory
-android:title="浮动通知处理器设置">
-
-<EditTextPreference
-    android:key="floattitle_tileShowNum"
-    android:summary="在屏幕内最多可显示的磁贴数量"
-    android:inputType="number"
-    android:defaultValue="6"
-    android:title="磁贴数量" />
-
-<Preference
-    android:key="floattitle_tilePosition"
-    android:title="修改磁贴位置" />
-
-<ListPreference
-    android:key="floattitle_tileDirection"
-    android:defaultValue="content"
-    android:entries="@array/array_position_entries"
-    android:entryValues="@array/array_position_entries_values"
-    android:title="磁贴方向" />
-<EditTextPreference
-    android:key="floattitle_time"
-    android:summary="设置延时多久通知自动消失（仅在通知展开情况下）"
-    android:inputType="number"
-    android:defaultValue="6000"
-    android:title="延时时长(毫秒)" />
-</PreferenceCategory>
-<PreferenceCategory
 android:title="复制通知处理器设置">
 
 <ListPreference

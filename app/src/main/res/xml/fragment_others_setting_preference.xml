@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-        android:title="复制通知处理器设置"/>
+
 
     <ListPreference
         android:key="copyactioner_select_mode"
