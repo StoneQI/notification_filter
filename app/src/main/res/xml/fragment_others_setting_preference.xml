@@ -36,5 +36,14 @@
         android:key="on_notification_float_message"
         android:summary="通知悬浮处理器总开关，开启后规则中的通知悬浮处理器才生效，一般用于音乐控制，默认开启网易云音乐和QQ音乐"
         android:title="通知悬浮处理器" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="on_notification_float_foregrounnd_switch"
+        android:title="开启通知悬浮处理器图标自定义" />
+    <Preference
+        android:key="setting_notification_float"
+        android:dependency="on_notification_float_foregrounnd_switch"
+        android:title="设置通知悬浮处理器图标"
+        android:summary=""/>
 
 </PreferenceScreen>

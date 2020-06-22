@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/window_root_lay"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="#eeFFFFFF"
-    app:cardElevation="3dp"
-    app:cardCornerRadius="7dp"
-    android:theme="@style/Theme.MaterialComponents.DayNight"
+    android:background="@drawable/widget_danmu_bg"
+    android:elevation="3dp"
     android:gravity="center_vertical">
     <LinearLayout
         android:layout_width="wrap_content"
@@ -31,7 +29,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical|start"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="3dp"
                     android:visibility="visible">
@@ -54,4 +52,4 @@
 
                 </LinearLayout>
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</LinearLayout>

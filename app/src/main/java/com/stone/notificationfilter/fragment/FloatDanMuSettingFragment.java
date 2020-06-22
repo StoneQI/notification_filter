@@ -1,8 +1,11 @@
 package com.stone.notificationfilter.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +18,7 @@ import com.stone.notificationfilter.R;
  * Use the {@link FloatDanMuSettingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FloatDanMuSettingFragment extends Fragment {
+public class FloatDanMuSettingFragment extends PreferenceFragmentCompat {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -57,10 +60,28 @@ public class FloatDanMuSettingFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        getPreferenceManager().setSharedPreferencesName("appSettings");
+        addPreferencesFromResource(R.xml.fragment_danmu_setting);
+
+        findPreference("danmu_custom_view").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+//                MainActivity mainActivity = (MainActivity)getActivity();
+//                mainActivity.replaceFragment(new FiliterActivity());
+//                Navigation.findNavController(getView()).navigate(R.id.action_floatTilesSettingFragment_to_floatTileCustomViewFragment);
+                Intent intent = new Intent(getActivity(), DanmuTileCustomViewAictivy.class);
+                startActivity(intent);//
+                return true;
+            }
+        });
+    }
+
 //    @Override
 //    public View onCreateView(LayoutInflater inflater, ViewGroup container,
 //                             Bundle savedInstanceState) {
 //        // Inflate the layout for this fragment
-////        return inflater.inflate(R.layout.fragment_float_dan_mu_setting, container, false);
+////        return inflater.inflate(R.layout.fragment_float_dan_mu_custom_view, container, false);
 //    }
 }

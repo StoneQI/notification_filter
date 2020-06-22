@@ -124,7 +124,7 @@ public abstract class BaseFloatDailog {
     /**
      * 用于显示在 mActivity 上的 mActivity
      */
-    private Context mActivity;
+    protected Context mActivity;
 
 
     /**

@@ -35,6 +35,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 //import com.luck.picture.lib.config.PictureMimeType;
 //import com.luck.picture.lib.entity.LocalMedia;
 //import com.luck.picture.lib.listener.OnResultCallbackListener;
+import com.stone.notificationfilter.BaseActivity;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.util.CheckUtil;
 import com.stone.notificationfilter.util.ImageUtil;
@@ -44,10 +45,9 @@ import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FloatTileCustomViewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FloatTileCustomViewFragment extends Fragment implements ColorPickerDialogListener {
+public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPickerDialogListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -82,82 +82,18 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
     private String mParam1;
     private String mParam2;
 
-    public FloatTileCustomViewFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FloatTileCustomViewFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FloatTileCustomViewFragment newInstance(String param1, String param2) {
-        FloatTileCustomViewFragment fragment = new FloatTileCustomViewFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+        setContentView(R.layout.fragment_float_tile_custom_view);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_float_tile_custom_view, container, false);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode){
-            case FILE_REQUEST_CODE:
-                ArrayList<MediaFile> files = data.getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES);
-                if (files == null || files.size() ==0){
-                    return;
-                }
-                Uri fileUri = files.get(0).getUri();
-                Glide.with(getContext()).load(files.get(0).getUri())//签到整体 背景
-                                        .into(new CustomTarget<Drawable>() {
-                                            @Override
-                                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                                    ImageUtil.saveImageToData(getContext(),"float_tile_background.9.png",ImageUtil.drawable2Bitmap(resource));
-                                                    rootLayBackGround =1;
-                                                    rootLayout.setBackground(resource);
-                                            }
-                                            @Override
-                                            public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                                            }        //设置宽高
-                                        });
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + requestCode);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        LinearLayout layout = view.findViewById(R.id.float_window_tile_view);
-        floatTileView = View.inflate(getContext(), R.layout.window_lay_right, null);
+        LinearLayout layout = findViewById(R.id.float_window_tile_view);
+        floatTileView = View.inflate(getApplicationContext(), R.layout.window_lay_right, null);
 
         layout.addView(floatTileView);
 
-        rootLayout = view.findViewById(R.id.window_root_lay);
+        rootLayout = findViewById(R.id.window_root_lay);
         final LinearLayout messageLay = floatTileView.findViewById(R.id.window_messgae_lay);
 //        final LinearLayout message_content = view.view.findViewById(R.id.message_content);
         imageIcon = floatTileView.findViewById(R.id.window_icon_img);
@@ -174,10 +110,10 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
 
 
 
-        TextView rootBackgroundImage = view.findViewById(R.id.root_background_image);
+        TextView rootBackgroundImage = findViewById(R.id.root_background_image);
         rootBackgroundImage.setOnClickListener(v -> {
-            CheckUtil.verifyStoragePermissions(getActivity());
-            Intent intent = new Intent(getActivity(), FilePickerActivity.class);
+            CheckUtil.verifyStoragePermissions(this);
+            Intent intent = new Intent(this, FilePickerActivity.class);
             intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
                     .setCheckPermission(true)
                     .setShowImages(true)
@@ -193,7 +129,7 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
         });
 
 
-        SeekBar iconWidthHeigtSeekBar = view.findViewById(R.id.icon_widthHeight);
+        SeekBar iconWidthHeigtSeekBar = findViewById(R.id.icon_widthHeight);
         iconWidthHeigtSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -214,7 +150,7 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
             }
         });
 
-        SeekBar titleTextSizeSeekBar = view.findViewById(R.id.titleTextSize);
+        SeekBar titleTextSizeSeekBar = findViewById(R.id.titleTextSize);
         titleTextSizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -233,7 +169,7 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
         });
 
 
-        final Spinner icon_type = view.findViewById(R.id.icon_type);
+        final Spinner icon_type = findViewById(R.id.icon_type);
 
         icon_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -254,24 +190,24 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
         });
 
 
-        TextView titleTextColor = view.findViewById(R.id.title_text_color);
+        TextView titleTextColor = findViewById(R.id.title_text_color);
         titleTextColor.setOnClickListener(v -> ColorPickerDialog.newBuilder().setDialogType(ColorPickerDialog.TYPE_CUSTOM)
                 .setAllowPresets(false)
                 .setDialogId(R.id.title_text_color)
                 .setColor(Color.BLACK)
                 .setShowAlphaSlider(true)
-                .show(getActivity()));
+                .show(this));
 
 
-        TextView contentTextColor = view.findViewById(R.id.content_text_color);
+        TextView contentTextColor = findViewById(R.id.content_text_color);
         contentTextColor.setOnClickListener(v -> ColorPickerDialog.newBuilder().setDialogType(ColorPickerDialog.TYPE_CUSTOM)
                 .setAllowPresets(false)
                 .setDialogId(R.id.content_text_color)
                 .setColor(Color.BLACK)
                 .setShowAlphaSlider(true)
-                .show(getActivity()));
+                .show(this));
 
-        SeekBar icon_ridas = view.findViewById(R.id.icon_ridas);
+        SeekBar icon_ridas = findViewById(R.id.icon_ridas);
         icon_ridas.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -290,7 +226,7 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
             }
         });
 
-        SeekBar contextTextSizeSeekBar = view.findViewById(R.id.contextTextSize);
+        SeekBar contextTextSizeSeekBar = findViewById(R.id.contextTextSize);
         contextTextSizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -309,11 +245,11 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
             }
         });
 
-        final SeekBar contextPaddingTopAndBottom = view.findViewById(R.id.contextPaddingTopAndBottom);
+        final SeekBar contextPaddingTopAndBottom = findViewById(R.id.contextPaddingTopAndBottom);
         contextPaddingTopAndBottom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    floatTileView.setPadding(progress,progress,3,progress);
+                floatTileView.setPadding(progress,progress,3,progress);
 
 
             }
@@ -356,7 +292,7 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
 //            }
 //        });
 
-        final SeekBar rootElevation = view.findViewById(R.id.rootElevation);
+        final SeekBar rootElevation = findViewById(R.id.rootElevation);
         rootElevation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -376,87 +312,86 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
             }
         });
 
-        view.findViewById(R.id.submit_custom_view).setOnClickListener(v -> {
+        findViewById(R.id.submit_custom_view).setOnClickListener(v -> {
             if (iconWidthHeightValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","iconWidthHeightValue",iconWidthHeightValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconWidthHeightValue",iconWidthHeightValue);
             }
             if (iconTypeValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","iconTypeValue",iconTypeValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconTypeValue",iconTypeValue);
             }
             if (iconRidusValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","iconRidusValue",iconRidusValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconRidusValue",iconRidusValue);
             }
             if (titleTextSizeValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","titleTextSizeValue",titleTextSizeValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","titleTextSizeValue",titleTextSizeValue);
             }
             if (contentTextSizeValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","contentTextSizeValue",contentTextSizeValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","contentTextSizeValue",contentTextSizeValue);
             }
             if (rootPaddingTopAndBottomValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","rootPaddingTopAndBottomValue", rootPaddingTopAndBottomValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootPaddingTopAndBottomValue", rootPaddingTopAndBottomValue);
             }
             if (rootElevationValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","rootElevationValue",iconWidthHeightValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootElevationValue",iconWidthHeightValue);
             }
 
             if (titleTextColorValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","titleTextColorValue",titleTextColorValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","titleTextColorValue",titleTextColorValue);
             }
             if (contentTextColorValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","contentTextColorValue",contentTextColorValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","contentTextColorValue",contentTextColorValue);
             }
 
             if (titleTextColorValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","rootLayRidusValue",rootLayRidusValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayRidusValue",rootLayRidusValue);
             }
             if (contentTextColorValue != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","rootLayColorValue",rootLayColorValue);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayColorValue",rootLayColorValue);
             }
 
             if (rootLayBackGround != -1){
-                SpUtil.putInt(getContext(),"floatTileCustonView","rootBackGround",rootLayBackGround);
+                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootBackGround",rootLayBackGround);
             }
 
-            new AlertDialog.Builder(getActivity())
+            new AlertDialog.Builder(this)
                     .setTitle("提示")
                     .setMessage("修改成功")
                     .show();
         });
 
-        view.findViewById(R.id.reset_custom_view).setOnClickListener(v -> {
-            SpUtil.putInt(getContext(),"floatTileCustonView","iconWidthHeightValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","iconTypeValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","iconRidusValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","titleTextSizeValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","contentTextSizeValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","rootPaddingTopAndBottomValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","rootElevationValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","titleTextColorValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","contentTextColorValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","rootLayRidusValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","rootLayColorValue",-1);
-            SpUtil.putInt(getContext(),"floatTileCustonView","rootBackGround",-1);
+        findViewById(R.id.reset_custom_view).setOnClickListener(v -> {
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconWidthHeightValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconTypeValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","iconRidusValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","titleTextSizeValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","contentTextSizeValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootPaddingTopAndBottomValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootElevationValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","titleTextColorValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","contentTextColorValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayRidusValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayColorValue",-1);
+            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootBackGround",-1);
 
-            new AlertDialog.Builder(getActivity())
+            new AlertDialog.Builder(this)
                     .setTitle("提示")
                     .setMessage("重置成功")
                     .show();
             initView();
         });
-        super.onViewCreated(view, savedInstanceState);
     }
 
     private  void initView(){
-        int iconWidthHeightValue = SpUtil.getInt(getContext(),"floatTileCustonView","iconWidthHeightValue",-1);
-        int iconTypeValue = SpUtil.getInt(getContext(),"floatTileCustonView","iconTypeValue",-1);
-        int iconRidusValue = SpUtil.getInt(getContext(),"floatTileCustonView","iconRidusValue",-1);
-        int titleTextSizeValue = SpUtil.getInt(getContext(),"floatTileCustonView","titleTextSizeValue",-1);
-        int contentTextSizeValue = SpUtil.getInt(getContext(),"floatTileCustonView","contentTextSizeValue",-1);
-        int rootPaddingTopAndBottomValue = SpUtil.getInt(getContext(),"floatTileCustonView","rootPaddingTopAndBottomValue",-1);
-        int rootElevationValue = SpUtil.getInt(getContext(),"floatTileCustonView","rootElevationValue",-1);
-        int titleTextColorValue = SpUtil.getInt(getContext(),"floatTileCustonView","titleTextColorValue",-1);
-        int contentTextColorValue = SpUtil.getInt(getContext(),"floatTileCustonView","contentTextColorValue",-1);
-        int rootLayBackGroundValue = SpUtil.getInt(getContext(),"floatTileCustonView","rootBackGround",-1);
+        int iconWidthHeightValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","iconWidthHeightValue",-1);
+        int iconTypeValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","iconTypeValue",-1);
+        int iconRidusValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","iconRidusValue",-1);
+        int titleTextSizeValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","titleTextSizeValue",-1);
+        int contentTextSizeValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","contentTextSizeValue",-1);
+        int rootPaddingTopAndBottomValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","rootPaddingTopAndBottomValue",-1);
+        int rootElevationValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","rootElevationValue",-1);
+        int titleTextColorValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","titleTextColorValue",-1);
+        int contentTextColorValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","contentTextColorValue",-1);
+        int rootLayBackGroundValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","rootBackGround",-1);
 
         if (iconWidthHeightValue != -1){
             imageIconLayoutParams.width=iconWidthHeightValue;
@@ -492,10 +427,43 @@ public class FloatTileCustomViewFragment extends Fragment implements ColorPicker
             floatTileView.setElevation(rootElevationValue);
         }
         if (rootLayBackGroundValue != -1){
-            Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(getContext(),"float_tile_background.9.png"),getContext());
+            Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(getApplicationContext(),"float_tile_background.9.png"),getApplicationContext());
             rootLayout.setBackground(drawable);
         }
+       
     }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode){
+            case FILE_REQUEST_CODE:
+                ArrayList<MediaFile> files = data.getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES);
+                if (files == null || files.size() ==0){
+                    return;
+                }
+                Uri fileUri = files.get(0).getUri();
+                Glide.with(getApplicationContext()).load(files.get(0).getUri())//签到整体 背景
+                                        .into(new CustomTarget<Drawable>() {
+                                            @Override
+                                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                                    ImageUtil.saveImageToData(getApplicationContext(),"float_tile_background.9.png",ImageUtil.drawable2Bitmap(resource));
+                                                    rootLayBackGround =1;
+                                                    rootLayout.setBackground(resource);
+                                            }
+                                            @Override
+                                            public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                            }        //设置宽高
+                                        });
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + requestCode);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     @Override
     public void onColorSelected(int dialogId, int color) {
         if (dialogId == R.id.title_text_color){

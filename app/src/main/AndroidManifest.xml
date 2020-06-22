@@ -42,6 +42,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".fragment.FloatTileCustomViewAictivy"/>
+        <activity android:name=".fragment.DanmuTileCustomViewAictivy"/>
+
 <!--        <activity-->
 <!--            android:name=".MainActivity"-->
 <!--            android:configChanges="keyboardHidden|orientation|screenSize">-->

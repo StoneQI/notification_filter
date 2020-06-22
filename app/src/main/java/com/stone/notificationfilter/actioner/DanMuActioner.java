@@ -11,8 +11,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -37,6 +42,7 @@ import com.cbman.roundimageview.RoundImageView;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.actioner.floatmessagereply.FloatMessageReply;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
+import com.stone.notificationfilter.util.ImageUtil;
 import com.stone.notificationfilter.util.PackageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.util.ToolUtils;
@@ -108,7 +114,7 @@ public class DanMuActioner {
 
 //        layoutParams.windowAnimations =R.style.PopupFloatTiltAnimLeft;
 
-
+        LinearLayout linearLayout = view.findViewById(R.id.window_root_lay);
         final LinearLayout messageLay = view.findViewById(R.id.window_messgae_lay);
 //        final LinearLayout message_content = view.findViewById(R.id.message_content);
         RoundImageView imageView = view.findViewById(R.id.window_icon_img);
@@ -120,7 +126,7 @@ public class DanMuActioner {
 
         final TextView titleText = view.findViewById(R.id.window_title_text);
         final TextView contentText = view.findViewById(R.id.window_content_text);
-        titleText.setText(this.notificationInfo.title);
+        titleText.setText(this.notificationInfo.title+":");
         contentText.setText(this.notificationInfo.content);
 
         if(this.notificationInfo.title.length() >18 || this.notificationInfo.content.length() >18){
@@ -128,51 +134,82 @@ public class DanMuActioner {
             layoutParams.width = (int) ToolUtils.dp2Px(250,context);
             messageLay.setLayoutParams(layoutParams);
         }
-//        final ViewGroup.LayoutParams imageIconLayoutParams = imageView.getLayoutParams();
-//        int iconWidthHeightValue = SpUtil.getInt(context,"floatTileCustonView","iconWidthHeightValue",-1);
-//        int iconTypeValue = SpUtil.getInt(context,"floatTileCustonView","iconTypeValue",-1);
-//        int iconRidusValue = SpUtil.getInt(context,"floatTileCustonView","iconRidusValue",-1);
-//        int titleTextSizeValue = SpUtil.getInt(context,"floatTileCustonView","titleTextSizeValue",-1);
-//        int contentTextSizeValue = SpUtil.getInt(context,"floatTileCustonView","contentTextSizeValue",-1);
-//        int rootPaddingValue = SpUtil.getInt(context,"floatTileCustonView","rootPaddingValue",-1);
-//        int rootElevationValue = SpUtil.getInt(context,"floatTileCustonView","rootElevationValue",-1);
-//
-//        int titleTextColorValue = SpUtil.getInt(context,"floatTileCustonView","titleTextColorValue",-1);
-//        int contentTextColorValue = SpUtil.getInt(context,"floatTileCustonView","contentTextColorValue",-1);
-//
-//        if (iconWidthHeightValue != -1){
-//            imageIconLayoutParams.width=iconWidthHeightValue;
-//            imageIconLayoutParams.height =iconWidthHeightValue;
-////                imageIcon.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//            imageView.setLayoutParams(imageIconLayoutParams);
-//        }
-//        if (iconTypeValue != -1){
-//            if (iconTypeValue ==0) imageView.setDisplayType(RoundImageView.DisplayType.ROUND_RECT);
-//            if (iconTypeValue ==1) imageView.setDisplayType(RoundImageView.DisplayType.CIRCLE);
-//            if (iconTypeValue ==2) imageView.setDisplayType(RoundImageView.DisplayType.NORMAL);
-//        }
-//        if (iconRidusValue != -1){
-//            imageView.setRadius(iconRidusValue);
-//        }
-//        if (titleTextSizeValue != -1){
-//            titleText.setTextSize(titleTextSizeValue);
-//        }
-//        if (contentTextSizeValue != -1){
-//            contentText.setTextSize(contentTextSizeValue);
-//        }
-//        if (titleTextColorValue != -1){
-//            titleText.setTextColor(titleTextColorValue);
-//        }
-//        if (contentTextColorValue != -1){
-//            contentText.setTextColor(contentTextColorValue);
-//        }
-//
-//        if (rootPaddingValue != -1){
-//            view.setPadding(rootPaddingValue,rootPaddingValue,rootPaddingValue,rootPaddingValue);
-//        }
-//        if (rootElevationValue != -1){
-//            view.setElevation(rootElevationValue);
-//        }
+        final ViewGroup.LayoutParams imageIconLayoutParams = imageView.getLayoutParams();
+        int iconWidthHeightValue = SpUtil.getInt(context,"danmuCustonView","iconWidthHeightValue",-1);
+        int iconTypeValue = SpUtil.getInt(context,"danmuCustonView","iconTypeValue",-1);
+        int iconRidusValue = SpUtil.getInt(context,"danmuCustonView","iconRidusValue",-1);
+        int titleTextSizeValue = SpUtil.getInt(context,"danmuCustonView","titleTextSizeValue",-1);
+        int contentTextSizeValue = SpUtil.getInt(context,"danmuCustonView","contentTextSizeValue",-1);
+        int rootPaddingTopAndBottomValue = SpUtil.getInt(context,"danmuCustonView","rootPaddingTopAndBottomValue",-1);
+        int rootElevationValue = SpUtil.getInt(context,"danmuCustonView","rootElevationValue",-1);
+
+        int titleTextColorValue = SpUtil.getInt(context,"danmuCustonView","titleTextColorValue",-1);
+        int contentTextColorValue = SpUtil.getInt(context,"danmuCustonView","contentTextColorValue",-1);
+        int rootLayBackGroundValue = SpUtil.getInt(context,"danmuCustonView","rootBackGround",-1);
+
+
+        if (iconWidthHeightValue != -1){
+            imageIconLayoutParams.width=iconWidthHeightValue;
+            imageIconLayoutParams.height =iconWidthHeightValue;
+//                imageIcon.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setLayoutParams(imageIconLayoutParams);
+        }
+        if (iconTypeValue != -1){
+            if (iconTypeValue ==0) imageView.setDisplayType(RoundImageView.DisplayType.ROUND_RECT);
+            if (iconTypeValue ==1) imageView.setDisplayType(RoundImageView.DisplayType.CIRCLE);
+            if (iconTypeValue ==2) imageView.setDisplayType(RoundImageView.DisplayType.NORMAL);
+        }
+        if (iconRidusValue != -1){
+            imageView.setRadius(iconRidusValue);
+        }
+        if (titleTextSizeValue != -1){
+            titleText.setTextSize(titleTextSizeValue);
+        }
+        if (contentTextSizeValue != -1){
+            contentText.setTextSize(contentTextSizeValue);
+        }
+        if (titleTextColorValue != -1){
+            titleText.setTextColor(titleTextColorValue);
+        }
+        if (contentTextColorValue != -1){
+            contentText.setTextColor(contentTextColorValue);
+        }
+
+        if (rootPaddingTopAndBottomValue != -1){
+            if (isLeft){
+                view.setPadding(3,rootPaddingTopAndBottomValue,rootPaddingTopAndBottomValue,rootPaddingTopAndBottomValue);
+            }else{
+                view.setPadding(rootPaddingTopAndBottomValue,rootPaddingTopAndBottomValue,3,rootPaddingTopAndBottomValue);
+            }
+
+        }
+        if (rootElevationValue != -1){
+            view.setElevation(rootElevationValue);
+        }
+
+        if (rootLayBackGroundValue != -1){
+            if (isLeft) {
+
+                Bitmap bitmapBackGround = ImageUtil.getImageFromData(context, "dan_mu_background.9.png");
+                Bitmap modBm = Bitmap.createBitmap(bitmapBackGround.getWidth(),bitmapBackGround.getHeight(),bitmapBackGround.getConfig());
+
+                Canvas canvas = new Canvas(modBm);
+                Paint paint = new Paint();
+                Matrix matrix = new Matrix();
+
+                matrix.setScale(-1,1);//翻转
+                matrix.postTranslate(bitmapBackGround.getWidth(),0);
+
+                canvas.drawBitmap(bitmapBackGround,matrix,paint);
+                linearLayout.setBackground(ImageUtil.BitmapToDrawable(modBm,context));
+
+
+            }else{
+                Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(context, "dan_mu_background.9.png"), context);
+                linearLayout.setBackground(drawable);
+            }
+        }
+
 
 
 

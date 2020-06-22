@@ -62,16 +62,12 @@
     <fragment
         android:id="@+id/floatTilesSettingFragment"
         android:name="com.stone.notificationfilter.fragment.FloatTilesSettingFragment"
-        android:label="@string/nav_float_tile_setting" >
-        <action
-            android:id="@+id/action_floatTilesSettingFragment_to_floatTileCustomViewFragment"
-            app:destination="@id/floatTileCustomViewFragment" />
-    </fragment>
+        android:label="@string/nav_float_tile_setting" />
     <fragment
         android:id="@+id/floatDanMuSettingFragment"
         android:name="com.stone.notificationfilter.fragment.FloatDanMuSettingFragment"
         android:label="@string/nav_danmu_tile_setting"
-        tools:layout="@layout/fragment_float_dan_mu_setting" />
+        tools:layout="@layout/fragment_float_dan_mu_custom_view" />
     <fragment
         android:id="@+id/otherSettingFragment"
         android:name="com.stone.notificationfilter.fragment.OtherSettingFragment"
@@ -91,9 +87,4 @@
         android:name="com.stone.notificationfilter.fragment.DonateFragment"
         android:label="@string/nav_donate"
         tools:layout="@layout/fragment_donate" />
-    <fragment
-        android:id="@+id/floatTileCustomViewFragment"
-        android:name="com.stone.notificationfilter.fragment.FloatTileCustomViewFragment"
-        android:label="@string/nav_float_tile_custom_view"
-        tools:layout="@layout/fragment_float_tile_custom_view" />
 </navigation>

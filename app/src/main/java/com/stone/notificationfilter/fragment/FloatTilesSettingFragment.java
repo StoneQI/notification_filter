@@ -12,8 +12,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -168,9 +166,9 @@ public class FloatTilesSettingFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceClick(Preference preference) {
 //                MainActivity mainActivity = (MainActivity)getActivity();
 //                mainActivity.replaceFragment(new FiliterActivity());
-                Navigation.findNavController(getView()).navigate(R.id.action_floatTilesSettingFragment_to_floatTileCustomViewFragment);
-//                Intent intent = new Intent(getActivity(), FloatTileCustomViewActivity.class);
-//                startActivity(intent);//
+//                Navigation.findNavController(getView()).navigate(R.id.action_floatTilesSettingFragment_to_floatTileCustomViewFragment);
+                Intent intent = new Intent(getActivity(), FloatTileCustomViewAictivy.class);
+                startActivity(intent);//
                 return true;
             }
         });

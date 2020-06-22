@@ -14,7 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.stone.notificationfilter.R;
+import com.stone.notificationfilter.util.ImageUtil;
+import com.stone.notificationfilter.util.SpUtil;
 
 /**
  * Created by wengyiming on 2017/9/13.
@@ -25,6 +28,7 @@ public class FloatWindow extends BaseFloatDailog {
     private FrameLayout floatCustomViewRight;
     FrameLayout.LayoutParams layoutParams;
     private View view;
+    private Context context;
     public interface IOnItemClicked{
         void onBackItemClick();//返回键按下
         void onCloseItemClick();//关闭键按下
@@ -108,7 +112,15 @@ public class FloatWindow extends BaseFloatDailog {
 
     @Override
     protected View getLogoView(LayoutInflater inflater) {
-        return inflater.inflate(R.layout.widget_float_window_logo, null);
+        View view = inflater.inflate(R.layout.widget_float_window_logo, null);
+
+        if (SpUtil.getBoolean(mActivity,"appSettings","on_notification_float_foregrounnd_switch",false)){
+            ImageView imageView = view.findViewById(R.id.logo);
+            Glide.with(view).load(ImageUtil.getImageFromData(mActivity,"notification_float_foreground.png")).into(imageView);
+        }
+
+
+        return view;
     }
 
     @Override
@@ -126,7 +138,7 @@ public class FloatWindow extends BaseFloatDailog {
 //            logoView.setScaleX(1 + offset);
 //            logoView.setScaleY(1 + offset);
         } else {
-            logoView.setBackgroundResource(R.drawable.widget_float_button_logo_bg);
+//            logoView.setBackgroundResource(R.drawable.widget_danmu_bg);
             logoView.setTranslationX(0);
             logoView.setScaleX(1);
             logoView.setScaleY(1);
