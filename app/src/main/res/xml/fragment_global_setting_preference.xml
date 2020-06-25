@@ -17,6 +17,7 @@
         android:key="notification_store_number"
         android:summary="在状态栏保存最近的信息，防止通知错过后找不到入口,默认存储8条，为0表示不存储"
         android:inputType="number"
+        android:dependency="notification_show"
         android:defaultValue="8"
         android:title="存储最近通知" />
     <SwitchPreference
@@ -41,6 +42,8 @@
         android:key="portrait_danmu_mode"
         android:summary="横屏时，以弹幕模式展示通知，不可点击"
         android:title="横屏弹幕模式" />
+
+
     <!--        <Preference-->
     <!--            android:key="todoNotification"-->
     <!--            android:title="通知栏待办" />-->

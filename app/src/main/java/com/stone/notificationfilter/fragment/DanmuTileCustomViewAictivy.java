@@ -1,8 +1,13 @@
 package com.stone.notificationfilter.fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.NinePatch;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -32,6 +37,8 @@ import com.stone.notificationfilter.util.CheckUtil;
 import com.stone.notificationfilter.util.ImageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class DanmuTileCustomViewAictivy extends BaseActivity implements ColorPickerDialogListener {
@@ -51,7 +58,7 @@ public class DanmuTileCustomViewAictivy extends BaseActivity implements ColorPic
 
     private int rootLayRidusValue=-1;
     private int rootLayColorValue=-1;
-    private  int rootLayBackGround = -1;
+    private  String rootLayBackGround = "-1";
 
     private LinearLayout rootLayout;
     private TextView titleText;
@@ -67,7 +74,7 @@ public class DanmuTileCustomViewAictivy extends BaseActivity implements ColorPic
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_float_tile_custom_view);
+        setContentView(R.layout.fragment_float_dan_mu_custom_view);
 
         LinearLayout layout = findViewById(R.id.float_window_tile_view);
         floatTileView = View.inflate(getApplicationContext(), R.layout.window_float_danmu, null);
@@ -85,29 +92,30 @@ public class DanmuTileCustomViewAictivy extends BaseActivity implements ColorPic
 
         titleText = floatTileView.findViewById(R.id.window_title_text);
         contentText = floatTileView.findViewById(R.id.window_content_text);
-        titleText.setText("调整样式");
+        titleText.setText("调整样式：");
         contentText.setText("根据下列选项调整磁贴样式");
         initView();
 
 
 
-        TextView rootBackgroundImage = findViewById(R.id.root_background_image);
-        rootBackgroundImage.setOnClickListener(v -> {
-            CheckUtil.verifyStoragePermissions(this);
-            Intent intent = new Intent(this, FilePickerActivity.class);
-            intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
-                    .setCheckPermission(true)
-                    .setShowImages(true)
-                    .setShowFiles(false)
-                    .setShowAudios(false)
-                    .setShowVideos(false)
-                    .setSingleChoiceMode(true)
-                    .enableImageCapture(false)
-                    .setSkipZeroSizeFiles(true)
-                    .build());
-            startActivityForResult(intent, FILE_REQUEST_CODE);
-
-        });
+//        TextView rootBackgroundImage = findViewById(R.id.root_background_image);
+//        rootBackgroundImage.setOnClickListener(v -> {
+//            CheckUtil.verifyStoragePermissions(this);
+//            Intent intent = new Intent(this, FilePickerActivity.class);
+//            intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
+//                    .setCheckPermission(true)
+//                    .setShowImages(true)
+//                    .setShowFiles(false)
+//                    .setShowAudios(false)
+//                    .setShowVideos(false)
+//                    .setSuffixes("png","jpg","bmp")
+//                    .setSingleChoiceMode(true)
+//                    .enableImageCapture(false)
+//                    .setSkipZeroSizeFiles(true)
+//                    .build());
+//            startActivityForResult(intent, FILE_REQUEST_CODE);
+//
+//        });
 
 
         SeekBar iconWidthHeigtSeekBar = findViewById(R.id.icon_widthHeight);
@@ -330,8 +338,8 @@ public class DanmuTileCustomViewAictivy extends BaseActivity implements ColorPic
                 SpUtil.putInt(getApplicationContext(),"danmuCustonView","rootLayColorValue",rootLayColorValue);
             }
 
-            if (rootLayBackGround != -1){
-                SpUtil.putInt(getApplicationContext(),"danmuCustonView","rootBackGround",rootLayBackGround);
+            if (!rootLayBackGround.equals("-1")){
+                SpUtil.putString(getApplicationContext(),"danmuCustonView","rootBackGround",rootLayBackGround);
             }
 
             new AlertDialog.Builder(this)
@@ -352,7 +360,7 @@ public class DanmuTileCustomViewAictivy extends BaseActivity implements ColorPic
             SpUtil.putInt(getApplicationContext(),"danmuCustonView","contentTextColorValue",-1);
             SpUtil.putInt(getApplicationContext(),"danmuCustonView","rootLayRidusValue",-1);
             SpUtil.putInt(getApplicationContext(),"danmuCustonView","rootLayColorValue",-1);
-            SpUtil.putInt(getApplicationContext(),"danmuCustonView","rootBackGround",-1);
+            SpUtil.putString(getApplicationContext(),"danmuCustonView","rootBackGround","-1");
 
             new AlertDialog.Builder(this)
                     .setTitle("提示")
@@ -372,7 +380,7 @@ public class DanmuTileCustomViewAictivy extends BaseActivity implements ColorPic
         int rootElevationValue = SpUtil.getInt(getApplicationContext(),"danmuCustonView","rootElevationValue",-1);
         int titleTextColorValue = SpUtil.getInt(getApplicationContext(),"danmuCustonView","titleTextColorValue",-1);
         int contentTextColorValue = SpUtil.getInt(getApplicationContext(),"danmuCustonView","contentTextColorValue",-1);
-        int rootLayBackGroundValue = SpUtil.getInt(getApplicationContext(),"danmuCustonView","rootBackGround",-1);
+        String rootLayBackGroundValue = SpUtil.getString(getApplicationContext(),"danmuCustonView","rootBackGround","-1");
 
         if (iconWidthHeightValue != -1){
             imageIconLayoutParams.width=iconWidthHeightValue;
@@ -407,9 +415,18 @@ public class DanmuTileCustomViewAictivy extends BaseActivity implements ColorPic
         if (rootElevationValue != -1){
             floatTileView.setElevation(rootElevationValue);
         }
-        if (rootLayBackGroundValue != -1){
-            Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(getApplicationContext(),"float_tile_background.9.png"),getApplicationContext());
-            rootLayout.setBackground(drawable);
+        if (!rootLayBackGroundValue.equals("-1")){
+            Glide.with(getApplicationContext()).load(new File(getApplicationContext().getFilesDir(),rootLayBackGroundValue))//签到整体 背景
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            rootLayout.setBackground(resource);
+                        }
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                        }        //设置宽高
+                    });
         }
 
     }
@@ -424,13 +441,35 @@ public class DanmuTileCustomViewAictivy extends BaseActivity implements ColorPic
                 if (files == null || files.size() ==0){
                     return;
                 }
-                Uri fileUri = files.get(0).getUri();
+                if (!SpUtil.getString(getApplicationContext(), "danmuCustonView", "rootBackGround", "-1").equals("-1")){
+                    getApplicationContext().deleteFile(SpUtil.getString(getApplicationContext(), "danmuCustonView","rootBackGround", "-1"));
+                }
+
+                BitmapFactory.Options options = new BitmapFactory.Options();
+
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+                Bitmap img = BitmapFactory.decodeFile(ImageUtil.getFilePath(getApplicationContext(),files.get(0).getUri()),options);
+
+                byte[] chunk = img.getNinePatchChunk();
+                //判断当前是不是.9图 这里可以加else做相应的处理
+                if (NinePatch.isNinePatchChunk(chunk)) {
+                    NinePatchDrawable npd = new NinePatchDrawable(getApplicationContext().getResources(), img, chunk, new Rect(), null);
+                    rootLayout.setBackground(npd);
+                }
+
+
+                try {
+                    ImageUtil.copyFileUsingFileChannels(new File(ImageUtil.getFilePath(getApplicationContext(),files.get(0).getUri())),new File(getApplicationContext().getFilesDir(), files.get(0).getName()));
+//                    SpUtil.putString(getApplicationContext(), "danmuCustonView", "rootBackGround", files.get(0).getName());
+                    rootLayBackGround = files.get(0).getName();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Glide.with(getApplicationContext()).load(files.get(0).getUri())//签到整体 背景
                         .into(new CustomTarget<Drawable>() {
                             @Override
                             public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                ImageUtil.saveImageToData(getApplicationContext(),"dan_mu_background.9.png",ImageUtil.drawable2Bitmap(resource));
-                                rootLayBackGround =1;
                                 rootLayout.setBackground(resource);
                             }
                             @Override

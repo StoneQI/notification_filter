@@ -44,6 +44,7 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.SPUtils;
 import com.bumptech.glide.Glide;
 import com.cbman.roundimageview.RoundImageView;
+import com.stone.notificationfilter.NotificationService;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.actioner.floatmessagereply.FloatMessageReply;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
@@ -161,7 +162,7 @@ public class FloatingTileActioner {
 
         int titleTextColorValue = SpUtil.getInt(context,"floatTileCustonView","titleTextColorValue",-1);
         int contentTextColorValue = SpUtil.getInt(context,"floatTileCustonView","contentTextColorValue",-1);
-        int rootLayBackGroundValue = SpUtil.getInt(context,"floatTileCustonView","rootBackGround",-1);
+        String rootLayBackGroundValue = SpUtil.getString(context,"floatTileCustonView","rootBackGround","-1");
 
 
         if (iconWidthHeightValue != -1){
@@ -203,10 +204,10 @@ public class FloatingTileActioner {
             view.setElevation(rootElevationValue);
         }
 
-        if (rootLayBackGroundValue != -1){
+        if (!rootLayBackGroundValue.equals("-1")){
             if (isLeft) {
 
-                Bitmap bitmapBackGround = ImageUtil.getImageFromData(context, "float_tile_background.9.png");
+                Bitmap bitmapBackGround = ImageUtil.getImageFromData(context, rootLayBackGroundValue);
                 Bitmap modBm = Bitmap.createBitmap(bitmapBackGround.getWidth(),bitmapBackGround.getHeight(),bitmapBackGround.getConfig());
 
                 Canvas canvas = new Canvas(modBm);
@@ -222,7 +223,7 @@ public class FloatingTileActioner {
 
             }else{
 
-                Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(context, "float_tile_background.9.png"), context);
+                Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(context, rootLayBackGroundValue), context);
                 rootLayout.setBackground(drawable);
             }
         }
@@ -266,6 +267,22 @@ public class FloatingTileActioner {
 
 
 
+    }
+
+    private void blackTempNotification(){
+        NotificationService.tempBlackAppLise.add(notificationInfo.packageName);
+        long floattitle_time = Long.parseLong(SpUtil.getString(context,"appSettings","floattitle_upblack_time", "10"));
+        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, PackageUtil.getAppNameFromPackname(context,notificationInfo.packageName)+"已被禁止通知"+floattitle_time+"分钟", Toast.LENGTH_SHORT).show());
+        TimerTask timerTask = new TimerTask(){
+            @Override
+            public void run() {
+                if (isOpen){
+                    NotificationService.tempBlackAppLise.remove(notificationInfo.packageName);
+                }
+            }
+        };
+        mtimer =new Timer();
+        mtimer.schedule(timerTask,floattitle_time*60000);
     }
 
     private void getScreenSize() {
@@ -522,6 +539,10 @@ public class FloatingTileActioner {
                     return true;
                 }
                 if (e1.getY() - e2.getY() > 30) {
+                    if(SpUtil.getBoolean(context,"appSettings","notification_upblack_show",false))
+                    {
+                        blackTempNotification();
+                    }
                     if(isOpen){
                         removeTile();
                     }

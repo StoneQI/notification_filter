@@ -18,7 +18,7 @@ public class FloatCustomViewActioner {
     private Context context;
     private WindowManager windowManager;
     private WindowManager.LayoutParams layoutParams;
-    private static View view = null;
+
     public boolean isRemove;
     private int viewWidth;
     private int viewHeight;
@@ -27,8 +27,8 @@ public class FloatCustomViewActioner {
     private boolean isOpen=true;
     private static String key ="0";
     private PendingIntent intent = null;
-//    private RemoteViews.RemoteView view=null;
     private static FloatWindow dialog;
+    private static View view = null;
     private static boolean isShow=false;
     public  FloatCustomViewActioner(NotificationInfo notificationInfo, Context context) {
         this.notificationInfo = notificationInfo;
@@ -44,15 +44,27 @@ public class FloatCustomViewActioner {
         };
         view = notificationInfo.remoteViews.apply(context,null);
         Log.e(TAG,"Key"+key);
-        if (key.equals(this.notificationInfo.key)&& isShow){
+        if (key.equals(this.notificationInfo.key)&& dialog!=null){
             dialog.setContentView(view,context);
-            dialog.updateExpanedView();
+            try {
+                dialog.updateExpanedView();
+            }catch (IllegalArgumentException e){
+                dialog.dismiss();
+                dialog = null;
+                showFloatWindow();
+            }
+
             return;
         }
         if (dialog!=null){
             dialog.dismiss();
+            dialog = null;
         }
-        dialog=new com.stone.notificationfilter.actioner.floatbutton.FloatWindow(context,500, new FloatWindow.IOnItemClicked() {
+        showFloatWindow();
+    }
+
+    private void showFloatWindow() {
+        dialog=new FloatWindow(context,500, new FloatWindow.IOnItemClicked() {
             @Override
             public void onBackItemClick() {
                 try {
@@ -68,7 +80,7 @@ public class FloatCustomViewActioner {
             public void onCloseItemClick() {
                 Toast.makeText(context,"通知悬浮组件关闭",Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
-                isShow=false;
+                dialog=null;
             }
 
             @Override
@@ -83,8 +95,17 @@ public class FloatCustomViewActioner {
         });
         dialog.setContentView(view,context);
         dialog.show();
-        isShow =true;
         key = this.notificationInfo.key;
         Log.e(TAG,"Show Window renew");
+    }
+
+    public void remove(){
+        Log.e(TAG,"remove Window renew");
+        if (key!= null && key.equals(notificationInfo.key)){
+            if(dialog!=null){
+                dialog.dismiss();
+                dialog = null;
+            }
+        }
     }
 }

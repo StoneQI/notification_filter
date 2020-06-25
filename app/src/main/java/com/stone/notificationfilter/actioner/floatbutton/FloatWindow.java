@@ -19,6 +19,8 @@ import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.util.ImageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 
+import java.io.File;
+
 /**
  * Created by wengyiming on 2017/9/13.
  */
@@ -116,7 +118,11 @@ public class FloatWindow extends BaseFloatDailog {
 
         if (SpUtil.getBoolean(mActivity,"appSettings","on_notification_float_foregrounnd_switch",false)){
             ImageView imageView = view.findViewById(R.id.logo);
-            Glide.with(view).load(ImageUtil.getImageFromData(mActivity,"notification_float_foreground.png")).into(imageView);
+            if (!SpUtil.getString(getContext(), "appSettings", "notification_float_foreground_path", "-1").equals("-1")){
+                Glide.with(view).load(new File(mActivity.getFilesDir(),SpUtil.getString(getContext(), "appSettings", "notification_float_foreground_path", "-1"))).into(imageView);
+            }
+
+
         }
 
 
@@ -146,9 +152,7 @@ public class FloatWindow extends BaseFloatDailog {
 
 
         if (isResetPosition) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                logoView.setRotation(offset * 360);
-            }
+            logoView.setRotation(offset * 360);
         } else {
             logoView.setRotation(offset * 360);
         }
@@ -193,8 +197,8 @@ public class FloatWindow extends BaseFloatDailog {
 //        layoutParams.width = (int)(mScreenWidth*0.8);
         layoutParams.width = (int)dp2Px(300,context);
 //        layoutParams.height = (int)dp2Px(161,context);
-
         this.view = view;
+        updateViewBeforeOpenMenu(mHintLocation);
 
     }
     public void show() {

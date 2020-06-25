@@ -28,7 +28,7 @@ public class SystemBaseHandler {
                 "下载",false));
 
         notificationHandlerItem.notificationPatterItems = notificationPatterItems;
-        notificationHandlerItem.actioner = 1;
+        notificationHandlerItem.actioner = "drop_notification";
         notificationHandlerItem.breakDown =true;
 
         notificationHandlerItems.add(notificationHandlerItem);
@@ -43,7 +43,7 @@ public class SystemBaseHandler {
         strings.add("com.netease.cloudmusic");
         strings.add("com.tencent.qqmusic");
         notificationHandlerItem2.packageNames =strings;
-        notificationHandlerItem2.actioner = 6;
+        notificationHandlerItem2.actioner = "float_notification";
         notificationHandlerItem2.breakDown =true;
         notificationHandlerItems.add(notificationHandlerItem2);
 
@@ -56,7 +56,7 @@ public class SystemBaseHandler {
         strings2.add("com.tencent.tim");
         strings2.add("com.tencent.mm");
         notificationHandlerItem3.packageNames =strings2;
-        notificationHandlerItem3.actioner = 5;
+        notificationHandlerItem3.actioner = "sound_notification";
         notificationHandlerItem3.breakDown =false;
         notificationHandlerItems.add(notificationHandlerItem3);
 
@@ -75,7 +75,7 @@ public class SystemBaseHandler {
                 "regex",
                 "^(?!.*?个联系人给你发过来).*$",true));
         notificationHandlerItem4.notificationPatterItems = notificationPatterItems4;
-        notificationHandlerItem4.actioner = 5;
+        notificationHandlerItem4.actioner = "save_log_notification";
         notificationHandlerItem4.breakDown =false;
         notificationHandlerItems.add(notificationHandlerItem4);
 
@@ -84,7 +84,7 @@ public class SystemBaseHandler {
             notificationHandlerItem5.orderID = 5;
             notificationHandlerItem5.name = "横屏弹幕通知";
             notificationHandlerItem5.sceen_status_on =2 ;
-            notificationHandlerItem5.actioner = 7;
+            notificationHandlerItem5.actioner = "danmu_notification";
             notificationHandlerItem5.breakDown =true;
             notificationHandlerItems.add(notificationHandlerItem5);
         }
@@ -95,7 +95,7 @@ public class SystemBaseHandler {
         NotificationHandlerItem notificationHandlerItem6 = new NotificationHandlerItem();
         notificationHandlerItem6.orderID = 5;
         notificationHandlerItem6.name = "默认悬浮通知";
-        notificationHandlerItem6.actioner = 0;
+        notificationHandlerItem6.actioner = "float_tile_notification";
         notificationHandlerItem6.breakDown =true;
         notificationHandlerItems.add(notificationHandlerItem6);
 

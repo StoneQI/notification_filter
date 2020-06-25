@@ -64,7 +64,7 @@ public abstract class BaseFloatDailog {
     /**
      * 悬浮窗 坐落 位置
      */
-    private int mHintLocation;
+    public int mHintLocation;
 
     /**
      * 记录当前手指位置在屏幕上的横坐标值
@@ -768,7 +768,7 @@ public abstract class BaseFloatDailog {
     public void updateExpanedView(){
         if(isExpaned){
             try {
-                updateViewBeforeOpenMenu(mHintLocation);
+//                updateViewBeforeOpenMenu(mHintLocation);
                 if (mHintLocation == RIGHT) {
                     int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                     int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -797,26 +797,16 @@ public abstract class BaseFloatDailog {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                if (mHintLocation == RIGHT) {
+                    wManager.addView(rightView,wmParams);
+                }else {
+                    wManager.addView(leftView,wmParams);
+                }
             }
 
             isExpaned = true;
             mHideTimer.cancel();
-        } else {
-            try {
-                updateViewBeforeCloseMenu(mHintLocation);
-                wManager.removeViewImmediate(mHintLocation == LEFT ? leftView : rightView);
-                wManager.addView(logoView, wmParams);
-                if (mGetViewCallback == null) {
-                    leftOrRightViewClosed(logoView);
-                } else {
-                    mGetViewCallback.leftOrRightViewClosed(logoView);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
-
     }
 
     /**

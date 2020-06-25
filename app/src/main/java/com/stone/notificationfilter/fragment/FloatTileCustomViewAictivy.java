@@ -41,6 +41,8 @@ import com.stone.notificationfilter.util.CheckUtil;
 import com.stone.notificationfilter.util.ImageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -70,7 +72,7 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
 
     private int rootLayRidusValue=-1;
     private int rootLayColorValue=-1;
-    private  int rootLayBackGround = -1;
+    private String rootLayBackGround = "-1";
 
     private LinearLayout rootLayout;
     private TextView titleText;
@@ -110,23 +112,24 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
 
 
 
-        TextView rootBackgroundImage = findViewById(R.id.root_background_image);
-        rootBackgroundImage.setOnClickListener(v -> {
-            CheckUtil.verifyStoragePermissions(this);
-            Intent intent = new Intent(this, FilePickerActivity.class);
-            intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
-                    .setCheckPermission(true)
-                    .setShowImages(true)
-                    .setShowFiles(false)
-                    .setShowAudios(false)
-                    .setShowVideos(false)
-                    .setSingleChoiceMode(true)
-                    .enableImageCapture(false)
-                    .setSkipZeroSizeFiles(true)
-                    .build());
-            startActivityForResult(intent, FILE_REQUEST_CODE);
-
-        });
+//        TextView rootBackgroundImage = findViewById(R.id.root_background_image);
+//        rootBackgroundImage.setOnClickListener(v -> {
+//            CheckUtil.verifyStoragePermissions(this);
+//            Intent intent = new Intent(this, FilePickerActivity.class);
+//            intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
+//                    .setCheckPermission(true)
+//                    .setShowImages(true)
+//                    .setShowFiles(false)
+//                    .setShowAudios(false)
+//                    .setSuffixes("png","jpg","bmp")
+//                    .setShowVideos(false)
+//                    .setSingleChoiceMode(true)
+//                    .enableImageCapture(false)
+//                    .setSkipZeroSizeFiles(true)
+//                    .build());
+//            startActivityForResult(intent, FILE_REQUEST_CODE);
+//
+//        });
 
 
         SeekBar iconWidthHeigtSeekBar = findViewById(R.id.icon_widthHeight);
@@ -349,8 +352,8 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
                 SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayColorValue",rootLayColorValue);
             }
 
-            if (rootLayBackGround != -1){
-                SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootBackGround",rootLayBackGround);
+            if (!rootLayBackGround.equals("-1")){
+                SpUtil.putString(getApplicationContext(),"floatTileCustonView","rootBackGround",rootLayBackGround);
             }
 
             new AlertDialog.Builder(this)
@@ -371,7 +374,7 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
             SpUtil.putInt(getApplicationContext(),"floatTileCustonView","contentTextColorValue",-1);
             SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayRidusValue",-1);
             SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootLayColorValue",-1);
-            SpUtil.putInt(getApplicationContext(),"floatTileCustonView","rootBackGround",-1);
+            SpUtil.putString(getApplicationContext(),"floatTileCustonView","rootBackGround","-1");
 
             new AlertDialog.Builder(this)
                     .setTitle("提示")
@@ -391,7 +394,7 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
         int rootElevationValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","rootElevationValue",-1);
         int titleTextColorValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","titleTextColorValue",-1);
         int contentTextColorValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","contentTextColorValue",-1);
-        int rootLayBackGroundValue = SpUtil.getInt(getApplicationContext(),"floatTileCustonView","rootBackGround",-1);
+        String rootLayBackGroundValue = SpUtil.getString(getApplicationContext(),"floatTileCustonView","rootBackGround","-1");
 
         if (iconWidthHeightValue != -1){
             imageIconLayoutParams.width=iconWidthHeightValue;
@@ -426,9 +429,18 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
         if (rootElevationValue != -1){
             floatTileView.setElevation(rootElevationValue);
         }
-        if (rootLayBackGroundValue != -1){
-            Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(getApplicationContext(),"float_tile_background.9.png"),getApplicationContext());
-            rootLayout.setBackground(drawable);
+        if (!rootLayBackGroundValue.equals("-1")){
+            Glide.with(getApplicationContext()).load(new File(getApplicationContext().getFilesDir(),rootLayBackGroundValue))//签到整体 背景
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            rootLayout.setBackground(resource);
+                        }
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                        }        //设置宽高
+                    });
         }
        
     }
@@ -443,13 +455,21 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
                 if (files == null || files.size() ==0){
                     return;
                 }
-                Uri fileUri = files.get(0).getUri();
+                if (!SpUtil.getString(getApplicationContext(), "floatTileCustonView", "rootBackGround", "-1").equals("-1")){
+                    getApplicationContext().deleteFile(SpUtil.getString(getApplicationContext(), "floatTileCustonView","rootBackGround", "-1"));
+                }
+
+                try {
+                    ImageUtil.copyFileUsingFileChannels(new File(ImageUtil.getFilePath(getApplicationContext(),files.get(0).getUri())),new File(getApplicationContext().getFilesDir(), files.get(0).getName()));
+                    rootLayBackGround = files.get(0).getName();
+//                    SpUtil.putString(getApplicationContext(), "floatTileCustonView", "rootBackGround", files.get(0).getName());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Glide.with(getApplicationContext()).load(files.get(0).getUri())//签到整体 背景
                                         .into(new CustomTarget<Drawable>() {
                                             @Override
                                             public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                                    ImageUtil.saveImageToData(getApplicationContext(),"float_tile_background.9.png",ImageUtil.drawable2Bitmap(resource));
-                                                    rootLayBackGround =1;
                                                     rootLayout.setBackground(resource);
                                             }
                                             @Override

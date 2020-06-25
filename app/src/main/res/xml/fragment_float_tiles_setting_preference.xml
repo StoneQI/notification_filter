@@ -36,4 +36,22 @@
         android:defaultValue="6"
         android:title="延时时长(秒)" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="notification_upblack_show"
+        android:summary="开启后，悬浮通知上划后，将禁用应用通知一段时间，可通过开启关闭服务重置"
+        android:title="开启上划禁止当前应用通知" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="notification_upblack_landscape"
+        android:dependency="notification_upblack_show"
+        android:title="仅横屏时禁止当前应用通知" />
+    <EditTextPreference
+        android:key="floattitle_upblack_time"
+        android:summary="设置禁止多久当前应用的通知"
+        android:inputType="number"
+        android:dependency="notification_upblack_show"
+        android:defaultValue="10"
+        android:title="禁止通知时长(分钟)" />
+
 </PreferenceScreen>

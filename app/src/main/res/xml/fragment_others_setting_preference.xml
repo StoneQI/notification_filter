@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <PreferenceCategory
+        android:title="复制通知处理器设置"/>
 
     <ListPreference
         android:key="copyactioner_select_mode"
@@ -45,5 +46,10 @@
         android:dependency="on_notification_float_foregrounnd_switch"
         android:title="设置通知悬浮处理器图标"
         android:summary=""/>
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="on_notification_float_message_link"
+        android:summary="关闭音乐软件通知栏信息时，同时关闭通知悬浮，（暂停音乐不会关闭通知悬浮）"
+        android:title="通知栏状态联动" />
 
 </PreferenceScreen>

@@ -126,7 +126,7 @@ public class DanMuActioner {
 
         final TextView titleText = view.findViewById(R.id.window_title_text);
         final TextView contentText = view.findViewById(R.id.window_content_text);
-        titleText.setText(this.notificationInfo.title+":");
+        titleText.setText(this.notificationInfo.title+"：");
         contentText.setText(this.notificationInfo.content);
 
         if(this.notificationInfo.title.length() >18 || this.notificationInfo.content.length() >18){
@@ -145,7 +145,7 @@ public class DanMuActioner {
 
         int titleTextColorValue = SpUtil.getInt(context,"danmuCustonView","titleTextColorValue",-1);
         int contentTextColorValue = SpUtil.getInt(context,"danmuCustonView","contentTextColorValue",-1);
-        int rootLayBackGroundValue = SpUtil.getInt(context,"danmuCustonView","rootBackGround",-1);
+        String rootLayBackGroundValue = SpUtil.getString(context,"danmuCustonView","rootBackGround","-1");
 
 
         if (iconWidthHeightValue != -1){
@@ -187,10 +187,10 @@ public class DanMuActioner {
             view.setElevation(rootElevationValue);
         }
 
-        if (rootLayBackGroundValue != -1){
+        if (!rootLayBackGroundValue.equals("-1")){
             if (isLeft) {
 
-                Bitmap bitmapBackGround = ImageUtil.getImageFromData(context, "dan_mu_background.9.png");
+                Bitmap bitmapBackGround = ImageUtil.getImageFromData(context, rootLayBackGroundValue);
                 Bitmap modBm = Bitmap.createBitmap(bitmapBackGround.getWidth(),bitmapBackGround.getHeight(),bitmapBackGround.getConfig());
 
                 Canvas canvas = new Canvas(modBm);
@@ -205,7 +205,7 @@ public class DanMuActioner {
 
 
             }else{
-                Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(context, "dan_mu_background.9.png"), context);
+                Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(context, rootLayBackGroundValue), context);
                 linearLayout.setBackground(drawable);
             }
         }

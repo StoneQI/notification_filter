@@ -23,7 +23,10 @@ import com.jaiselrahman.filepicker.config.Configurations;
 import com.jaiselrahman.filepicker.model.MediaFile;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.util.ImageUtil;
+import com.stone.notificationfilter.util.SpUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -115,16 +118,27 @@ public class OtherSettingFragment extends PreferenceFragmentCompat {
                 if (files == null || files.size() ==0){
                     return;
                 }
-                Glide.with(getContext()).load(files.get(0).getUri())//签到整体 背景
-                        .into(new CustomTarget<Drawable>() {
-                            @Override
-                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                ImageUtil.saveImageToData(getContext(),"notification_float_foreground.png",ImageUtil.drawable2Bitmap(resource));
-                            }
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                            }        //设置宽高
-                        });
+
+                if (!SpUtil.getString(getContext(), "appSettings", "notification_float_foreground_path", "-1").equals("-1")){
+                    getContext().deleteFile(SpUtil.getString(getContext(), "appSettings","notification_float_foreground_path", "-1"));
+                }
+
+                try {
+                    ImageUtil.copyFileUsingFileChannels(new File(ImageUtil.getFilePath(getContext(),files.get(0).getUri())),new File(getContext().getFilesDir(), files.get(0).getName()));
+                    SpUtil.putString(getContext(), "appSettings", "notification_float_foreground_path", files.get(0).getName());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+//                Glide.with(getContext()).load(files.get(0).getUri())//签到整体 背景
+//                        .into(new CustomTarget<Drawable>() {
+//                            @Override
+//                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+//                                ImageUtil.saveImageToData(getContext(),"notification_float_foreground.png",ImageUtil.drawable2Bitmap(resource));
+//                            }
+//                            @Override
+//                            public void onLoadCleared(@Nullable Drawable placeholder) {
+//                            }        //设置宽高
+//                        });
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + requestCode);

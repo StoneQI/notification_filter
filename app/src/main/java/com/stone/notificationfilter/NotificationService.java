@@ -51,6 +51,7 @@ import com.stone.notificationfilter.util.ToolUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -68,7 +69,7 @@ public class NotificationService extends NotificationListenerService {
 
 
     public static boolean isStartListener = true;
-    public static  boolean isCancalSystemNotification = false;
+    public static boolean isCancalSystemNotification = false;
 
     private NotificationHandlerItemFileStorage notificationHandlerItemFileStorage;
 
@@ -78,10 +79,12 @@ public class NotificationService extends NotificationListenerService {
 
 
     public static Set<String> selectAppList = null;
+    public static Set<String> tempBlackAppLise = new HashSet<>();
     public static int notification_store_number;
 //    True为白名单， false为黑名单
     public static  boolean appListMode = false;
-    private boolean isSceenLock =false;
+    private boolean isSceenLock = false;
+    private boolean isLandScape = false;
     private NotificationInfo notificationInfo=null;
 
     private static int NOTIFICATIONID = 0;
@@ -135,12 +138,12 @@ public class NotificationService extends NotificationListenerService {
             @Override
             public void run() {
                 try {
+                    isStartListener =true;
+                    tempBlackAppLise.clear();
                     String packageNamestring = SpUtil.getString(getApplicationContext(),"appSettings","select_applists", "");
                     selectAppList = SpUtil.string2Set(packageNamestring);
                     appListMode = SpUtil.getBoolean(getApplicationContext(),"appSettings","applist_mode", false);
-
                     notification_store_number = Integer.parseInt(SpUtil.getString(getApplicationContext(),"appSettings","notification_store_number", "8"));
-
                     notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),true);
                     notificationHandlerItems = notificationHandlerItemFileStorage.getAllAsArrayList();
                     notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule(getApplicationContext()));
@@ -161,6 +164,15 @@ public class NotificationService extends NotificationListenerService {
         if (!isStartListener){
 //            super.onNotificationPosted(sbn);
             return;
+        }
+        if (tempBlackAppLise.size() !=0){
+            if (!(SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_upblack_landscape",true) && !isLandScape)){
+                if (tempBlackAppLise.contains(sbn.getPackageName())){
+                    Log.i(TAG,sbn.getPackageName()+"is temp black");
+                    cancelNotification(sbn.getKey());
+                    return;
+                }
+            }
         }
         if(selectAppList.size()>1){
             if(appListMode){
@@ -213,14 +225,14 @@ public class NotificationService extends NotificationListenerService {
                 notificationInfo.content =notificationHandlerJudge.contentReplace(notificationInfo.content);
 
                 switch (notificationHandlerItem.actioner){
-                    case 0:floatingTileAction(notificationInfo); isCancalSystemNotification =true;break;
-                    case 1:isCancalSystemNotification =true; break;
-                    case 2:new CopyActioner(notificationInfo,NotificationService.this).run();break;
-                    case 3:new RunIntentActioner(notificationInfo,NotificationService.this).run();break;
-                    case 4:new SaveToFileActioner(notificationInfo,NotificationService.this).run();break;
-                    case 5:new NotificationSoundActioner(notificationInfo,NotificationService.this).run();break;
-                    case 6:new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
-                    case 7:new DanMuActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
+                    case "float_tile_notification":floatingTileAction(notificationInfo); isCancalSystemNotification =true;break;
+                    case "drop_notification":isCancalSystemNotification =true; break;
+                    case "copy_notification":new CopyActioner(notificationInfo,NotificationService.this).run();break;
+                    case "click_notification":new RunIntentActioner(notificationInfo,NotificationService.this).run();break;
+                    case "save_log_notification":new SaveToFileActioner(notificationInfo,NotificationService.this).run();break;
+                    case "sound_notification":new NotificationSoundActioner(notificationInfo,NotificationService.this).run();break;
+                    case "float_notification":new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
+                    case "danmu_notification":new DanMuActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
                 }
 
                 if(notificationHandlerItem.breakDown){
@@ -232,16 +244,42 @@ public class NotificationService extends NotificationListenerService {
             }
         }
 
-//        if (isCancalSystemNotification){
-//            if (notificationInfo!=null){
-//                super.onNotificationPosted(sbn);
-////                NotificationManager notificationManager =
-////                        (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-////                notificationManager.notify(NOTIFICATIONID++,notificationInfo.notification);
-//                Log.i(TAG,notificationInfo.title+" is cancel notification");
-//            }
-//        }
+    }
 
+
+
+    @Override
+    public void onNotificationRemoved(StatusBarNotification sbn) {
+        Log.i(TAG,"notification remove");
+        if (SpUtil.getBoolean(getApplicationContext(),"appSettings","on_notification_float_message_link",true)){
+            notificationInfo = getNotificationInfo(sbn);
+            new FloatCustomViewActioner(notificationInfo,NotificationService.this).remove();
+        }
+        super.onNotificationRemoved(sbn);
+    }
+
+    @Override
+    public void onListenerConnected() {
+        isStartListener =true;
+        Log.i(TAG,"notification service connected start");
+        super.onListenerConnected();
+    }
+
+    @Override
+    public void onListenerDisconnected() {
+        isStartListener = false;
+        Log.i(TAG,"notification service connected stop");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            requestRebind(new ComponentName(this, NotificationService.class));
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterReceiver(mBroadcastReceiver);
+        stopForeground(true);
+        super.onDestroy();
+        Log.i(TAG,"notification service stop");
     }
 
     public  void notificationRestore(NotificationInfo notificationInfo){
@@ -275,34 +313,14 @@ public class NotificationService extends NotificationListenerService {
 
     }
 
-    @Override
-    public void onNotificationRemoved(StatusBarNotification sbn) {
-
-        super.onNotificationRemoved(sbn);
-    }
-
-    @Override
-    public void onListenerConnected() {
-        isStartListener =true;
-        Log.i(TAG,"notification service connected start");
-        super.onListenerConnected();
-    }
-
-    @Override
-    public void onListenerDisconnected() {
-        isStartListener = false;
-        Log.i(TAG,"notification service connected stop");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            requestRebind(new ComponentName(this, NotificationService.class));
+    private void setSceenAngle(){
+        Configuration mConfiguration = getApplicationContext().getResources().getConfiguration(); //获取设置的配置信息
+        int ori = mConfiguration.orientation; //获取屏幕方向
+        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+            isLandScape = true;
+        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
+            isLandScape = false;
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        unregisterReceiver(mBroadcastReceiver);
-        stopForeground(true);
-        super.onDestroy();
-        Log.i(TAG,"notification service stop");
     }
 
     private NotificationInfo getNotificationInfo(StatusBarNotification sbn) {
@@ -349,11 +367,9 @@ public class NotificationService extends NotificationListenerService {
 
 //        if (notification == null) return;
 
-        Configuration mConfiguration = getApplicationContext().getResources().getConfiguration(); //获取设置的配置信息
-        int ori = mConfiguration.orientation; //获取屏幕方向
-        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+        if (isLandScape) {
             notificationInfo.sceenStatus =2;
-        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
+        } else {
             notificationInfo.sceenStatus =1;
         }
 

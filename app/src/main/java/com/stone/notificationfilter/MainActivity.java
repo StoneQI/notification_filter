@@ -18,7 +18,8 @@ import com.stone.notificationfilter.util.SpUtil;
 //import android.support.v7.app.AppCompatActivity;
 //import com.stone.notificationfilter.util.filestore.FileStorage;
 
-
+//TODO: 小窗口大小，弹幕通知显示不全
+//
 /**
  * 1.0.190807
  * Hello World

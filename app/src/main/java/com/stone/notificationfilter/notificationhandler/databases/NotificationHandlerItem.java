@@ -40,13 +40,13 @@ public class NotificationHandlerItem {
     public Boolean breakDown =false;
 //        <string-array name="notification_actioner">
 //        <item>悬浮通知</item>
-//        <item>系统通知</item>
 //        <item>丢弃通知</item>
 //        <item>复制到内容到剪贴板</item>
 //        <item>执行点击事件</item>
 //        <item>保存到日记记录</item>
 //        <item>播放提示音</item>
 //        <item>通知组件悬浮</item>
+//        <item>弹幕悬浮</item>
 //    </string-array>
 //
 //    <string-array name="notification_sceen_status_on">
@@ -54,7 +54,34 @@ public class NotificationHandlerItem {
 //        <item>仅竖屏屏启用</item>
 //        <item>仅横屏启用</item>
 //    </string-array>
-    public int actioner = 0;
+    public String actioner = "float_tile_notification";
     public int sceen_status_on = 0;
+
+    public static int getActionerIndex(String value){
+        switch (value){
+            case "float_tile_notification":return 0;
+            case "drop_notification":return 1;
+            case "copy_notification":return 2;
+            case "click_notification":return 3;
+            case "save_log_notification":return 4;
+            case "sound_notification":return 5;
+            case "float_notification":return 6;
+            case "danmu_notification":return 7;
+        };
+        return -1;
+    }
+    public static String getActionerValue(int value){
+        switch (value){
+            case 0:return "float_tile_notification";
+            case 1:return "drop_notification";
+            case 2:return "copy_notification";
+            case 3:return "click_notification";
+            case 4:return "save_log_notification";
+            case 5:return "sound_notification";
+            case 6:return "float_notification";
+            case 7:return "danmu_notification";
+        };
+        return "-1";
+    }
 
 }

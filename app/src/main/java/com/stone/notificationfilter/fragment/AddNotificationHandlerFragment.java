@@ -46,7 +46,7 @@ public class AddNotificationHandlerFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private final static  String TAG ="AddNotiHandlerFragment";
-    private  long notificationHandlerItemID;
+    private  long notificationHandlerItemID = -1;
     private NotificationHandlerItemFileStorage notificationHandlerItemFileStorage =null;
     private NotificationHandlerItem notificationFiliter =null;
     private HashSet<String> packageNames = null;
@@ -145,7 +145,7 @@ public class AddNotificationHandlerFragment extends Fragment {
             filter_content_replace.setText(notificationFiliter.contextFiliterReplace);
             packageNames  = (notificationFiliter.packageNames);
             isBreak.setChecked(notificationFiliter.breakDown);
-            actioner.setSelection(notificationFiliter.actioner,true);
+            actioner.setSelection(NotificationHandlerItem.getActionerIndex(notificationFiliter.actioner),true);
             sceen_status_on.setSelection(notificationFiliter.sceen_status_on,true);
 
         }else {
@@ -183,7 +183,7 @@ public class AddNotificationHandlerFragment extends Fragment {
                 notificationFiliter.contextFiliter =filter_content_extra.getText().toString();
                 notificationFiliter.contextFiliterReplace =filter_content_replace.getText().toString();
                 notificationFiliter.breakDown = isBreak.isChecked();
-                notificationFiliter.actioner = actioner.getSelectedItemPosition();
+                notificationFiliter.actioner = NotificationHandlerItem.getActionerValue(actioner.getSelectedItemPosition());
                 notificationFiliter.sceen_status_on = sceen_status_on.getSelectedItemPosition();
                 if (packageNames.size() !=0){
                     notificationFiliter.packageNames =  packageNames;
