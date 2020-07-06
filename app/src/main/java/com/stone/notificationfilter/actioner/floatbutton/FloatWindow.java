@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import java.io.File;
  */
 
 public class FloatWindow extends BaseFloatDailog {
+    private static final String TAG = "BaseFloatDailog" ;
     private FrameLayout floatCustomViewLeft;
     private FrameLayout floatCustomViewRight;
     FrameLayout.LayoutParams layoutParams;
@@ -75,7 +77,7 @@ public class FloatWindow extends BaseFloatDailog {
     @Override
     protected View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener) {
         View view = inflater.inflate(R.layout.widget_float_window_left, null);
-        floatCustomViewLeft=(FrameLayout)view.findViewById(R.id.float_custom_view_left);
+        floatCustomViewLeft=view.findViewById(R.id.float_custom_view_left);
         floatCustomViewLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,7 +97,7 @@ public class FloatWindow extends BaseFloatDailog {
     @Override
     protected View getRightView(LayoutInflater inflater, View.OnTouchListener touchListener) {
         View view = inflater.inflate(R.layout.widget_float_window_right, null);
-        floatCustomViewRight=(FrameLayout)view.findViewById(R.id.float_custom_view_right);
+        floatCustomViewRight=view.findViewById(R.id.float_custom_view_right);
         floatCustomViewRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -194,8 +196,20 @@ public class FloatWindow extends BaseFloatDailog {
 
     public void setContentView(View view,Context context){
         layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        view.measure(width, height);
+        int viewWidth = view.getMeasuredWidth();
+        int viewHeight = view.getMeasuredHeight();
+        Log.e(TAG,"viewWidth: "+viewWidth);
+        Log.e(TAG,"viewHeight: "+viewHeight);
 //        layoutParams.width = (int)(mScreenWidth*0.8);
         layoutParams.width = (int)dp2Px(300,context);
+
+        layoutParams.height = viewHeight;
+
+        view.setLayoutParams(layoutParams);
 //        layoutParams.height = (int)dp2Px(161,context);
         this.view = view;
         updateViewBeforeOpenMenu(mHintLocation);

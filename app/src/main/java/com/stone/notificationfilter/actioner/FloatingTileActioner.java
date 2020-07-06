@@ -298,7 +298,8 @@ public class FloatingTileActioner {
         }
 
         isEditPos = false;
-        setOnTouchListenr();
+        new Handler(Looper.getMainLooper()).post(()->{setOnTouchListenr();});
+
         addViewToWindow();
 
     }
@@ -331,8 +332,6 @@ public class FloatingTileActioner {
                 } else {
                     layoutParams.y = layoutParams.y + (viewHeight + 18)*showID;
                 }
-
-
 
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
@@ -383,7 +382,9 @@ public class FloatingTileActioner {
             public boolean onTouch(View v, MotionEvent event) {
 //                Log.e(TAG,"layoutParams"+String.valueOf(layoutParams.x)+","+String.valueOf(layoutParams.y));
                 Log.e(TAG,"raw:"+String.valueOf(x)+","+String.valueOf(y));
-
+                if (event == null){
+                    return false;
+                }
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getRawX();
@@ -514,7 +515,9 @@ public class FloatingTileActioner {
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 Log.i(TAG, velocityX+","+velocityY);
 
-
+                if (e1 == null || e2 == null){
+                    return true;
+                }
                 if (e2.getX() - e1.getX() > 110) {
                     if(isLeft){
                         if (isOpen){
@@ -574,12 +577,9 @@ public class FloatingTileActioner {
                 return false;
             }
         });
-        view.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    gestureDetector.onTouchEvent(event);
-                    return false;
-                }
+        view.setOnTouchListener((v, event) -> {
+            gestureDetector.onTouchEvent(event);
+            return false;
         });
 
     }
@@ -588,6 +588,7 @@ public class FloatingTileActioner {
 
 
             Intent intent =  context.getPackageManager().getLaunchIntentForPackage(appName);
+            if (intent ==null) return;
 //            intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK);
             startFreeformHack(context,intent,mScreenWidth,mScreenHeight);
 //            context.startActivity(intent);

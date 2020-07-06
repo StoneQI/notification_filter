@@ -12,6 +12,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -264,11 +265,15 @@ public class AddNotificationHandlerFragment extends Fragment {
     };
 
     private void popBackStack() {
+        new Handler(Looper.getMainLooper()).post(()->{
+            NavController navController = Navigation.findNavController(view);
+//        navController.popBackStack();
+//        navController.navigateUp();
+            if (!navController.popBackStack()){
+                getActivity().finish();
+            }
+        });
 
-        NavController navController = Navigation.findNavController(view);
-        if (!navController.popBackStack()){
-            getActivity().finish();
-        }
     }
 
     @Override

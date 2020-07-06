@@ -22,8 +22,8 @@ android {
         applicationId "com.stone.notificationfilter"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 20200625
-        versionName "0.9.8"
+        versionCode 20200706
+        versionName "0.9.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "releaseTime", "\"" + new Date().format("yyyy-MM-dd HH:mm:ss") + "\"")
         multiDexEnabled true
@@ -93,7 +93,8 @@ dependencies {
 //    implementation 'com.github.nguyenhoanglam:ImagePicker:1.4.2'
 //    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.8'
 //    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.8'
-    implementation 'com.github.jaiselrahman:FilePicker:1.3.2'
+//    implementation 'com.github.jaiselrahman:FilePicker:1.3.2'
+//    implementation 'me.rosuh:AndroidFilePicker:0.6.3'
 
 //    implementation 'com.zhihu.android:matisse:0.5.2'
 //    implementation 'com.github.wildma:PictureSelector:2.1.0'

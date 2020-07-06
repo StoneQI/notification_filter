@@ -2,6 +2,8 @@ package com.stone.notificationfilter.actioner;
 
 import android.app.PendingIntent;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -44,23 +46,25 @@ public class FloatCustomViewActioner {
         };
         view = notificationInfo.remoteViews.apply(context,null);
         Log.e(TAG,"Key"+key);
-        if (key.equals(this.notificationInfo.key)&& dialog!=null){
-            dialog.setContentView(view,context);
-            try {
-                dialog.updateExpanedView();
-            }catch (IllegalArgumentException e){
+        new Handler(Looper.getMainLooper()).post(()-> {
+            if (key.equals(this.notificationInfo.key) && dialog != null) {
+                dialog.setContentView(view, context);
+                try {
+                    dialog.updateExpanedView();
+                } catch (IllegalArgumentException e) {
+                    dialog.dismiss();
+                    dialog = null;
+                    showFloatWindow();
+                }
+
+                return;
+            }
+            if (dialog != null) {
                 dialog.dismiss();
                 dialog = null;
-                showFloatWindow();
             }
-
-            return;
-        }
-        if (dialog!=null){
-            dialog.dismiss();
-            dialog = null;
-        }
-        showFloatWindow();
+            showFloatWindow();
+        });
     }
 
     private void showFloatWindow() {
@@ -99,9 +103,9 @@ public class FloatCustomViewActioner {
         Log.e(TAG,"Show Window renew");
     }
 
-    public void remove(){
+    public static void remove(String notiKey){
         Log.e(TAG,"remove Window renew");
-        if (key!= null && key.equals(notificationInfo.key)){
+        if (key != null && key.equals(notiKey)){
             if(dialog!=null){
                 dialog.dismiss();
                 dialog = null;

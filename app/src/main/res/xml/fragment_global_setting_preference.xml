@@ -9,7 +9,7 @@
 
 
     <SwitchPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="notification_show"
         android:summary="在通知栏显示一条通知以防止进程关闭"
         android:title="通知栏保活" />
@@ -37,6 +37,11 @@
         android:title="选择匹配应用"
         android:summary="修改后，重新关闭开启服务才能生效"/>
 
+
+<!--    <Preference-->
+<!--        android:key="select_system_notification_applist"-->
+<!--        android:title="选择系统通知匹配应用"-->
+<!--        android:summary="选择的应用"/>-->
     <SwitchPreference
         android:defaultValue="false"
         android:key="portrait_danmu_mode"

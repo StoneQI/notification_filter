@@ -60,26 +60,28 @@ public class NotificationHandlerItem {
     public static int getActionerIndex(String value){
         switch (value){
             case "float_tile_notification":return 0;
-            case "drop_notification":return 1;
-            case "copy_notification":return 2;
-            case "click_notification":return 3;
-            case "save_log_notification":return 4;
-            case "sound_notification":return 5;
-            case "float_notification":return 6;
-            case "danmu_notification":return 7;
+            case "system_notification":return 1;
+            case "drop_notification":return 2;
+            case "copy_notification":return 3;
+            case "click_notification":return 4;
+            case "save_log_notification":return 5;
+            case "sound_notification":return 6;
+            case "float_notification":return 7;
+            case "danmu_notification":return 8;
         };
         return -1;
     }
     public static String getActionerValue(int value){
         switch (value){
             case 0:return "float_tile_notification";
-            case 1:return "drop_notification";
-            case 2:return "copy_notification";
-            case 3:return "click_notification";
-            case 4:return "save_log_notification";
-            case 5:return "sound_notification";
-            case 6:return "float_notification";
-            case 7:return "danmu_notification";
+            case 1:return "system_notification";
+            case 2:return "drop_notification";
+            case 3:return "copy_notification";
+            case 4:return "click_notification";
+            case 5:return "save_log_notification";
+            case 6:return "sound_notification";
+            case 7:return "float_notification";
+            case 8:return "danmu_notification";
         };
         return "-1";
     }

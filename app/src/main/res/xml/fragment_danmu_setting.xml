@@ -20,6 +20,11 @@
     <Preference
         android:key="danmu_custom_view"
         android:title="磁贴样式自定义" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="is_danmu_clicked"
+        android:summary="弹幕通知接受点击事件"
+        android:title="接受点击事件" />
 
 <!--    <ListPreference-->
 <!--        android:key="floattitle_tileDirection"-->

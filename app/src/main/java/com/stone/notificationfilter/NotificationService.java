@@ -69,7 +69,7 @@ public class NotificationService extends NotificationListenerService {
 
 
     public static boolean isStartListener = true;
-    public static boolean isCancalSystemNotification = false;
+
 
     private NotificationHandlerItemFileStorage notificationHandlerItemFileStorage;
 
@@ -80,11 +80,17 @@ public class NotificationService extends NotificationListenerService {
 
     public static Set<String> selectAppList = null;
     public static Set<String> tempBlackAppLise = new HashSet<>();
+
+    public static boolean isForegroundNotification = true;
     public static int notification_store_number;
 //    True为白名单， false为黑名单
     public static  boolean appListMode = false;
+
+    public  boolean isCancalSystemNotification = false;
     private boolean isSceenLock = false;
     private boolean isLandScape = false;
+    private boolean isNotificationUpblackLandscape = true
+            ;
     private NotificationInfo notificationInfo=null;
 
     private static int NOTIFICATIONID = 0;
@@ -121,7 +127,10 @@ public class NotificationService extends NotificationListenerService {
 
         reloadData();
         createNotificationChannel();
-        if (SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_show", true)){
+        isForegroundNotification = SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_show", true);
+        notification_store_number = Integer.parseInt(SpUtil.getString(getApplicationContext(),"appSettings","notification_store_number", "8"));
+        isNotificationUpblackLandscape = SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_upblack_landscape",true);
+        if (isForegroundNotification){
             addForegroundNotification();
         }
     }
@@ -143,7 +152,7 @@ public class NotificationService extends NotificationListenerService {
                     String packageNamestring = SpUtil.getString(getApplicationContext(),"appSettings","select_applists", "");
                     selectAppList = SpUtil.string2Set(packageNamestring);
                     appListMode = SpUtil.getBoolean(getApplicationContext(),"appSettings","applist_mode", false);
-                    notification_store_number = Integer.parseInt(SpUtil.getString(getApplicationContext(),"appSettings","notification_store_number", "8"));
+
                     notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),true);
                     notificationHandlerItems = notificationHandlerItemFileStorage.getAllAsArrayList();
                     notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule(getApplicationContext()));
@@ -160,13 +169,18 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(final StatusBarNotification sbn) {
         Log.i(TAG,"onNotificationPosted:"+isStartListener);
+        if (sbn==null) return;
 
         if (!isStartListener){
 //            super.onNotificationPosted(sbn);
             return;
         }
+
+        isCancalSystemNotification = false;
+        setSceenAngle();
+
         if (tempBlackAppLise.size() !=0){
-            if (!(SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_upblack_landscape",true) && !isLandScape)){
+            if (!(isNotificationUpblackLandscape && !isLandScape)){
                 if (tempBlackAppLise.contains(sbn.getPackageName())){
                     Log.i(TAG,sbn.getPackageName()+"is temp black");
                     cancelNotification(sbn.getKey());
@@ -175,16 +189,10 @@ public class NotificationService extends NotificationListenerService {
             }
         }
         if(selectAppList.size()>1){
-            if(appListMode){
-                if(!selectAppList.contains(sbn.getPackageName())){
-                    cancelNotification(sbn.getKey());
-                    return;
-                }
-            }else {
-                if(selectAppList.contains(sbn.getPackageName())){
-                    cancelNotification(sbn.getKey());
-                    return;
-                }
+            if(appListMode^selectAppList.contains(sbn.getPackageName())){
+                cancelNotification(sbn.getKey());
+                return;
+
             }
         }
         if (isSceenLock) {
@@ -193,56 +201,68 @@ public class NotificationService extends NotificationListenerService {
 
         try {
             notificationInfo = getNotificationInfo(sbn);
-
+            if (notificationInfo == null) return;
         }catch (Exception e){
             e.printStackTrace();
         }
 
         if (!TextUtils.isEmpty(notificationInfo.packageName) && notificationInfo.packageName.equals("com.stone.notificationfilter")){
+            isCancalSystemNotification = true;
             if (!TextUtils.isEmpty(notificationInfo.title) && !notificationInfo.title.equals("测试标题")){
                 return;
             }
         }else{
-            if (notification_store_number > 0){
+            if (isForegroundNotification && notification_store_number > 0){
                 notificationRestore(notificationInfo);
             }
 
         }
 
-        cancelNotification(notificationInfo.key);
+//        cancelNotification(notificationInfo.key);
 
-        isCancalSystemNotification =false;
-        for(NotificationHandlerItem notificationHandlerItem:notificationHandlerItems){
-            try {
-                NotificationHandlerJudge notificationHandlerJudge = new NotificationHandlerJudge(notificationInfo, notificationHandlerItem);
-                if (!notificationHandlerJudge.isMatch()){
-                    Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is fail");
-                    continue;
-                }
-                Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is match");
+        try {
+            for(NotificationHandlerItem notificationHandlerItem:notificationHandlerItems){
 
-                notificationInfo.title = notificationHandlerJudge.titleReplace(notificationInfo.title);
-                notificationInfo.content =notificationHandlerJudge.contentReplace(notificationInfo.content);
+                    if (!NotificationHandlerJudge.isMatch(notificationInfo, notificationHandlerItem)){
+                        Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is fail");
+                        continue;
+                    }
+                    Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is match");
 
-                switch (notificationHandlerItem.actioner){
-                    case "float_tile_notification":floatingTileAction(notificationInfo); isCancalSystemNotification =true;break;
-                    case "drop_notification":isCancalSystemNotification =true; break;
-                    case "copy_notification":new CopyActioner(notificationInfo,NotificationService.this).run();break;
-                    case "click_notification":new RunIntentActioner(notificationInfo,NotificationService.this).run();break;
-                    case "save_log_notification":new SaveToFileActioner(notificationInfo,NotificationService.this).run();break;
-                    case "sound_notification":new NotificationSoundActioner(notificationInfo,NotificationService.this).run();break;
-                    case "float_notification":new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
-                    case "danmu_notification":new DanMuActioner(notificationInfo,NotificationService.this).run();isCancalSystemNotification =true;break;
-                }
+                    notificationInfo.title = NotificationHandlerJudge.titleReplace(notificationInfo.title);
+                    notificationInfo.content =NotificationHandlerJudge.contentReplace(notificationInfo.content);
+                        switch (notificationHandlerItem.actioner){
+                            case "float_tile_notification":
+                                new Thread(()->{floatingTileAction(notificationInfo);}).start(); isCancalSystemNotification =true;break;
+                            case "system_notification":isCancalSystemNotification = false; break;
+                            case "drop_notification":isCancalSystemNotification = true; break;
+                            case "copy_notification":
+                                new Thread(()->{new CopyActioner(notificationInfo,NotificationService.this).run();}).start();break;
+                            case "click_notification":
+                                new Thread(()->{new RunIntentActioner(notificationInfo,NotificationService.this).run();}).start();break;
+                            case "save_log_notification":
+                                new Thread(()->{new SaveToFileActioner(notificationInfo,NotificationService.this).run();}).start();break;
+                            case "sound_notification":
+                                new Thread(()->{new NotificationSoundActioner(notificationInfo,NotificationService.this).run();}).start();break;
+                            case "float_notification":
+                                new Thread(()->{new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();}).start();isCancalSystemNotification =true;break;
+                            case "danmu_notification":
+                                new Thread(()->{new DanMuActioner(notificationInfo,NotificationService.this).run();}).start();isCancalSystemNotification =true;break;
+                        }
 
-                if(notificationHandlerItem.breakDown){
-                    break;
-                }
-            }catch (Exception e){
-                isCancalSystemNotification =false;
-                e.printStackTrace();
+                    if(notificationHandlerItem.breakDown){
+                        break;
+                    }
             }
+        }catch (Exception e){
+            isCancalSystemNotification =false;
+//                super.onNotificationPosted(sbn);
+                e.printStackTrace();
         }
+        if (isCancalSystemNotification){
+            cancelNotification(notificationInfo.key);
+        }
+//        onNotificationPosted(sbn);
 
     }
 
@@ -251,9 +271,12 @@ public class NotificationService extends NotificationListenerService {
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
         Log.i(TAG,"notification remove");
+        if (sbn==null){
+            return;
+        }
         if (SpUtil.getBoolean(getApplicationContext(),"appSettings","on_notification_float_message_link",true)){
-            notificationInfo = getNotificationInfo(sbn);
-            new FloatCustomViewActioner(notificationInfo,NotificationService.this).remove();
+//            notificationInfo = getNotificationInfo(sbn);
+            FloatCustomViewActioner.remove(sbn.getKey());
         }
         super.onNotificationRemoved(sbn);
     }
@@ -326,6 +349,7 @@ public class NotificationService extends NotificationListenerService {
     private NotificationInfo getNotificationInfo(StatusBarNotification sbn) {
         Notification notification = sbn.getNotification();
         Bundle extras = sbn.getNotification().extras;
+        if (extras == null) return null;
         NotificationInfo notificationInfo = new NotificationInfo(sbn.getId(),sbn.getKey(),sbn.getPostTime());
         notificationInfo.notification = notification;
         notificationInfo.isClearable = sbn.isClearable();
@@ -334,8 +358,11 @@ public class NotificationService extends NotificationListenerService {
         notificationInfo.packageName = sbn.getPackageName();
         notificationInfo.largeIcon = sbn.getNotification().getLargeIcon();
         notificationInfo.smallIcon = sbn.getNotification().getSmallIcon();
-        notificationInfo.title = extras.getString(Notification.EXTRA_TITLE);
-        notificationInfo.content = extras.getString(Notification.EXTRA_TEXT);
+
+        notificationInfo.title = extras.getString(Notification.EXTRA_TITLE,"");
+
+        notificationInfo.content = extras.getString(Notification.EXTRA_TEXT,"");
+
         notificationInfo.intent = sbn.getNotification().contentIntent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationInfo.ChannelID = notification.getChannelId();

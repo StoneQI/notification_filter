@@ -3,6 +3,8 @@ package com.stone.notificationfilter.actioner;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,12 +34,15 @@ public class CopyActioner {
             content = notificationInfo.content;
         }
         Log.e(TAG,content);
-        if(!StringUtils.isEmpty(content)){
-            ClipData mClipData = ClipData.newPlainText("Label", content);
-            cm.setPrimaryClip(mClipData);
+        String finalContent = content;
+        new Handler(Looper.getMainLooper()).post(()-> {
+            if (!StringUtils.isEmpty(finalContent)) {
+                ClipData mClipData = ClipData.newPlainText("Label", finalContent);
+                cm.setPrimaryClip(mClipData);
 //        Toast.makeText(context,"\""+content+"\"已被复制",);
-            Toast.makeText(context, "\""+content+"\"已被复制", Toast.LENGTH_SHORT).show();
-        }
+                Toast.makeText(context, "\"" + finalContent + "\"已被复制", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 }

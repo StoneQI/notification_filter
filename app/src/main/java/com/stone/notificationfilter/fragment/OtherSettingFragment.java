@@ -1,5 +1,7 @@
 package com.stone.notificationfilter.fragment;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -11,18 +13,19 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.jaiselrahman.filepicker.activity.FilePickerActivity;
-import com.jaiselrahman.filepicker.config.Configurations;
-import com.jaiselrahman.filepicker.model.MediaFile;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.util.ImageUtil;
+import com.stone.notificationfilter.util.JxdUtils;
 import com.stone.notificationfilter.util.SpUtil;
 
 import java.io.File;
@@ -91,18 +94,19 @@ public class OtherSettingFragment extends PreferenceFragmentCompat {
 //                Navigation.findNavController(getView()).navigate(R.id.action_floatTilesSettingFragment_to_floatTileCustomViewFragment);
 //                Intent intent = new Intent(getActivity(), FloatTileCustomViewAictivy.class);
 //                startActivity(intent);//
-                Intent intent = new Intent(getActivity(), FilePickerActivity.class);
-                intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
-                        .setCheckPermission(true)
-                        .setShowImages(true)
-                        .setShowFiles(false)
-                        .setShowAudios(false)
-                        .setShowVideos(false)
-                        .setSingleChoiceMode(true)
-                        .enableImageCapture(false)
-                        .setSkipZeroSizeFiles(true)
-                        .build());
-                startActivityForResult(intent, FILE_REQUEST_CODE);
+//                Intent intent = new Intent(getActivity(), FilePickerActivity.class);
+//                intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
+//                        .setCheckPermission(true)
+//                        .setShowImages(true)
+//                        .setShowFiles(false)
+//                        .setShowAudios(false)
+//                        .setShowVideos(false)
+//                        .setSingleChoiceMode(true)
+//                        .enableImageCapture(false)
+//                        .setSkipZeroSizeFiles(true)
+//                        .build());
+//                startActivityForResult(intent, FILE_REQUEST_CODE);
+                chooseFile();
                 return true;
             }
         });
@@ -110,39 +114,53 @@ public class OtherSettingFragment extends PreferenceFragmentCompat {
 
     }
 
+    private static final String TAG1 = "FileChoose";
+
+    // 调用系统文件管理器
+    private void chooseFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*").addCategory(Intent.CATEGORY_OPENABLE);
+        try {
+            startActivityForResult(Intent.createChooser(intent, "Choose File"), FILE_REQUEST_CODE);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), "亲，木有文件管理器啊-_-!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode){
-            case FILE_REQUEST_CODE:
-                ArrayList<MediaFile> files = data.getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES);
-                if (files == null || files.size() ==0){
-                    return;
-                }
+            if(data ==null || data.getData()==null){
+                return;
+            }
+            if (requestCode == FILE_REQUEST_CODE) {
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri uri = data.getData();
+                    String imagePath = JxdUtils.getPath(getContext(), uri);
 
-                if (!SpUtil.getString(getContext(), "appSettings", "notification_float_foreground_path", "-1").equals("-1")){
-                    getContext().deleteFile(SpUtil.getString(getContext(), "appSettings","notification_float_foreground_path", "-1"));
-                }
+                    String detaleFilePath =  SpUtil.getString(getContext(), "appSettings", "notification_float_foreground_path", "-1");
+                    if (!TextUtils.isEmpty(imagePath) ) {
+                        try {
+                            String newFileName = System.currentTimeMillis()%10+'-'+JxdUtils.getFileNameforPath(imagePath);
+                            JxdUtils.copyFile(new File(imagePath), new File(getContext().getFilesDir(),newFileName ));
+                            SpUtil.putString(getContext(), "appSettings", "notification_float_foreground_path",newFileName);
+                            if (!detaleFilePath.equals("-1")) {
+                                getContext().deleteFile(detaleFilePath);
+//                                getContext().deleteFile(imagePath);
+                            }
+                            Toast.makeText(getActivity(), "图片设置成功", Toast.LENGTH_SHORT).show();
 
-                try {
-                    ImageUtil.copyFileUsingFileChannels(new File(ImageUtil.getFilePath(getContext(),files.get(0).getUri())),new File(getContext().getFilesDir(), files.get(0).getName()));
-                    SpUtil.putString(getContext(), "appSettings", "notification_float_foreground_path", files.get(0).getName());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                            return;
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Toast.makeText(getActivity(), "图片设置失败", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "你没有选择任何图片", Toast.LENGTH_SHORT).show();
                 }
-//                Glide.with(getContext()).load(files.get(0).getUri())//签到整体 背景
-//                        .into(new CustomTarget<Drawable>() {
-//                            @Override
-//                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-//                                ImageUtil.saveImageToData(getContext(),"notification_float_foreground.png",ImageUtil.drawable2Bitmap(resource));
-//                            }
-//                            @Override
-//                            public void onLoadCleared(@Nullable Drawable placeholder) {
-//                            }        //设置宽高
-//                        });
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + requestCode);
-        }
+            }
         super.onActivityResult(requestCode, resultCode, data);
     }
 

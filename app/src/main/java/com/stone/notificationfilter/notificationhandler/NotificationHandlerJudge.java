@@ -14,11 +14,13 @@ public class NotificationHandlerJudge {
     private static NotificationHandlerItem notificationHandlerItem;
 
     public NotificationHandlerJudge(NotificationInfo notificationInfo, NotificationHandlerItem notificationHandlerItem) {
-        this.notificationInfo = notificationInfo;
-        this.notificationHandlerItem = notificationHandlerItem;
+//        this.notificationInfo = notificationInfo;
+//        this.notificationHandlerItem = notificationHandlerItem;
     }
 
-    public  boolean isMatch(){
+    public static boolean isMatch(NotificationInfo notificationInfo, NotificationHandlerItem notificationHandlerItem){
+        NotificationHandlerJudge.notificationInfo = notificationInfo;
+        NotificationHandlerJudge.notificationHandlerItem = notificationHandlerItem;
         if (!isPackageMatch()){
             return false;
         }
@@ -32,21 +34,21 @@ public class NotificationHandlerJudge {
         return true;
     }
 
-    private  boolean isSceenOriMatch(){
+    private static boolean isSceenOriMatch(){
         if (notificationHandlerItem.sceen_status_on ==0 ){
             return true;
         }
         return notificationHandlerItem.sceen_status_on == notificationInfo.sceenStatus;
 
     }
-    private  boolean isPackageMatch(){
+    private static boolean isPackageMatch(){
         if (notificationHandlerItem.packageNames ==null || notificationHandlerItem.packageNames.size()==0){
             return true;
         }
         return notificationHandlerItem.packageNames.contains(notificationInfo.packageName);
     }
 
-    private  boolean isPatterItemMatch(){
+    private static boolean isPatterItemMatch(){
         if (notificationHandlerItem.notificationPatterItems ==null || notificationHandlerItem.notificationPatterItems.size()==0){
             return true;
         }
@@ -77,19 +79,19 @@ public class NotificationHandlerJudge {
         return isHasOneMatch;
     }
 
-    private  boolean isNoContainMatchItem(String patternRule, String desContent) {
+    private static boolean isNoContainMatchItem(String patternRule, String desContent) {
         return !desContent.contains(patternRule);
     }
 
-    private  boolean isRegexMatchItem(String patternRule, String desContent) {
+    private static boolean isRegexMatchItem(String patternRule, String desContent) {
         return Pattern.matches(patternRule,desContent);
     }
 
-    private  boolean isContainMatchItem(String patternRule, String desContent) {
+    private static boolean isContainMatchItem(String patternRule, String desContent) {
         return desContent.contains(patternRule);
     }
 
-    public   String titleReplace(String content) {
+    public  static String titleReplace(String content) {
         if (TextUtils.isEmpty(content)) return content;
         String new_title = content;
         if (!TextUtils.isEmpty(notificationHandlerItem.titleFiliter)) {
@@ -112,7 +114,7 @@ public class NotificationHandlerJudge {
         return new_title;
 
     }
-    public  String contentReplace(String content){
+    public static String contentReplace(String content){
         if (TextUtils.isEmpty(content)) return content;
         String new_Content = content;
         if(!TextUtils.isEmpty(notificationHandlerItem.contextFiliter)){

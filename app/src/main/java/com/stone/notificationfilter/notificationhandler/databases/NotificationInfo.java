@@ -22,8 +22,8 @@ public class NotificationInfo {
     public String Tag;
     public Icon smallIcon;
     public Icon largeIcon;
-    public String title;
-    public String content;
+    public String title="";
+    public String content="";
     public Boolean isInteractive =false;
     public PendingIntent intent =null;
     public RemoteViews remoteViews;

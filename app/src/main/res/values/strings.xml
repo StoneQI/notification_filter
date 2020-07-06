@@ -82,6 +82,7 @@
 
     <string-array name="notification_actioner">
         <item>悬浮通知</item>
+        <item>系统通知</item>
         <item>丢弃通知</item>
         <item>复制到内容到剪贴板</item>
         <item>执行点击事件</item>

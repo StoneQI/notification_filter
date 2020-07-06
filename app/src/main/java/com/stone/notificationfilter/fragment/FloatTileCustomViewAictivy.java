@@ -24,9 +24,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.cbman.roundimageview.RoundImageView;
-import com.jaiselrahman.filepicker.activity.FilePickerActivity;
-import com.jaiselrahman.filepicker.config.Configurations;
-import com.jaiselrahman.filepicker.model.MediaFile;
 import com.jaredrummler.android.colorpicker.ColorPickerDialog;
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener;
 
@@ -449,38 +446,6 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode){
-            case FILE_REQUEST_CODE:
-                ArrayList<MediaFile> files = data.getParcelableArrayListExtra(FilePickerActivity.MEDIA_FILES);
-                if (files == null || files.size() ==0){
-                    return;
-                }
-                if (!SpUtil.getString(getApplicationContext(), "floatTileCustonView", "rootBackGround", "-1").equals("-1")){
-                    getApplicationContext().deleteFile(SpUtil.getString(getApplicationContext(), "floatTileCustonView","rootBackGround", "-1"));
-                }
-
-                try {
-                    ImageUtil.copyFileUsingFileChannels(new File(ImageUtil.getFilePath(getApplicationContext(),files.get(0).getUri())),new File(getApplicationContext().getFilesDir(), files.get(0).getName()));
-                    rootLayBackGround = files.get(0).getName();
-//                    SpUtil.putString(getApplicationContext(), "floatTileCustonView", "rootBackGround", files.get(0).getName());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Glide.with(getApplicationContext()).load(files.get(0).getUri())//签到整体 背景
-                                        .into(new CustomTarget<Drawable>() {
-                                            @Override
-                                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                                    rootLayout.setBackground(resource);
-                                            }
-                                            @Override
-                                            public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                                            }        //设置宽高
-                                        });
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + requestCode);
-        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 

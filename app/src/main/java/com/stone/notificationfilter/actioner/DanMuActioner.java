@@ -2,6 +2,9 @@ package com.stone.notificationfilter.actioner;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -11,10 +14,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -32,12 +37,14 @@ import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.PathInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ScreenUtils;
 import com.cbman.roundimageview.RoundImageView;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.actioner.floatmessagereply.FloatMessageReply;
@@ -64,25 +71,25 @@ public class DanMuActioner {
     private int viewHeight;
     private int mScreenHeight;
     private int mScreenWidth;
-    private int mMoveSpeed =8;
-    private int mResetUpdateX =0;
-    private static int mPrePosition =-1;
+
+    private static int preLineInt;
+    private PropertyValuesHolder animatorX;
+
 
     private WindowManager windowManager;
     private WindowManager.LayoutParams layoutParams;
-    public boolean isEditPos=false;
     private boolean isOpen=true;
     public boolean isRemove;
 
-    public  int showID = -1;
+
     private View view;
+    private  LinearLayout rootContentLayout;
+
     private Timer mtimer =null;
     private  boolean isLeft=true;
-    private  boolean isVert =false;
     private  boolean isRefuse =false;
+    private  boolean isDanmuClicked = false;
 
-    private Interpolator mLinearInterpolator = new LinearInterpolator();
-    ValueAnimator valueAnimator = null;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -92,7 +99,7 @@ public class DanMuActioner {
         this.notificationInfo = notificationInfo;
 
 
-
+        isDanmuClicked = SpUtil.getBoolean(context,"appSettings","is_danmu_clicked",false);
         windowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getScreenSize();
@@ -106,15 +113,7 @@ public class DanMuActioner {
 
         view = View.inflate(context, R.layout.window_float_danmu, null);
 
-//        RelativeLayout relativeLayout = new RelativeLayout(null);
-//        RelativeLayout.LayoutParams = new
-//        relativeLayout.addView(view);
-
-
-
-//        layoutParams.windowAnimations =R.style.PopupFloatTiltAnimLeft;
-
-        LinearLayout linearLayout = view.findViewById(R.id.window_root_lay);
+        rootContentLayout = view.findViewById(R.id.window_root_lay);
         final LinearLayout messageLay = view.findViewById(R.id.window_messgae_lay);
 //        final LinearLayout message_content = view.findViewById(R.id.message_content);
         RoundImageView imageView = view.findViewById(R.id.window_icon_img);
@@ -123,6 +122,18 @@ public class DanMuActioner {
         } else {
             imageView.setImageIcon(this.notificationInfo.largeIcon);
         }
+
+        if (isDanmuClicked){
+            rootContentLayout.setOnClickListener(v -> {
+                try {
+                    intent.send();
+                } catch (PendingIntent.CanceledException e) {
+                    e.printStackTrace();
+                }
+                removeTile();
+            });
+        }
+
 
         final TextView titleText = view.findViewById(R.id.window_title_text);
         final TextView contentText = view.findViewById(R.id.window_content_text);
@@ -201,18 +212,25 @@ public class DanMuActioner {
                 matrix.postTranslate(bitmapBackGround.getWidth(),0);
 
                 canvas.drawBitmap(bitmapBackGround,matrix,paint);
-                linearLayout.setBackground(ImageUtil.BitmapToDrawable(modBm,context));
+                rootContentLayout.setBackground(ImageUtil.BitmapToDrawable(modBm,context));
 
 
             }else{
                 Drawable drawable = ImageUtil.BitmapToDrawable(ImageUtil.getImageFromData(context, rootLayBackGroundValue), context);
-                linearLayout.setBackground(drawable);
+                rootContentLayout.setBackground(drawable);
             }
         }
 
 
 
 
+    }
+
+    public int getStatusBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        int height = resources.getDimensionPixelSize(resourceId);
+        return height;
     }
 
     private void WindowInit(Context context) {
@@ -234,7 +252,7 @@ public class DanMuActioner {
         viewWidth = view.getMeasuredWidth();
         viewHeight = view.getMeasuredHeight();
 
-        layoutParams.width = viewWidth;
+        layoutParams.width = mScreenWidth;
         layoutParams.height = viewHeight;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -242,7 +260,13 @@ public class DanMuActioner {
         } else {
             layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;;
         }
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+        if (isDanmuClicked){
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED| WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+
+        }else {
+            layoutParams.flags =WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED|  WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+        }
         layoutParams.format = PixelFormat.RGBA_8888;
 
     }
@@ -258,130 +282,104 @@ public class DanMuActioner {
         if (isRefuse){
             return;
         }
-//        Log.e(TAG, "mScreenWidth : "+mScreenWidth);
-//        Log.e(TAG, "mScreenHeight : "+mScreenHeight);
-//        Log.e(TAG, "viewWidth : "+viewWidth);
-//        Log.e(TAG, "viewHeight : "+viewHeight);
-
-        isEditPos = false;
-//        setOnTouchListenr();
+//
+//        if (isDanmuClicked){
+//            new Handler(Looper.getMainLooper()).post(this::setOnTouchListenr);
+//        }
         addViewToWindow();
 
     }
     public void addViewToWindow() {
         Random random = new Random();
-        layoutParams.y = random.nextInt(4)*(viewHeight+9)+60;
-        layoutParams.x = mScreenWidth;
 
-        layoutParams.windowAnimations = R.style.DanMuMoveTiltAnim;
+        layoutParams.y = random.nextInt(3)*(viewHeight+13)+getStatusBarHeight(context);
+        layoutParams.x = 0;
+//        layoutParams.windowAnimations = R.style.DanMuMoveTiltAnim;
 
-//        Animation translateAnimation = new TranslateAnimation( mScreenWidth,-viewWidth,layoutParams.y,layoutParams.y);
-//        // 步骤2：创建平移动画的对象：平移动画对应的Animation子类为TranslateAnimation
-//        // 参数分别是：
-//        // 1. fromXDelta ：视图在水平方向x 移动的起始值
-//        // 2. toXDelta ：视图在水平方向x 移动的结束值
-//        // 3. fromYDelta ：视图在竖直方向y 移动的起始值
-//        // 4. toYDelta：视图在竖直方向y 移动的结束值
-//
-//        translateAnimation.setDuration(5000);
-//        // 固定属性的设置都是在其属性前加“set”，如setDuration（）
-//
-//        view.startAnimation(translateAnimation);
 
-        view.setLayerType(View.LAYER_TYPE_HARDWARE,null);
+        view.bringToFront();
 //        layoutParams.layoutAnimationParameters = controller;
 //        w
 
 
 
-        mHandler.post(new Runnable() {
+
+
+        mHandler.post(() -> {
+            try {
+                windowManager.addView(view, layoutParams);
+
+                TimerTask timerTask = new TimerTask(){
                     @Override
                     public void run() {
-                        try {
-                            windowManager.addView(view, layoutParams);
-
-                            TimerTask timerTask = new TimerTask(){
-                                @Override
-                                public void run() {
-                                    if (isOpen){
-                                        removeTile();
-                                    }
-                                }
-                            };
-                            mtimer =new Timer();
-                            mtimer.schedule(timerTask,10000);
-//                            valueAnimator = ValueAnimator.ofInt(0,mScreenWidth+viewWidth);
-////                            valueAnimator.setInterpolator(TimeInterpolator);
-//                            valueAnimator.setDuration(8000);
-////                            valueAnimator.setPersistentDrawingCache（PERSISTENT_ANIMATION_CACHE）
-//                            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//                                @Override
-//                                public void onAnimationUpdate(ValueAnimator animation) {
-//                                    mResetUpdateX = (int) animation.getAnimatedValue();
-//                                    layoutParams.x = mScreenWidth-mResetUpdateX;
-//                                    if (layoutParams.x == -viewWidth){
-//                                        removeTile();
-//                                        valueAnimator.cancel();
-//                                        return;
-//                                    }
-//                                    windowManager.updateViewLayout(view,layoutParams);
-//
-////                                    mHandler.post(updatePositionRunnable);
-//
-//                                }
-//                            });
-//                            valueAnimator.addListener(new AnimatorListenerAdapter() {
-//                                @Override
-//                                public void onAnimationEnd(Animator animation) {
-//                                    mHandler.post(removeViewRunnable);
-//                                    super.onAnimationEnd(animation);
-//                                }
-//                            });
-//                            valueAnimator.start();
-                        } catch (WindowManager.BadTokenException e) {
-                            // 无悬浮窗权限
-                            e.printStackTrace();
+                        if (isOpen){
+                            removeTile();
                         }
                     }
-                    });
+                };
+
+//                PropertyValuesHolder.ofFloat("translationX",(float)mScreenWidth,-(float)viewWidth)
+
+                animatorX = PropertyValuesHolder.ofFloat("translationX",(float)mScreenWidth,-(float)viewWidth);
+                ObjectAnimator.ofPropertyValuesHolder(view, animatorX).setDuration(10000).start();
+//                objectAnimator.setDuration(10000);
+//                objectAnimator.setInterpolator(new LinearInterpolator());
+//                objectAnimator.start();
+//                objectAnimator.addListener(new AnimatorListenerAdapter() {
+//                    @Override
+//                    public void onAnimationEnd(Animator animation) {
+//                        view.setLayerType(View.LAYER_TYPE_NONE, null);
+//                        super.onAnimationEnd(animation);
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationStart(Animator animation) {
+//                        view.setLayerType(View.LAYER_TYPE_HARDWARE,null);
+//                        super.onAnimationStart(animation);
+//                    }
+//                });
 
 
-//        TileObject.waitingForShowingTileList.add(this);
-    }
-
-    private Runnable updatePositionRunnable = new Runnable() {
-        @Override
-        public void run() {
-            updateView();
-        }
-    };
-
-    private Runnable removeViewRunnable = new Runnable() {
-        @Override
-        public void run() {
-            removeTile();
-        }
-    };
-
-    private void updateView(){
-//        Log.e(TAG, "mResetUpdateX : "+mResetUpdateX);
-//        Log.e(TAG, "x : "+String.valueOf(layoutParams.x));
-
-            try {
-                windowManager.updateViewLayout(view,layoutParams);
-            }catch (Exception e){
+                mtimer =new Timer();
+                mtimer.schedule(timerTask,10000);
+            } catch (WindowManager.BadTokenException e) {
+                // 无悬浮窗权限
                 e.printStackTrace();
             }
-
+        });
 
     }
+
+//    private Runnable updatePositionRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            updateView();
+//        }
+//    };
+//
+//    private Runnable removeViewRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            removeTile();
+//        }
+//    };
+//
+//    private void updateView(){
+//            try {
+//                windowManager.updateViewLayout(view,layoutParams);
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//
+//
+//    }
 
 
     private void setOnTouchListenr() {
 
-        final GestureDetector gestureDetector= new GestureDetector(this.view.getContext(), new GestureDetector.OnGestureListener(){
+        final GestureDetector gestureDetector= new GestureDetector(this.rootContentLayout.getContext(), new GestureDetector.OnGestureListener(){
             protected static final float FLIP_DISTANCE = 50;
-
             @Override
             public boolean onDown(MotionEvent e) {
                 return false;
@@ -390,13 +388,11 @@ public class DanMuActioner {
 
             @Override
             public void onShowPress(MotionEvent e) {
-                return;
             }
 
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                if (isOpen){
                     try {
                         if(intent !=null){
                             intent.send();
@@ -405,11 +401,8 @@ public class DanMuActioner {
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
-                }else {
-                    showNoificationInfo();
-                }
                 Log.i(TAG, "点击...");
-                return true;
+                return false;
             }
 
             @Override
@@ -428,38 +421,49 @@ public class DanMuActioner {
                 }
             }
 
+
+
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 Log.i(TAG, velocityX+","+velocityY);
-
-
-                if (e2.getX() - e1.getX() > 110) {
-                    if(isLeft){
-                        if (isOpen){
-                            TileObject.clearShowingTile();
-                        }
-                    }else {
-                        closeNoificationInfo();
-                    }
+                if (e1 == null || e2 == null){
                     return true;
                 }
-                if (e1.getX() - e2.getX() > 110) {
-                    if(!isLeft){
-                        if (isOpen){
-                            TileObject.clearShowingTile();
-                        }
-                    }else {
-                        closeNoificationInfo();
-                    }
 
-                    Log.i(TAG, "向左滑...");
-                    Log.i(TAG, String.valueOf(mScreenHeight));
-                    return true;
-                }
+//                if (e2.getX() - e1.getX() > 110) {
+//                    if(isLeft){
+//                        if (isOpen){
+//                            TileObject.clearShowingTile();
+//                        }
+//                    }else {
+//                        closeNoificationInfo();
+//                    }
+//                    return true;
+//                }
+//                if (e1.getX() - e2.getX() > 110) {
+//                    if(!isLeft){
+//                        if (isOpen){
+//                            TileObject.clearShowingTile();
+//                        }
+//                    }else {
+//                        closeNoificationInfo();
+//                    }
+//
+//                    Log.i(TAG, "向左滑...");
+//                    Log.i(TAG, String.valueOf(mScreenHeight));
+//                    return true;
+//                }
                 if (e1.getY() - e2.getY() > 30) {
-                    if(isOpen){
-                        removeTile();
-                    }
+                    removeTile();
+                    if(SpUtil.getBoolean(context,"appSettings","message_replay",false))
+                        if (notificationInfo.packageName.contains("com.tencent.mm")){
+                            //快捷回复
+                            Log.e(TAG,"快捷回复");
+                            if (ToolUtils.checkAppInstalled(context,"com.google.android.projection.gearhead")){
+                                FloatMessageReply floatMessageReply = new FloatMessageReply(notificationInfo,context);
+                                floatMessageReply.run();
+                            }
+                        }
                     Log.i(TAG, "向下滑...");
                     return true;
                 }
@@ -479,21 +483,14 @@ public class DanMuActioner {
                     Log.i(TAG, "向上滑...");
                     return true;
                 }
-
-
-
-
                 Log.d("TAG", e2.getX() + " " + e2.getY());
 
                 return false;
             }
         });
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                gestureDetector.onTouchEvent(event);
-                return false;
-            }
+        view.setOnTouchListener((v, event) -> {
+            gestureDetector.onTouchEvent(event);
+            return false;
         });
 
     }
@@ -503,7 +500,8 @@ public class DanMuActioner {
 
         Intent intent =  context.getPackageManager().getLaunchIntentForPackage(appName);
 //            intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startFreeformHack(context,intent,mScreenWidth,mScreenHeight);
+        if (intent== null)
+            startFreeformHack(context,intent,mScreenWidth,mScreenHeight);
 //            context.startActivity(intent);
 
     }

@@ -73,7 +73,6 @@ public class TileObject {
         for (int i = 0; i < showingFloatingTileList.size();) {
             showingFloatingTileList.get(i).removeTile();
         }
-        showingFloatingTileList.clear();
         isClearMultiNOfici =false;
         showWaitingTile();
     }

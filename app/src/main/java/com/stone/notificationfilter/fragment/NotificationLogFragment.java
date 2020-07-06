@@ -52,6 +52,10 @@ public class NotificationLogFragment extends Fragment {
 
     private NotificationItemDao notificationItemDao;
 
+    private NotificationLogSwipeAdapter notificationLogSwipeAdapter;
+
+    private ArrayList<NotificationLogItem> notificationLogItemList;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -60,6 +64,8 @@ public class NotificationLogFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private  int INITADAPTER =0;
+    private  int DETELEDATA =1;
     private View view;
 
     @SuppressLint("HandlerLeak")
@@ -69,80 +75,89 @@ public class NotificationLogFragment extends Fragment {
         //当有消息发送出来的时候就执行Handler的这个方法
         public void handleMessage(Message msg){
             super.handleMessage(msg);
-            pd.dismiss();
-            if(notificationItemEntities ==null || notificationItemEntities.size()==0){
-                view.findViewById(R.id.no_log_data).setVisibility(View.VISIBLE);
-                return;
-            }else
-            {
-                mRecyclerView.removeAllViews();
-                view.findViewById(R.id.no_log_data).setVisibility(View.GONE);
-            }
-            final ArrayList<NotificationLogItem> notificationLogItemList = new ArrayList<>();
-            for (NotificationItemEntity notificationItemEntity: notificationItemEntities) {
-                NotificationLogItem notificationLogItem = new NotificationLogItem();
-                notificationLogItem.id = notificationItemEntity.ID;
-                notificationLogItem.mPackageName = notificationItemEntity.packageName;
-                notificationLogItem.mAppName = notificationItemEntity.appName;
-                notificationLogItem.mContent = notificationItemEntity.content;
-                notificationLogItem.mPostTime = TimeUtil.getStrTime(notificationItemEntity.postTime);
-                notificationLogItem.mTitle = notificationItemEntity.title;
-                Drawable appicon = PackageUtil.getAppIconFromPackname(getContext(),notificationItemEntity.packageName);
-                if (appicon ==null)
+            if (msg.what == INITADAPTER){
+                pd.dismiss();
+                if(notificationItemEntities ==null || notificationItemEntities.size()==0){
+                    view.findViewById(R.id.no_log_data).setVisibility(View.VISIBLE);
+                    return;
+                }else
                 {
-                    appicon = getActivity().getDrawable(R.drawable.ic_launcher_foreground);
+                    mRecyclerView.removeAllViews();
+                    view.findViewById(R.id.no_log_data).setVisibility(View.GONE);
                 }
-                notificationLogItem.setAppIcon(appicon);
-                notificationLogItemList.add(notificationLogItem);
-            }
-            OnItemSwipeListener onItemSwipeListener = new OnItemSwipeListener() {
-                private long datele_id = -1;
-                @Override
-                public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
-                    Log.e(TAG,String.valueOf(pos));
-                    if(notificationItemDao ==null){
-                        NotificationItemDataBase db =NotificationItemDataBase.getInstance(getContext());
-                        notificationItemDao = db.NotificationItemDao();
+                notificationLogItemList = new ArrayList<>();
+                for (NotificationItemEntity notificationItemEntity: notificationItemEntities) {
+                    NotificationLogItem notificationLogItem = new NotificationLogItem();
+                    notificationLogItem.id = notificationItemEntity.ID;
+                    notificationLogItem.mPackageName = notificationItemEntity.packageName;
+                    notificationLogItem.mAppName = notificationItemEntity.appName;
+                    notificationLogItem.mContent = notificationItemEntity.content;
+                    notificationLogItem.mPostTime = TimeUtil.getStrTime(notificationItemEntity.postTime);
+                    notificationLogItem.mTitle = notificationItemEntity.title;
+                    Drawable appicon = PackageUtil.getAppIconFromPackname(getContext(),notificationItemEntity.packageName);
+                    if (appicon ==null)
+                    {
+                        appicon = getActivity().getDrawable(R.drawable.ic_launcher_foreground);
                     }
-                    datele_id = notificationLogItemList.get(pos).id;
-
+                    notificationLogItem.setAppIcon(appicon);
+                    notificationLogItemList.add(notificationLogItem);
                 }
-                @Override
-                public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {}
-                @Override
-                public void onItemSwiped(RecyclerView.ViewHolder viewHolder, final int pos) {
-                    new Thread(){
-                        public void run(){
-                            //在新线程里执行长耗时方法
-                            if( datele_id != -1)
-                            {
-                                notificationItemDao.deleteByID(datele_id);
-                            }
-
+                OnItemSwipeListener onItemSwipeListener = new OnItemSwipeListener() {
+                    private long datele_id = -1;
+                    @Override
+                    public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
+                        Log.e(TAG,String.valueOf(pos));
+                        if(notificationItemDao ==null){
+                            NotificationItemDataBase db =NotificationItemDataBase.getInstance(getContext());
+                            notificationItemDao = db.NotificationItemDao();
                         }
-                    }.start();
+                        datele_id = notificationLogItemList.get(pos).id;
+
+                    }
+                    @Override
+                    public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {}
+                    @Override
+                    public void onItemSwiped(RecyclerView.ViewHolder viewHolder, final int pos) {
+                        new Thread(){
+                            public void run(){
+                                //在新线程里执行长耗时方法
+                                if( datele_id != -1)
+                                {
+                                    notificationItemDao.deleteByID(datele_id);
+                                }
+
+                            }
+                        }.start();
 
 
-                }
+                    }
 
-                @Override
-                public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
+                    @Override
+                    public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
 
-                }
-            };
-            OnItemDragListener onItemDragListener = new OnItemDragListener() {
-                @Override
-                public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int pos){}
-                @Override
-                public void onItemDragMoving(RecyclerView.ViewHolder source, int from, RecyclerView.ViewHolder target, int to) {}
-                @Override
-                public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int pos) {}
-            };
-            NotificationLogSwipeAdapter notificationLogSwipeAdapter = new NotificationLogSwipeAdapter(notificationLogItemList);
-            notificationLogSwipeAdapter.getDraggableModule().setOnItemSwipeListener(onItemSwipeListener);
-            notificationLogSwipeAdapter.getDraggableModule().setOnItemDragListener(onItemDragListener);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            mRecyclerView.setAdapter(notificationLogSwipeAdapter);
+                    }
+                };
+                OnItemDragListener onItemDragListener = new OnItemDragListener() {
+                    @Override
+                    public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int pos){}
+                    @Override
+                    public void onItemDragMoving(RecyclerView.ViewHolder source, int from, RecyclerView.ViewHolder target, int to) {}
+                    @Override
+                    public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int pos) {}
+                };
+                notificationLogSwipeAdapter = new NotificationLogSwipeAdapter(notificationLogItemList);
+                notificationLogSwipeAdapter.getDraggableModule().setOnItemSwipeListener(onItemSwipeListener);
+                notificationLogSwipeAdapter.getDraggableModule().setOnItemDragListener(onItemDragListener);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mRecyclerView.setAdapter(notificationLogSwipeAdapter);
+            }
+
+            if (msg.what == DETELEDATA){
+                pd.dismiss();
+                notificationLogSwipeAdapter.notifyDataSetChanged();
+                view.findViewById(R.id.no_log_data).setVisibility(View.VISIBLE);
+            }
+
 
         }
     };
@@ -207,7 +222,7 @@ public class NotificationLogFragment extends Fragment {
         new Thread(){
             public void run(){
                 notificationItemEntities = notificationItemDao.loadAllDESC();
-                handler.sendEmptyMessage(0);
+                handler.sendEmptyMessage(INITADAPTER);
             }
         }.start();
 
@@ -239,8 +254,9 @@ public class NotificationLogFragment extends Fragment {
             new Thread(){
                 public void run(){
                     notificationItemDao.deleteAll();
-                    notificationItemEntities = notificationItemDao.loadAllDESC();
-                    handler.sendEmptyMessage(0);
+                    notificationItemEntities.clear();
+                    notificationLogItemList.clear();
+                    handler.sendEmptyMessage(DETELEDATA);
                 }
             }.start();
         }
