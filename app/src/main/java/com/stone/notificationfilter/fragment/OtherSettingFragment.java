@@ -89,23 +89,6 @@ public class OtherSettingFragment extends PreferenceFragmentCompat {
         findPreference("setting_notification_float").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-//                MainActivity mainActivity = (MainActivity)getActivity();
-//                mainActivity.replaceFragment(new FiliterActivity());
-//                Navigation.findNavController(getView()).navigate(R.id.action_floatTilesSettingFragment_to_floatTileCustomViewFragment);
-//                Intent intent = new Intent(getActivity(), FloatTileCustomViewAictivy.class);
-//                startActivity(intent);//
-//                Intent intent = new Intent(getActivity(), FilePickerActivity.class);
-//                intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
-//                        .setCheckPermission(true)
-//                        .setShowImages(true)
-//                        .setShowFiles(false)
-//                        .setShowAudios(false)
-//                        .setShowVideos(false)
-//                        .setSingleChoiceMode(true)
-//                        .enableImageCapture(false)
-//                        .setSkipZeroSizeFiles(true)
-//                        .build());
-//                startActivityForResult(intent, FILE_REQUEST_CODE);
                 chooseFile();
                 return true;
             }

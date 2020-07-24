@@ -1,19 +1,11 @@
 package com.stone.notificationfilter.actioner;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ActivityOptions;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -21,10 +13,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -35,14 +25,10 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.SPUtils;
-import com.bumptech.glide.Glide;
 import com.cbman.roundimageview.RoundImageView;
 import com.stone.notificationfilter.NotificationService;
 import com.stone.notificationfilter.R;
@@ -53,11 +39,9 @@ import com.stone.notificationfilter.util.PackageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.util.ToolUtils;
 
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.stone.notificationfilter.util.ToolUtils.getActivityOptions;
 import static com.stone.notificationfilter.util.ToolUtils.startFreeformHack;
 
 /**
@@ -269,21 +253,7 @@ public class FloatingTileActioner {
 
     }
 
-    private void blackTempNotification(){
-        NotificationService.tempBlackAppLise.add(notificationInfo.packageName);
-        long floattitle_time = Long.parseLong(SpUtil.getString(context,"appSettings","floattitle_upblack_time", "10"));
-        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, PackageUtil.getAppNameFromPackname(context,notificationInfo.packageName)+"已被禁止通知"+floattitle_time+"分钟", Toast.LENGTH_SHORT).show());
-        TimerTask timerTask = new TimerTask(){
-            @Override
-            public void run() {
-                if (isOpen){
-                    NotificationService.tempBlackAppLise.remove(notificationInfo.packageName);
-                }
-            }
-        };
-        mtimer =new Timer();
-        mtimer.schedule(timerTask,floattitle_time*60000);
-    }
+
 
     private void getScreenSize() {
         Point point = new Point();
@@ -505,7 +475,7 @@ public class FloatingTileActioner {
                 if(SpUtil.getBoolean(context,"appSettings","message_replay",false)){
                         Log.e(TAG,"小窗打开");
                         if (SpUtil.getBoolean(context, "appSettings","freeform_mode_switch", true)){
-                            openActivity(notificationInfo.packageName);
+                            openFloatWindowAction(notificationInfo.packageName);
                         }
 
                 }
@@ -544,7 +514,7 @@ public class FloatingTileActioner {
                 if (e1.getY() - e2.getY() > 30) {
                     if(SpUtil.getBoolean(context,"appSettings","notification_upblack_show",false))
                     {
-                        blackTempNotification();
+                        blackTempNotificationAction();
                     }
                     if(isOpen){
                         removeTile();
@@ -584,17 +554,64 @@ public class FloatingTileActioner {
 
     }
 
-    public void openActivity(String appName ) {
 
 
-            Intent intent =  context.getPackageManager().getLaunchIntentForPackage(appName);
-            if (intent ==null) return;
+    private  void selectRunAction(String action){
+        switch (action){
+            case "clearShowNotification": clearShowNotificationACtion();break;
+            case "blackTempNotification": blackTempNotificationAction();break;
+            case "removeCurrentNotification":removeCurrentNotificationAction();break;
+            case  "emoveCurrentNotificationWithReply":removeCurrentNotificationWithReplyAction();break;
+            case  "openFloatWindow":openFloatWindowAction(notificationInfo.packageName);break;
+
+            default:removeCurrentNotificationAction();
+        }
+    }
+
+    public void openFloatWindowAction(String appName ) {
+
+
+        Intent intent =  context.getPackageManager().getLaunchIntentForPackage(appName);
+        if (intent ==null) return;
 //            intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startFreeformHack(context,intent,mScreenWidth,mScreenHeight);
+        startFreeformHack(context,intent,mScreenWidth,mScreenHeight);
 //            context.startActivity(intent);
 
     }
 
+    private void blackTempNotificationAction(){
+        NotificationService.tempBlackAppLise.add(notificationInfo.packageName);
+        long floattitle_time = Long.parseLong(SpUtil.getString(context,"appSettings","floattitle_upblack_time", "10"));
+        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, PackageUtil.getAppNameFromPackname(context,notificationInfo.packageName)+"已被禁止通知"+floattitle_time+"分钟", Toast.LENGTH_SHORT).show());
+        TimerTask timerTask = new TimerTask(){
+            @Override
+            public void run() {
+                if (isOpen){
+                    NotificationService.tempBlackAppLise.remove(notificationInfo.packageName);
+                }
+            }
+        };
+        mtimer =new Timer();
+        mtimer.schedule(timerTask,floattitle_time*60000);
+    }
+    private void removeCurrentNotificationAction(){
+        removeTile();
+    }
+    private void removeCurrentNotificationWithReplyAction(){
+        removeTile();
+        if (notificationInfo.packageName.contains("com.tencent.mm")){
+            //快捷回复
+            Log.e(TAG,"快捷回复");
+            if (ToolUtils.checkAppInstalled(context,"com.google.android.projection.gearhead")){
+                FloatMessageReply floatMessageReply = new FloatMessageReply(notificationInfo,context);
+                floatMessageReply.run();
+            }
+        }
+    }
+
+    private  void clearShowNotificationACtion(){
+        TileObject.clearShowingTile();
+    }
 
 
 

@@ -5,4 +5,18 @@
         <item name="cricle">圆形</item>
         <item name="cricle">方形</item>
     </string-array>
+    <string-array name="array_floattitle_actions" >
+        <item >关闭当前通知</item>
+        <item >关闭当前通知并开启微信回复</item>
+        <item >关闭当前显示所有通知</item>
+        <item >打开应用小窗</item>
+        <item >禁止当前应用通知一定时间</item>
+    </string-array>
+
+    <string-array name="array_floattitle_actions_values" >
+        <item >关闭当前通知</item>
+        <item >关闭当前显示通知</item>
+        <item >打开小窗</item>
+        <item >打开小窗</item>
+    </string-array>
 </resources>

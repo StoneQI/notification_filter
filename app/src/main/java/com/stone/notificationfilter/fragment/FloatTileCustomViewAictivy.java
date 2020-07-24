@@ -1,6 +1,9 @@
 package com.stone.notificationfilter.fragment;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -11,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -36,6 +41,7 @@ import com.stone.notificationfilter.BaseActivity;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.util.CheckUtil;
 import com.stone.notificationfilter.util.ImageUtil;
+import com.stone.notificationfilter.util.JxdUtils;
 import com.stone.notificationfilter.util.SpUtil;
 
 import java.io.File;
@@ -109,24 +115,12 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
 
 
 
-//        TextView rootBackgroundImage = findViewById(R.id.root_background_image);
-//        rootBackgroundImage.setOnClickListener(v -> {
-//            CheckUtil.verifyStoragePermissions(this);
-//            Intent intent = new Intent(this, FilePickerActivity.class);
-//            intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
-//                    .setCheckPermission(true)
-//                    .setShowImages(true)
-//                    .setShowFiles(false)
-//                    .setShowAudios(false)
-//                    .setSuffixes("png","jpg","bmp")
-//                    .setShowVideos(false)
-//                    .setSingleChoiceMode(true)
-//                    .enableImageCapture(false)
-//                    .setSkipZeroSizeFiles(true)
-//                    .build());
+        TextView rootBackgroundImage = findViewById(R.id.root_background_image);
+        rootBackgroundImage.setOnClickListener(v -> {
+            chooseFile();
 //            startActivityForResult(intent, FILE_REQUEST_CODE);
-//
-//        });
+
+        });
 
 
         SeekBar iconWidthHeigtSeekBar = findViewById(R.id.icon_widthHeight);
@@ -444,8 +438,52 @@ public class FloatTileCustomViewAictivy extends BaseActivity implements ColorPic
 
 
 
+    // 调用系统文件管理器
+    private void chooseFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*").addCategory(Intent.CATEGORY_OPENABLE);
+        try {
+            startActivityForResult(Intent.createChooser(intent, "Choose File"), FILE_REQUEST_CODE);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getApplicationContext(), "亲，木有文件管理器啊-_-!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(data ==null || data.getData()==null){
+            return;
+        }
+        if (requestCode == FILE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri uri = data.getData();
+                String imagePath = JxdUtils.getPath(getApplicationContext(), uri);
+
+                String detaleFilePath =  SpUtil.getString(getApplicationContext(), "floatTileCustonView", "rootBackGround", "-1");
+                if (!TextUtils.isEmpty(imagePath) ) {
+                    try {
+                        String newFileName = System.currentTimeMillis()%10+'-'+JxdUtils.getFileNameforPath(imagePath);
+                        JxdUtils.copyFile(new File(imagePath), new File(getApplicationContext().getFilesDir(),newFileName ));
+                        SpUtil.putString(getApplicationContext(), "floatTileCustonView", "rootBackGround",newFileName);
+//                        Bitmap  bimap = new Bitmap();
+                        if (!detaleFilePath.equals("-1")) {
+                            getApplicationContext().deleteFile(detaleFilePath);
+//                                getContext().deleteFile(imagePath);
+                        }
+                        Toast.makeText(getApplicationContext(), "图片设置成功", Toast.LENGTH_SHORT).show();
+
+                        return;
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                Toast.makeText(getApplicationContext(), "图片设置失败", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "你没有选择任何图片", Toast.LENGTH_SHORT).show();
+            }
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 

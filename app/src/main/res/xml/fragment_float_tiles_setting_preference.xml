@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+<!--    <ListPreference-->
+<!--        android:key="floattitle_downAction"-->
+<!--        android:defaultValue="content"-->
+<!--        android:entries="@array/array_floattitle_actions"-->
+<!--        android:entryValues="@array/array_floattitle_actions_values"-->
+<!--        android:title="下划执行动作" />-->
+
 
     <SwitchPreference
         android:defaultValue="false"
