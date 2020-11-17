@@ -91,7 +91,7 @@ public class FloatingTileActioner {
             floattitle_x = SpUtil.getInt(context,"appSettings","floattitle_portrait_x",mScreenWidth);
             isVert =true;
         }
-        Log.e(TAG, "floattitle_x:"+String.valueOf(floattitle_x));
+//        Log.e(TAG, "floattitle_x:"+String.valueOf(floattitle_x));
         if (Math.abs(floattitle_x) < Math.abs(floattitle_x - mScreenWidth)){
             layoutParams.gravity= Gravity.START;
 //            view = View.inflate(context, R.layout.window_lay_left, null);
@@ -351,7 +351,7 @@ public class FloatingTileActioner {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 //                Log.e(TAG,"layoutParams"+String.valueOf(layoutParams.x)+","+String.valueOf(layoutParams.y));
-                Log.e(TAG,"raw:"+String.valueOf(x)+","+String.valueOf(y));
+//                Log.e(TAG,"raw:"+String.valueOf(x)+","+String.valueOf(y));
                 if (event == null){
                     return false;
                 }
@@ -366,7 +366,7 @@ public class FloatingTileActioner {
                         y = (int) event.getRawY();
                         lastX = event.getRawX();
                         lastY = event.getRawY();
-                        Log.e(TAG,"viewx:"+String.valueOf(viewx));
+//                        Log.e(TAG,"viewx:"+String.valueOf(viewx));
                         break;
                     case MotionEvent.ACTION_MOVE:
                         changeX = (int) event.getRawX();
@@ -374,7 +374,7 @@ public class FloatingTileActioner {
 //                        newX = (int)(m)
                         int nowX = (int) event.getRawX();
                         int nowY = (int) event.getRawY();
-                        Log.e(TAG,"viewwidth:"+viewWidth);
+//                        Log.e(TAG,"viewwidth:"+viewWidth);
                         int movedX;
                         if(isLeft){
                             if(nowX-viewx>0){
@@ -397,7 +397,7 @@ public class FloatingTileActioner {
 
                             }
                         }
-                        Log.e(TAG,"viewx:"+String.valueOf(movedX));
+//                        Log.e(TAG,"viewx:"+String.valueOf(movedX));
                         int movedY = nowY - y;
                         x = nowX;
                         y = nowY;
@@ -408,11 +408,11 @@ public class FloatingTileActioner {
                         break;
                     case MotionEvent.ACTION_UP:
                         if (isVert){
-                            Log.e(TAG,"portrait:"+String.valueOf(x)+","+String.valueOf(layoutParams.y));
+//                            Log.e(TAG,"portrait:"+String.valueOf(x)+","+String.valueOf(layoutParams.y));
                             SpUtil.putInt(context,"appSettings","floattitle_portrait_x", x);
                             SpUtil.putInt(context,"appSettings","floattitle_portrait_y", layoutParams.y);
                         }else {
-                            Log.e(TAG,"landscape:"+String.valueOf(x)+","+String.valueOf(layoutParams.y));
+//                            Log.e(TAG,"landscape:"+String.valueOf(x)+","+String.valueOf(layoutParams.y));
                             SpUtil.putInt(context,"appSettings","floattitle_landscape_x", x);
                             SpUtil.putInt(context,"appSettings","floattitle_landscape_y", layoutParams.y);
                         }
@@ -461,7 +461,7 @@ public class FloatingTileActioner {
                 }else {
                     showNoificationInfo();
                 }
-                Log.i(TAG, "点击...");
+//                Log.i(TAG, "点击...");
                 return true;
             }
 
@@ -473,7 +473,7 @@ public class FloatingTileActioner {
             @Override
             public void onLongPress(MotionEvent e) {
                 if(SpUtil.getBoolean(context,"appSettings","message_replay",false)){
-                        Log.e(TAG,"小窗打开");
+//                        Log.e(TAG,"小窗打开");
                         if (SpUtil.getBoolean(context, "appSettings","freeform_mode_switch", true)){
                             openFloatWindowAction(notificationInfo.packageName);
                         }
@@ -483,7 +483,7 @@ public class FloatingTileActioner {
 
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                Log.i(TAG, velocityX+","+velocityY);
+//                Log.i(TAG, velocityX+","+velocityY);
 
                 if (e1 == null || e2 == null){
                     return true;
@@ -507,8 +507,8 @@ public class FloatingTileActioner {
                         closeNoificationInfo();
                     }
 
-                    Log.i(TAG, "向左滑...");
-                    Log.i(TAG, String.valueOf(mScreenHeight));
+//                    Log.i(TAG, "向左滑...");
+//                    Log.i(TAG, String.valueOf(mScreenHeight));
                     return true;
                 }
                 if (e1.getY() - e2.getY() > 30) {
@@ -519,7 +519,7 @@ public class FloatingTileActioner {
                     if(isOpen){
                         removeTile();
                     }
-                    Log.i(TAG, "向下滑...");
+//                    Log.i(TAG, "向下滑...");
                     return true;
                 }
                 if (e2.getY() - e1.getY() > 30) {
@@ -528,21 +528,21 @@ public class FloatingTileActioner {
                         if(SpUtil.getBoolean(context,"appSettings","message_replay",false))
                             if (notificationInfo.packageName.contains("com.tencent.mm")){
                                 //快捷回复
-                                Log.e(TAG,"快捷回复");
+//                                Log.e(TAG,"快捷回复");
                                 if (ToolUtils.checkAppInstalled(context,"com.google.android.projection.gearhead")){
                                     FloatMessageReply floatMessageReply = new FloatMessageReply(notificationInfo,context);
                                     floatMessageReply.run();
                                 }
                             }
                     }
-                    Log.i(TAG, "向上滑...");
+//                    Log.i(TAG, "向上滑...");
                     return true;
                 }
 
 
 
 
-                Log.d("TAG", e2.getX() + " " + e2.getY());
+//                Log.d("TAG", e2.getX() + " " + e2.getY());
 
                 return false;
             }
@@ -601,7 +601,7 @@ public class FloatingTileActioner {
         removeTile();
         if (notificationInfo.packageName.contains("com.tencent.mm")){
             //快捷回复
-            Log.e(TAG,"快捷回复");
+//            Log.e(TAG,"快捷回复");
             if (ToolUtils.checkAppInstalled(context,"com.google.android.projection.gearhead")){
                 FloatMessageReply floatMessageReply = new FloatMessageReply(notificationInfo,context);
                 floatMessageReply.run();
@@ -626,7 +626,7 @@ public class FloatingTileActioner {
         layoutParams.width = viewWidth;
         layoutParams.height = viewHeight;
         windowManager.updateViewLayout(view, layoutParams);
-        Log.i(TAG, "向右滑...");
+//        Log.i(TAG, "向右滑...");
         if(mtimer != null)
         {
             mtimer.cancel();

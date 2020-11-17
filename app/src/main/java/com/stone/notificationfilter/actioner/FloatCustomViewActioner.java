@@ -15,9 +15,9 @@ import com.stone.notificationfilter.util.SpUtil;
 
 public class FloatCustomViewActioner {
 
-    private static String TAG ="FloatCustomViewActioner";
-    private NotificationInfo notificationInfo;
-    private Context context;
+    private static final String TAG ="FloatCustomViewActioner";
+    private final NotificationInfo notificationInfo;
+    private final Context context;
     private WindowManager windowManager;
     private WindowManager.LayoutParams layoutParams;
 
@@ -45,7 +45,7 @@ public class FloatCustomViewActioner {
             return;
         };
         view = notificationInfo.remoteViews.apply(context,null);
-        Log.e(TAG,"Key"+key);
+//        Log.e(TAG,"Key"+key);
         new Handler(Looper.getMainLooper()).post(()-> {
             if (key.equals(this.notificationInfo.key) && dialog != null) {
                 dialog.setContentView(view, context);
@@ -100,11 +100,11 @@ public class FloatCustomViewActioner {
         dialog.setContentView(view,context);
         dialog.show();
         key = this.notificationInfo.key;
-        Log.e(TAG,"Show Window renew");
+//        Log.e(TAG,"Show Window renew");
     }
 
     public static void remove(String notiKey){
-        Log.e(TAG,"remove Window renew");
+//        Log.e(TAG,"remove Window renew");
         if (key != null && key.equals(notiKey)){
             if(dialog!=null){
                 dialog.dismiss();

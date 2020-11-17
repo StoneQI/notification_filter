@@ -33,7 +33,7 @@ public class NotificationTileService extends TileService {
                 tile.setState(Tile.STATE_INACTIVE);
                 //更新快速设置面板上的图块的颜色，状态为关.
                 tile.updateTile();
-                NotificationService.isStartListener =false;
+                NotificationService.offListener();
                 Toast.makeText(getApplicationContext(), R.string.service_stop, Toast.LENGTH_SHORT).show();
 
                 break;
@@ -45,7 +45,7 @@ public class NotificationTileService extends TileService {
                 //更新快速设置面板上的图块的颜色，状态为开.
                 tile.updateTile();
                 startService(new Intent(getApplicationContext(), NotificationCollectorMonitorService.class));
-                NotificationService.isStartListener = true;
+                NotificationService.onListener();
                 Toast.makeText(getApplicationContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
 
                 break;

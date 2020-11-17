@@ -31,6 +31,11 @@ public class NotificationInfo {
     public int sceenStatus;
     public String ChannelID;
     public String ChannelGROUPID;
+    public Boolean hasBigCustomView= false;
+    public Boolean hasContentView = false;
+    public Boolean hasHeadsUpContentView = false;
+    public Boolean hasCustomView = false;
+    public String template;
 
 
     public String getAttribute(String attributeName){

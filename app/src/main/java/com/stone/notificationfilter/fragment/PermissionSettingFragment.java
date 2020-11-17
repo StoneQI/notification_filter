@@ -79,7 +79,7 @@ public class PermissionSettingFragment extends PreferenceFragmentCompat {
                 getActivity().startService(new Intent(getActivity(), NotificationCollectorMonitorService.class));
 //                Toast.makeText(getContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
             }else {
-                NotificationService.isStartListener=false;
+                NotificationService.offListener();
             }
         }
 

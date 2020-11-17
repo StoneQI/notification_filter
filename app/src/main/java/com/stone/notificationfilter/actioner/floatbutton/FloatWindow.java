@@ -66,6 +66,7 @@ public class FloatWindow extends BaseFloatDailog {
         if(mHintLocation ==RIGHT){
             floatCustomViewRight.removeAllViews();
             floatCustomViewLeft.removeAllViews();
+//            view.removeView();
             floatCustomViewRight.addView(view,layoutParams);
         }else{
             floatCustomViewLeft.removeAllViews();

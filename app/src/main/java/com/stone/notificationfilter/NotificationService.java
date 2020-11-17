@@ -1,6 +1,5 @@
 package com.stone.notificationfilter;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,132 +13,117 @@ import android.content.res.Configuration;
 import android.media.session.MediaSession;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.RemoteInput;
 
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.blankj.utilcode.util.AppUtils;
 import com.stone.notificationfilter.actioner.CopyActioner;
 import com.stone.notificationfilter.actioner.DanMuActioner;
 import com.stone.notificationfilter.actioner.FloatCustomViewActioner;
 import com.stone.notificationfilter.actioner.NotificationSoundActioner;
 import com.stone.notificationfilter.actioner.RunIntentActioner;
 import com.stone.notificationfilter.actioner.SaveToFileActioner;
-import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterDataBase;
 import com.stone.notificationfilter.notificationhandler.NotificationHandlerJudge;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItem;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItemFileStorage;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
-import com.stone.notificationfilter.entitys.notificationfilter.NotificationFilterEntity;
 import com.stone.notificationfilter.notificationhandler.databases.SystemBaseHandler;
-import com.stone.notificationfilter.util.Actioner;
 import com.stone.notificationfilter.util.ImageUtil;
 import com.stone.notificationfilter.util.PackageUtil;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.actioner.FloatingTileActioner;
-import com.stone.notificationfilter.util.ToolUtils;
 
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 
 /**
  * Create by LingC on 2019/8/4 21:46
  */
 public class NotificationService extends NotificationListenerService {
-    private final static  String TAG ="NotificationService";
+    private final static boolean DEBUG = false;
 
-    private static String GROUP_KEY_NOTIFI_STROE = "com.stone.GROUP_KEY_NOTIFI_STROE";
+    private final static String TAG ="NotificationService";
 
-
-    public static boolean isStartListener = true;
-
-
+    private static final String GROUP_KEY_NOTIFI_STROE = "com.stone.GROUP_KEY_NOTIFI_STROE";
+    private static boolean isStartListener = false;
     private NotificationHandlerItemFileStorage notificationHandlerItemFileStorage;
-
-
-
     private ArrayList<NotificationHandlerItem> notificationHandlerItems;
-
 
     public static Set<String> selectAppList = null;
     public static Set<String> tempBlackAppLise = new HashSet<>();
+    public static Set<String> systemImportAPP = new HashSet<>();
+
 
     public static boolean isForegroundNotification = true;
-    public static int notification_store_number;
+    public static boolean isNotificationStore;
 //    True为白名单， false为黑名单
     public static  boolean appListMode = false;
 
-    public  boolean isCancalSystemNotification = false;
+//    public  boolean isCancalSystemNotification = false;
     private boolean isSceenLock = false;
     private boolean isLandScape = false;
-    private boolean isNotificationUpblackLandscape = true
-            ;
+    private boolean isNotificationUpblackLandscape = true;
     private NotificationInfo notificationInfo=null;
+    private NotificationManager mNotificationManager;
+    private static  int NOTIFICATIONID = 2;
+    public static void offListener(){
+        isStartListener = false;
+    }
+    public static void onListener(){
+        isStartListener = true;
+    }
+//    private static Map<String, Boolean> isBlockNotification = new HashMap<>();
+//    @SuppressLint("HandlerLeak")
+//    private final Handler mHandler = new Handler(){
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//            if (DEBUG) Log.e(TAG,"data refash");
+//        }
+//    };
 
-    private static int NOTIFICATIONID = 0;
-
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Log.e(TAG,"data refash");
-        }
-    };
     @Override
     public void onCreate() {
-        super.onCreate();
-        isStartListener = true;
+//        super.onCreate();
+
+
         init();
-        Log.e(TAG,"service create");
+        if (DEBUG) Log.e(TAG,"service create");
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_USER_PRESENT));
         registerReceiver(mBroadcastReceiver, new IntentFilter(NOTIFICATION_FILTER_START_INTENT));
+        systemImportAPP.add("com.android.incallui");
+        systemImportAPP.add("com.android.server.telecom");
+
+//
 
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG,"onStartCommand create");
-        init();
-        super.onStartCommand(intent, flags, startId);
-        return START_REDELIVER_INTENT;
-    }
     private  void init(){
-
-        reloadData();
+        mNotificationManager = getSystemService(NotificationManager.class);
+        isForegroundNotification = SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_show", false);
         createNotificationChannel();
-        isForegroundNotification = SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_show", true);
-        notification_store_number = Integer.parseInt(SpUtil.getString(getApplicationContext(),"appSettings","notification_store_number", "8"));
-        isNotificationUpblackLandscape = SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_upblack_landscape",true);
         if (isForegroundNotification){
             addForegroundNotification();
+        }else {
+            stopForeground(true);
         }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.e(TAG,"onBind");
+        isNotificationStore = Integer.parseInt(SpUtil.getString(getApplicationContext(), "appSettings", "notification_store_number", "32")) > 0;
+        isNotificationUpblackLandscape = SpUtil.getBoolean(getApplicationContext(),"appSettings","notification_upblack_landscape",true);
         reloadData();
-        return super.onBind(intent);
+
     }
 
     public void reloadData(){
@@ -147,7 +131,6 @@ public class NotificationService extends NotificationListenerService {
             @Override
             public void run() {
                 try {
-                    isStartListener =true;
                     tempBlackAppLise.clear();
                     String packageNamestring = SpUtil.getString(getApplicationContext(),"appSettings","select_applists", "");
                     selectAppList = SpUtil.string2Set(packageNamestring);
@@ -160,7 +143,7 @@ public class NotificationService extends NotificationListenerService {
                     e.printStackTrace();
                 }
 
-                mHandler.sendEmptyMessage(0);
+//                mHandler.sendEmptyMessage(0);
             }
         }).start();
     }
@@ -168,35 +151,34 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(final StatusBarNotification sbn) {
-        Log.i(TAG,"onNotificationPosted:"+isStartListener);
-        if (sbn==null) return;
+        if (sbn==null || !isStartListener ) return;
+        if (DEBUG) Log.e(TAG,sbn.getKey());
 
-        if (!isStartListener){
-//            super.onNotificationPosted(sbn);
+        if( systemImportAPP.contains(sbn.getPackageName())){
             return;
         }
-
-        isCancalSystemNotification = false;
+        boolean isCancalSystemNotification = true;
+        boolean isRestoreNotification = true;
+        // 监测屏幕反向
         setSceenAngle();
 
-        if (tempBlackAppLise.size() !=0){
+        // 临时禁止通知
+        if (tempBlackAppLise.size() >0){
             if (!(isNotificationUpblackLandscape && !isLandScape)){
                 if (tempBlackAppLise.contains(sbn.getPackageName())){
-                    Log.i(TAG,sbn.getPackageName()+"is temp black");
+                    if (DEBUG) Log.i(TAG,sbn.getPackageName()+"is temp black");
                     cancelNotification(sbn.getKey());
                     return;
                 }
             }
         }
+
+        // 黑 白名单检测
         if(selectAppList.size()>1){
             if(appListMode^selectAppList.contains(sbn.getPackageName())){
                 cancelNotification(sbn.getKey());
                 return;
-
             }
-        }
-        if (isSceenLock) {
-            return;
         }
 
         try {
@@ -206,63 +188,97 @@ public class NotificationService extends NotificationListenerService {
             e.printStackTrace();
         }
 
+
         if (!TextUtils.isEmpty(notificationInfo.packageName) && notificationInfo.packageName.equals("com.stone.notificationfilter")){
-            isCancalSystemNotification = true;
-            if (!TextUtils.isEmpty(notificationInfo.title) && !notificationInfo.title.equals("测试标题")){
+            if(notificationInfo.ChannelID.equals(NOTIFICATION_CHANNEL_ID)){
+                if (DEBUG) Log.e(TAG,"restore: "+sbn.getKey());
                 return;
             }
-        }else{
-            if (isForegroundNotification && notification_store_number > 0){
-                notificationRestore(notificationInfo);
-            }
-
+            cancelNotification(sbn.getKey());
         }
-
-//        cancelNotification(notificationInfo.key);
 
         try {
             for(NotificationHandlerItem notificationHandlerItem:notificationHandlerItems){
-
                     if (!NotificationHandlerJudge.isMatch(notificationInfo, notificationHandlerItem)){
-                        Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is fail");
+//                        Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is fail");
                         continue;
                     }
-                    Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is match");
+                   Log.i(TAG,notificationInfo.title+" in "+notificationHandlerItem.name+" patter is match");
 
                     notificationInfo.title = NotificationHandlerJudge.titleReplace(notificationInfo.title);
                     notificationInfo.content =NotificationHandlerJudge.contentReplace(notificationInfo.content);
                         switch (notificationHandlerItem.actioner){
                             case "float_tile_notification":
-                                new Thread(()->{floatingTileAction(notificationInfo);}).start(); isCancalSystemNotification =true;break;
-                            case "system_notification":isCancalSystemNotification = false; break;
-                            case "drop_notification":isCancalSystemNotification = true; break;
+                                new Thread(()->{
+                                    new FloatingTileActioner(notificationInfo,NotificationService.this,false).run();
+                                }).start();
+                                isCancalSystemNotification =true;
+                                break;
+                            case "system_notification":
+                                isCancalSystemNotification = false;
+                                break;
+                            case "drop_notification":
+                                isCancalSystemNotification = true;
+                                isRestoreNotification =false;
+                                break;
+
                             case "copy_notification":
-                                new Thread(()->{new CopyActioner(notificationInfo,NotificationService.this).run();}).start();break;
+                                new Thread(()->{
+                                    new CopyActioner(notificationInfo,NotificationService.this).run();
+                                }).start();
+                                break;
                             case "click_notification":
-                                new Thread(()->{new RunIntentActioner(notificationInfo,NotificationService.this).run();}).start();break;
+                                new Thread(()->{
+                                    new RunIntentActioner(notificationInfo,NotificationService.this).run();
+                                }).start();
+                                break;
                             case "save_log_notification":
-                                new Thread(()->{new SaveToFileActioner(notificationInfo,NotificationService.this).run();}).start();break;
+                                new Thread(()->{
+                                    new SaveToFileActioner(notificationInfo,NotificationService.this).run();
+                                }).start();
+                                break;
                             case "sound_notification":
-                                new Thread(()->{new NotificationSoundActioner(notificationInfo,NotificationService.this).run();}).start();break;
+                                new Thread(()->{
+                                    new NotificationSoundActioner(notificationInfo,NotificationService.this).run();
+                                }).start();
+                                break;
                             case "float_notification":
-                                new Thread(()->{new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();}).start();isCancalSystemNotification =true;break;
+                                new Thread(()->{
+                                    new FloatCustomViewActioner(notificationInfo,NotificationService.this).run();
+                                }).start();
+                                isCancalSystemNotification = false;
+                                isRestoreNotification = false;
+                                break;
                             case "danmu_notification":
-                                new Thread(()->{new DanMuActioner(notificationInfo,NotificationService.this).run();}).start();isCancalSystemNotification =true;break;
+                                new Thread(()->{
+                                    new DanMuActioner(notificationInfo,NotificationService.this).run();
+                                }).start();
+                                isCancalSystemNotification =true;
+                                break;
                         }
 
                     if(notificationHandlerItem.breakDown){
                         break;
                     }
             }
+            if (!notificationInfo.hasCustomView){
+                if (isNotificationStore  && isRestoreNotification){
+//                    if ()Log.i(TAG,"restore");
+                    notificationRestore(notificationInfo);
+                }
+
+                if (isCancalSystemNotification){
+                    if (notificationInfo.isOnGoing){
+                        snoozeNotification(sbn.getKey(), 1000);
+                    }else{
+                        cancelNotification(sbn.getKey());
+                    }
+                }
+            }
         }catch (Exception e){
-            isCancalSystemNotification =false;
-//                super.onNotificationPosted(sbn);
-                e.printStackTrace();
+//            isCancalSystemNotification =false;;
+            e.printStackTrace();
         }
-        if (isCancalSystemNotification){
-            cancelNotification(notificationInfo.key);
-        }
-//        onNotificationPosted(sbn);
 
     }
 
@@ -270,7 +286,7 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.i(TAG,"notification remove");
+        if (DEBUG) Log.i(TAG,"notification remove");
         if (sbn==null){
             return;
         }
@@ -278,49 +294,40 @@ public class NotificationService extends NotificationListenerService {
 //            notificationInfo = getNotificationInfo(sbn);
             FloatCustomViewActioner.remove(sbn.getKey());
         }
-        super.onNotificationRemoved(sbn);
+//        super.onNotificationRemoved(sbn);
+    }
+
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        offListener();
+        unregisterReceiver(mBroadcastReceiver);
+        stopForeground(true);
+        if (DEBUG) Log.i(TAG,"unbind");
+        return false;
     }
 
     @Override
     public void onListenerConnected() {
-        isStartListener =true;
-        Log.i(TAG,"notification service connected start");
-        super.onListenerConnected();
+        if (!isStartListener){
+            onListener();
+        }
+        if (DEBUG) Log.i(TAG,"notification service connected start");
     }
 
     @Override
     public void onListenerDisconnected() {
-        isStartListener = false;
-        Log.i(TAG,"notification service connected stop");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            requestRebind(new ComponentName(this, NotificationService.class));
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        unregisterReceiver(mBroadcastReceiver);
-        stopForeground(true);
-        super.onDestroy();
-        Log.i(TAG,"notification service stop");
+        offListener();
+        if (DEBUG) Log.i(TAG,"notification service connected stop");
+        requestRebind(new ComponentName(this, NotificationService.class));
     }
 
     public  void notificationRestore(NotificationInfo notificationInfo){
+        if (DEBUG) Log.d(TAG,"restore notification");
 
-        if (!notificationInfo.isClearable){
+        if(TextUtils.isEmpty(notificationInfo.title) && TextUtils.isEmpty(notificationInfo.content)){
             return;
         }
-        if (notificationInfo.content == null && notificationInfo.title==null) {
-            return;
-        }
-
-        NotificationManager notificationManager =
-                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (NOTIFICATIONID > notification_store_number){
-            notificationManager.cancel(NOTIFICATIONID-notification_store_number);
-        }
-
         String AppName = (String) PackageUtil.getAppNameFromPackname(getApplicationContext(),notificationInfo.packageName);
         Notification newMessageNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher)
@@ -329,12 +336,68 @@ public class NotificationService extends NotificationListenerService {
                 .setContentText(notificationInfo.content)
                 .setContentIntent(notificationInfo.intent)
                 .setGroup(GROUP_KEY_NOTIFI_STROE)
-                .setAutoCancel(true)
                 .build();
 
-        notificationManager.notify(NOTIFICATIONID++,newMessageNotification);
+        mNotificationManager.notify(Math.abs(notificationInfo.key.hashCode()),newMessageNotification);
+        if (!isForegroundNotification){
+            updateNotificationSummary();
+        }
+    }
+
+    private void updateNotificationSummary() {
+        if (DEBUG) Log.i(TAG,isForegroundNotification?"isForegroundNotification:true":"isForegroundNotification:flase");
+        Notification newMessageNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setStyle(new NotificationCompat.InboxStyle().setSummaryText("历史通知..."))
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+//                .setContentIntent(notificationInfo.intent)
+                .setGroup(GROUP_KEY_NOTIFI_STROE)
+                .setGroupSummary(true)
+                .build();
+        mNotificationManager.notify(MANAGER_NOTIFICATION_ID,newMessageNotification);
+    }
+
+
+    public static final String NOTIFICATION_CHANNEL_ID = "FloatWindowService";
+    public static final String NOTIFICATION_FILTER_START_INTENT = "com.stone.notificationfilter.FloatServiceStart";
+    public static final int MANAGER_NOTIFICATION_ID = 1;
+
+    private void createNotificationChannel() {
+        CharSequence name = "通知处理器";
+        String description = "防止通知处理器被后台关闭和保存历史通知";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
+        channel.setDescription(description);
+        channel.enableLights(false);
+        channel.enableVibration(false);
+        channel.setShowBadge(false);
+        if (mNotificationManager != null) {
+            mNotificationManager.createNotificationChannel(channel);
+        }
+    }
+    private void addForegroundNotification() {
+        if (DEBUG) Log.i(TAG,isForegroundNotification?"isForegroundNotification:true":"isForegroundNotification:flase");
+        String contentText = "通知处理器运行中...";
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+        Notification mBuilder = new NotificationCompat.Builder(this.getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                .setContentTitle(contentText)
+                .setContentText(contentText)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setTicker(contentText)
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .setSummaryText(contentText))
+                .setGroup(GROUP_KEY_NOTIFI_STROE)
+                .setGroupSummary(true)
+                .build();
+        startForeground(MANAGER_NOTIFICATION_ID, mBuilder);
 
     }
+
+
 
     private void setSceenAngle(){
         Configuration mConfiguration = getApplicationContext().getResources().getConfiguration(); //获取设置的配置信息
@@ -364,11 +427,12 @@ public class NotificationService extends NotificationListenerService {
         notificationInfo.content = extras.getString(Notification.EXTRA_TEXT,"");
 
         notificationInfo.intent = sbn.getNotification().contentIntent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationInfo.ChannelID = notification.getChannelId();
-        }
+        notificationInfo.ChannelID = notification.getChannelId();
+
 //        notificationInfo.ChannelID = extras.getString(Notification.EXTRA_CHANNEL_ID);
-        notificationInfo.ChannelGROUPID = extras.getString(Notification.EXTRA_CHANNEL_GROUP_ID);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            notificationInfo.ChannelGROUPID = extras.getString(Notification.EXTRA_CHANNEL_GROUP_ID);
+        }
 
         PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
         Notification.Action[] action = notification.actions;
@@ -382,10 +446,43 @@ public class NotificationService extends NotificationListenerService {
 //        String channelID = extras.getString(Notification.EXTRA_CHANNEL_ID);
 ////        String EXTRA_CONTAINS_CUSTOM_VIEW = extras.getString(Notification.EXTRA_CONTAINS_CUSTOM_VIEW);
 //
-        String EXTRA_TEMPLATE = extras.getString(Notification.EXTRA_TEMPLATE);
-//        Log.e(TAG,"TEMPLATE"+EXTRA_TEMPLATE);
+
+        notificationInfo.template = extras.getString(Notification.EXTRA_TEMPLATE,"");
+//        String aa = extras.getString(Notification.EXTRA_CONTAINS_CUSTOM_VIEW,true);
+
+
+        if(sbn.getNotification().bigContentView != null){
+            notificationInfo.hasBigCustomView = true;
+        }
+
+        if(sbn.getNotification().contentView != null){
+            notificationInfo.hasContentView = true;
+        }
+        if(sbn.getNotification().headsUpContentView != null){
+            notificationInfo.hasHeadsUpContentView = true;
+        }
+
+        if(notificationInfo.hasBigCustomView){
+            notificationInfo.remoteViews = sbn.getNotification().bigContentView;
+        }else if(notificationInfo.hasContentView){
+            notificationInfo.remoteViews = sbn.getNotification().contentView;
+        }else if(notificationInfo.template.contains("MediaStyle")){
+            MediaSession.Token mediaSession = extras.getParcelable(Notification.EXTRA_MEDIA_SESSION);
+            notificationInfo.remoteViews = getBigContentView(getApplicationContext(), notificationInfo,mediaSession);
+            if(notificationInfo.remoteViews == null){
+                notificationInfo.remoteViews = getContentView(getApplicationContext(), notificationInfo,mediaSession);
+            }
+        }
+
+        if(notificationInfo.hasContentView || notificationInfo.hasBigCustomView ||
+                notificationInfo.hasHeadsUpContentView || notificationInfo.template.contains("MediaStyle")){
+            notificationInfo.hasCustomView = true;
+        }
+
+//        sbn.getNotification().
+        //        Log.e(TAG,"TEMPLATE"+EXTRA_TEMPLATE);
 //        String textLines = extras.getString(Notification.EXTRA_TEXT_LINES);
-        MediaSession.Token EXTRA_MEDIA_SESSION = extras.getParcelable(Notification.EXTRA_MEDIA_SESSION);
+
 ////        String EXTRA_COMPACT_ACTIONS = extras.getString(Notification.EXTRA_COMPACT_ACTIONS);
 //        String EXTRA_SUMMARY_TEXT = extras.getString(Notification.EXTRA_SUMMARY_TEXT);
 //        String EXTRA_TITLE_BIG = extras.getString(Notification.EXTRA_TITLE_BIG);
@@ -399,37 +496,49 @@ public class NotificationService extends NotificationListenerService {
         } else {
             notificationInfo.sceenStatus =1;
         }
+//        sbn.getNotification().notify();
 
-        RemoteViews remoteViews = getBigContentView(getApplicationContext(), notification);
-        if(remoteViews == null)
-            remoteViews = getContentView(getApplicationContext(), notification);
-        if (remoteViews != null)
-        {
-            notificationInfo.remoteViews = remoteViews;
-        }
 
 
         notificationInfo.isInteractive = powerManager.isInteractive();
         return notificationInfo;
     }
 
-    public static RemoteViews getBigContentView(Context context, Notification notification)
+    public static RemoteViews getBigContentView(Context context, NotificationInfo notification, MediaSession.Token mediaSession)
     {
-        if(notification.bigContentView != null)
-            return notification.bigContentView;
-        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            return Notification.Builder.recoverBuilder(context, notification).createBigContentView();
-        else
-            return null;
+        Notification.Builder builder = Notification.Builder.recoverBuilder(context, notification.notification);
+        builder.setStyle(new Notification.MediaStyle().setMediaSession(mediaSession)).build();
+
+//        Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
+//        mediaStyle.setMediaSession(mediaSession);
+//        Class<Notification.MediaStyle> mediaStyleClass = Notification.MediaStyle.class;
+//        RemoteViews remoteViews = null;
+//        try {
+//            Method getBigRemoteView = mediaStyleClass.getDeclaredMethod("makeBigContentView");
+//            remoteViews = (RemoteViews)getBigRemoteView.invoke(mediaStyle);
+//            if (remoteViews == null) {
+//                Log.e(TAG,"Remote error");
+//            }
+//        } catch (Exception e) {
+//            Log.e(TAG,"reflace error");
+//            e.printStackTrace();
+//        }
+//        getBigRemoteView.setAccessible(true);
+//
+//
+//        Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
+//                .setStyle(new Notification.MediaStyle().setMediaSession(mediaSession));
+        return builder.createBigContentView();
     }
-    public static RemoteViews getContentView(Context context, Notification notification)
+    public static RemoteViews getContentView(Context context, NotificationInfo notification, MediaSession.Token mediaSession)
     {
-        if(notification.contentView != null)
-            return notification.contentView;
-        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            return Notification.Builder.recoverBuilder(context, notification).createContentView();
-        else
-            return null;
+        Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setStyle(new Notification.MediaStyle().setMediaSession(mediaSession)); ;
+//        Notification.MediaStyle mediaStyle = new Notification.MediaStyle();
+//        mediaStyle.setMediaSession(mediaSession);
+
+
+        return builder.createContentView();
     }
 
     private void floatingTileAction(final NotificationInfo notificationInfo) {
@@ -437,64 +546,25 @@ public class NotificationService extends NotificationListenerService {
                 floatingTile.run();
     }
 
-    private RemoteViews mRemoteViews;
-    private NotificationCompat.Builder mBuilder;
-    private static final String NOTIFICATION_CHANNEL_ID = "FloatWindowService";
-    private static final String NOTIFICATION_FILTER_START_INTENT = "com.stone.notificationfilter.FloatServiceStart";
-    public static final int MANAGER_NOTIFICATION_ID = 0x1001;
+//    private RemoteViews mRemoteViews;
 
-
-    private void addForegroundNotification() {
-
-        String contentText = "通知处理器开启运行中...";
-
-        mBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setOngoing(true)
-                .setContentTitle(contentText)
-                .setWhen(System.currentTimeMillis())
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setGroup(GROUP_KEY_NOTIFI_STROE)
-                .setGroupSummary(true)
-                .setStyle(new NotificationCompat.InboxStyle()
-                        .setSummaryText(contentText))
-                .setAutoCancel(false);
-
-        startForeground(MANAGER_NOTIFICATION_ID, mBuilder.build());
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "通知处理器";
-            String description = "防止通知处理器被后台关闭";
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            channel.setShowBadge(false);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
-    }
 
     private void updateNotification(){
-        Log.i(TAG,"updateNotification:"+isStartListener);
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationCustomRemoteVIew();
-        mNotificationManager.notify(MANAGER_NOTIFICATION_ID, mBuilder.build());
+        if (DEBUG) Log.i(TAG,"updateNotification:"+isStartListener);
+//        notificationCustomRemoteVIew();
+//        mNotificationManager.notify(MANAGER_NOTIFICATION_ID, mBuilder.build());
 
     }
 
-    private void notificationCustomRemoteVIew() {
-        if(isStartListener){
-            mRemoteViews.setTextViewText(R.id.notification_filter_title, getResources().getString(R.string.service_start));
-            mRemoteViews.setImageViewResource(R.id.notification_filter_start, android.R.drawable.ic_media_play);
-        }else{
-            mRemoteViews.setTextViewText(R.id.notification_filter_title, getResources().getString(R.string.service_stop));
-            mRemoteViews.setImageViewResource(R.id.notification_filter_start, android.R.drawable.ic_media_pause);
-        }
-    }
+//    private void notificationCustomRemoteVIew() {
+//        if(isStartListener){
+//            mRemoteViews.setTextViewText(R.id.notification_filter_title, getResources().getString(R.string.service_start));
+//            mRemoteViews.setImageViewResource(R.id.notification_filter_start, android.R.drawable.ic_media_play);
+//        }else{
+//            mRemoteViews.setTextViewText(R.id.notification_filter_title, getResources().getString(R.string.service_stop));
+//            mRemoteViews.setImageViewResource(R.id.notification_filter_start, android.R.drawable.ic_media_pause);
+//        }
+//    }
 
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -505,19 +575,20 @@ public class NotificationService extends NotificationListenerService {
                 switch (action) {
                     case Intent.ACTION_SCREEN_OFF:
                         isSceenLock =true;
-                        Log.d(TAG, "屏幕关闭，变黑");
+                        if (DEBUG) Log.d(TAG, "屏幕关闭，变黑");
                         break;
                     case Intent.ACTION_SCREEN_ON:
-                        Log.d(TAG, "屏幕开启，变亮");
+                        if (DEBUG) Log.d(TAG, "屏幕开启，变亮");
                         break;
                     case Intent.ACTION_USER_PRESENT:
                         isSceenLock =false;
-                        Log.d(TAG, "解锁成功");
+                        if (DEBUG) Log.d(TAG, "解锁成功");
                         break;
                     case NOTIFICATION_FILTER_START_INTENT:
-                        isStartListener=!isStartListener;
-                        updateNotification();
-                        Log.i(TAG,"updateNotification:"+isStartListener);
+//                        isStartListener=!isStartListener;
+//                        updateNotification();
+                        init();
+                        if (DEBUG) Log.i(TAG,"updateNotification:"+isStartListener);
                     default:
                         break;
                 }

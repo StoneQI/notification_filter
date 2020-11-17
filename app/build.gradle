@@ -1,8 +1,16 @@
 apply plugin: 'com.android.application'
+apply plugin: 'bugly'
+
+bugly {
+    appId = 'e1a21830b6' // 注册时分配的App ID
+    appKey = 'acb7f898-89e3-422a-9491-1deb7fb4790f' // 注册时分配的App Key
+//    debug = true
+}
 
 android {
 
     compileSdkVersion 29
+//    buildToolsVersion "29.0.2"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -20,10 +28,10 @@ android {
     }
     defaultConfig {
         applicationId "com.stone.notificationfilter"
-        minSdkVersion 23
-        targetSdkVersion 28
-        versionCode 20200706
-        versionName "0.9.9"
+        minSdkVersion 26
+        targetSdkVersion defaultTargetSdkVersion
+        versionCode 20201117
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "releaseTime", "\"" + new Date().format("yyyy-MM-dd HH:mm:ss") + "\"")
         multiDexEnabled true

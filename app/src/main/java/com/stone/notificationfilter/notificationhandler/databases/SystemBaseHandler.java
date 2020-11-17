@@ -19,13 +19,26 @@ public class SystemBaseHandler {
         HashSet< NotificationHandlerItem.NotificationPatterItem> notificationPatterItems = new HashSet<>();
         notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("title",
                 "contain",
-                "正在其他应用的上层显示内容",false));
+                "其他应用的上层",false));
         notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("content",
                 "contain",
                 "正在运行",false));
         notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("content",
                 "contain",
+                "后台运行",false));
+        notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("content",
+                "contain",
+                "导致系统卡顿",false));
+        notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("content",
+                "contain",
+                "降低待机时间",false));
+        notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("content",
+                "contain",
                 "下载",false));
+        notificationPatterItems.add(new NotificationHandlerItem.NotificationPatterItem("title",
+                "contain",
+                "正在运行",false));
+
 
         notificationHandlerItem.notificationPatterItems = notificationPatterItems;
         notificationHandlerItem.actioner = "drop_notification";
@@ -42,6 +55,7 @@ public class SystemBaseHandler {
         HashSet<String> strings = new HashSet<>();
         strings.add("com.netease.cloudmusic");
         strings.add("com.tencent.qqmusic");
+        strings.add("com.miui.player");
         notificationHandlerItem2.packageNames =strings;
         notificationHandlerItem2.actioner = "float_notification";
         notificationHandlerItem2.breakDown =true;

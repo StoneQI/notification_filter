@@ -1,5 +1,7 @@
 package com.stone.notificationfilter;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
@@ -41,6 +43,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_nav_host);
 
+
         NavController navController =  Navigation.findNavController(this,R.id.nav_host_fragment);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
 
@@ -49,7 +52,7 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(mToolBar);
 
         NavigationUI.setupWithNavController(mToolBar,navController);
-
+        createNotificationChannel();
         boolean isFirstBoot = SpUtil.getBoolean(this,"appSettings","isFirstBoot", true);
         if (isFirstBoot) {
 //            NotificationHandlerItemFileStorage notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext())
@@ -57,8 +60,7 @@ public class MainActivity extends BaseActivity {
                     .setTitle("欢迎使用 " + getString(R.string.app_name))
                     .setMessage("在使用之前，您需要了解一些内容：" +
                             "\n本项目的开发的原因是：原作者的弃坑，，" +
-                            "\n但恰好项目开源，本人又是程序，加之需要该应用" +
-                            "\n所以三天入门安卓，再连肝四天完成本应用初版" +
+                            "\n但恰好项目开源，因此本人接手了该项目" +
                             "\n由于刚入门安卓开发，应用或许仍有BUG" +
                             "\n所做的改进：" +
                             "\n    几乎重写整个项目架构，修复BUG" +
@@ -67,7 +69,7 @@ public class MainActivity extends BaseActivity {
                             "\n 右划后仅显示图标，不会自动关闭，可左划和点击恢复展开状态" +
                             "\n 展开状态下，点击悬浮通知，触发通知栏点击事件" +
                             "\n\n应用启动需要通知使用权和悬浮窗权限，带有感叹号的是未赋予的权限，您必须赋予后才能正常使用" +
-                            "\n在修改应用配置时（如磁贴位置，磁贴方向）应用会清除所有悬浮磁贴（包括显示中和待显示）")
+                            "\n 在修改应用配置时（如磁贴位置，磁贴方向）应用会清除所有悬浮磁贴（包括显示中和待显示）")
                     .setCancelable(false)
                     .setPositiveButton("了解", new DialogInterface.OnClickListener() {
                         @Override
@@ -80,6 +82,20 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    private void createNotificationChannel() {
+        CharSequence name = "通知处理器";
+        String description = "防止通知处理器被后台关闭和保存历史通知";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationManager mNotificationManager = getSystemService(NotificationManager.class);
+        NotificationChannel channel = new NotificationChannel(NotificationService.NOTIFICATION_CHANNEL_ID, name, importance);
+        channel.setDescription(description);
+        channel.enableLights(false);
+        channel.enableVibration(false);
+        channel.setShowBadge(false);
+        if (mNotificationManager != null) {
+            mNotificationManager.createNotificationChannel(channel);
+        }
+    }
 
 
     @Override

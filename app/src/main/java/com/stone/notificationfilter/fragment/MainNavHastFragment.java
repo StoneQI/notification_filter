@@ -37,6 +37,8 @@ import com.stone.notificationfilter.BuildConfig;
 import com.stone.notificationfilter.MainActivity3;
 import com.stone.notificationfilter.NotificationService;
 import com.stone.notificationfilter.R;
+import com.stone.notificationfilter.dialogapppicker.utils.Utils;
+import com.stone.notificationfilter.util.CheckUtil;
 import com.stone.notificationfilter.util.NotificationCollectorMonitorService;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.util.ToolUtils;
@@ -107,32 +109,33 @@ public class MainNavHastFragment extends Fragment {
         Log.i(TAG,"onResume is runing");
         isNotificationListenerEnable = true;
         isCanDrawWindow = true;
+
+
         if (!ToolUtils.isNotificationListenerEnable(getContext())) {
             isNotificationListenerEnable = false;
         }
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (!Settings.canDrawOverlays(getContext())) {
-                isCanDrawWindow = false;
-            }
+        if (!Settings.canDrawOverlays(getContext())) {
+            isCanDrawWindow = false;
         }
-        if (!(isNotificationListenerEnable && isCanDrawWindow)) {
-            start_sevice.setChecked(false);
+        if (!isNotificationListenerEnable || !isCanDrawWindow || !CheckUtil.isServiceWorked(getContext(),"com.stone.notificationfilter.NotificationService")){
+                new AlertDialog.Builder(getContext())
+                        .setTitle("警告")
+                        .setMessage("服务未进行:" +
+                                "\n请检查权限是否授予" +
+                                "\n或重新授予获取通知权限")
+                        .setPositiveButton("关闭", null)
+                        .show();
+                start_sevice.setChecked(false);
         }else {
-            boolean isStart = SpUtil.getBoolean(getContext(),"appSettings","start_service", true);
-            if (isStart){
-                NotificationService.isStartListener=true;
-                getActivity().startService(new Intent(getActivity(), NotificationCollectorMonitorService.class));
-                if (!start_sevice.isChecked()){
+                boolean isStart = SpUtil.getBoolean(getContext(),"appSettings","start_service", true);
+                if (isStart){
+                    NotificationService.onListener();
                     start_sevice.setChecked(true);
-                }
-//                start_sevice.setChecked(true);
-//                Toast.makeText(getContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
-            }else {
-                NotificationService.isStartListener = false;
-                if (start_sevice.isChecked()) {
+                }else {
+                    NotificationService.offListener();
                     start_sevice.setChecked(false);
                 }
-            }
+            getActivity().sendBroadcast(new Intent(NotificationService.NOTIFICATION_FILTER_START_INTENT));
         }
     }
 
@@ -147,37 +150,41 @@ public class MainNavHastFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-//        Toolbar toolbar = getActivity().getActionBar();
-
         start_sevice = view.findViewById(R.id.start_service);
         start_sevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    if (isNotificationListenerEnable && isCanDrawWindow){
-                        Log.e("MainFragment",String.valueOf(isChecked));
-                        NotificationService.isStartListener=true;
-                        getActivity().startService(new Intent(getActivity(), NotificationCollectorMonitorService.class));
-                        getActivity().startService(new Intent(getActivity(), NotificationService.class));
-//                        Toast.makeText(getContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
-//                        buttonView.setChecked(true);
-                        SpUtil.putBoolean(getContext(),"appSettings","start_service", true);
-                    }else {
-                        Log.e("MainFragment",String.valueOf(isChecked));
-                        Toast.makeText(getContext(), "权限不足，将无法开启服务", Toast.LENGTH_SHORT).show();
+                    if (!isNotificationListenerEnable || !isCanDrawWindow || !CheckUtil.isServiceWorked(getContext(),"com.stone.notificationfilter.NotificationService")){
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("警告")
+                                .setMessage("服务未进行:" +
+                                        "\n请检查权限是否授予" +
+                                        "\n或重新授予获取通知权限")
+                                .setPositiveButton("关闭", null)
+                                .show();
                         buttonView.setChecked(false);
+                        NotificationService.offListener();
                         SpUtil.putBoolean(getContext(),"appSettings","start_service", false);
 
+                    }else{
+                        NotificationService.onListener();
+                        Toast.makeText(getContext(), R.string.service_start, Toast.LENGTH_SHORT).show();
+                        SpUtil.putBoolean(getContext(),"appSettings","start_service", true);
                     }
                 }else {
-                    Log.e("MainFragment",String.valueOf(isChecked));
-//                    stopNotificationListenerService();
-                    NotificationService.isStartListener=false;
+                    NotificationService.offListener();
                     Toast.makeText(getContext(), R.string.service_stop, Toast.LENGTH_SHORT).show();
                     buttonView.setChecked(false);
                     SpUtil.putBoolean(getContext(),"appSettings","start_service", false);
 
                 }
+//                Intent intent = ;
+//通过intent传递少量数据
+//                intent.putExtra("data", "finch");
+// 发送普通广播
+                getActivity().sendBroadcast(new Intent(NotificationService.NOTIFICATION_FILTER_START_INTENT));
+
             }
         });
 
@@ -225,16 +232,16 @@ public class MainNavHastFragment extends Fragment {
                         //指定通知被创建的时间
                         .setWhen(System.currentTimeMillis())
                         //设置通知的小图标
-                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
                         //设置通知的大图标
-                        .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                                R.drawable.ic_launcher_background))
+//                        .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+//                                R.drawable.ic_launcher_background))
                         //添加点击跳转通知跳转
                         .setContentIntent(pendingIntent)
                         //实现点击跳转后关闭通知
                         .setAutoCancel(true)
                         .build();
-                notificationManager.notify(1,notification);
+                notificationManager.notify(0xffff,notification);
             }
         });
 
@@ -272,7 +279,7 @@ public class MainNavHastFragment extends Fragment {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "测试通知";
-            String description = "测试通知";
+            String description = "发送一条测试通知";
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
             channel.setDescription(description);

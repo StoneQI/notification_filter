@@ -9,7 +9,7 @@
 
 
     <SwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="notification_show"
         android:summary="在通知栏显示一条通知以防止进程关闭"
         android:title="通知栏保活" />
@@ -17,8 +17,7 @@
         android:key="notification_store_number"
         android:summary="在状态栏保存最近的信息，防止通知错过后找不到入口,默认存储8条，为0表示不存储"
         android:inputType="number"
-        android:dependency="notification_show"
-        android:defaultValue="8"
+        android:defaultValue="32"
         android:title="存储最近通知" />
     <SwitchPreference
         android:defaultValue="false"

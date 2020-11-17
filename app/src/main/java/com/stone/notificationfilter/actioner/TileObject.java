@@ -27,7 +27,7 @@ public class TileObject {
 
 
 
-    public static int getNextPosition() {
+    public static synchronized int getNextPosition() {
         for (int i = 0; i <positionArray.size() ; i++) {
             if(!positionArray.get(i)){
                 positionArray.set(i,true);
@@ -50,13 +50,13 @@ public class TileObject {
         return -1;
     }
 
-    public static  void setMostShowTitleNum(int mostShowTitleNum){
+    public static synchronized void setMostShowTitleNum(int mostShowTitleNum){
         for (;mMostShowTitleNum < mostShowTitleNum; mMostShowTitleNum++){
             positionArray.add(mMostShowTitleNum,false);
         }
 
     }
-    public static void removeSingleShowingTile(FloatingTileActioner floatingTileActioner){
+    public static synchronized void removeSingleShowingTile(FloatingTileActioner floatingTileActioner){
         int showID = floatingTileActioner.showID;
         Log.e(TAG,String.valueOf(showID));
         positionArray.set(showID,false);
@@ -67,7 +67,7 @@ public class TileObject {
         }
     }
 
-    public static void clearShowingTile() {
+    public static synchronized void clearShowingTile() {
 
         isClearMultiNOfici =true;
         for (int i = 0; i < showingFloatingTileList.size();) {
@@ -77,7 +77,7 @@ public class TileObject {
         showWaitingTile();
     }
 
-    public static  void showWaitingTile() {
+    public static synchronized void showWaitingTile() {
         while (!TileObject.waitingForShowingTileList.isEmpty()) {
             if (showTileNum == mMostShowTitleNum)break;
             FloatingTileActioner floatingTile = TileObject.waitingForShowingTileList.get(0);
@@ -86,8 +86,10 @@ public class TileObject {
         }
     }
 
-    public static void clearAllTile() {
-        waitingForShowingTileList.clear();
+    public static synchronized void clearAllTile() {
+        if(waitingForShowingTileList !=null){
+            waitingForShowingTileList.clear();
+        }
         // 待显示列表必须在这之前清除，否则会触发显示机会事件
         clearShowingTile();
     }
