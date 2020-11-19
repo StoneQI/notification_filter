@@ -67,11 +67,13 @@ public class FloatWindow extends BaseFloatDailog {
             floatCustomViewRight.removeAllViews();
             floatCustomViewLeft.removeAllViews();
 //            view.removeView();
-            floatCustomViewRight.addView(view,layoutParams);
+            if (floatCustomViewRight != null)
+                floatCustomViewRight.addView(view,layoutParams);
         }else{
             floatCustomViewLeft.removeAllViews();
             floatCustomViewRight.removeAllViews();
-            floatCustomViewLeft.addView(view,layoutParams);
+            if (floatCustomViewLeft != null)
+                floatCustomViewLeft.addView(view,layoutParams);
         }
     }
 

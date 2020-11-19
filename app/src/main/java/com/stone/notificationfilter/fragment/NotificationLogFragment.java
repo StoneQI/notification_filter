@@ -254,8 +254,10 @@ public class NotificationLogFragment extends Fragment {
             new Thread(){
                 public void run(){
                     notificationItemDao.deleteAll();
-                    notificationItemEntities.clear();
-                    notificationLogItemList.clear();
+                    if (notificationItemEntities != null)
+                        notificationItemEntities.clear();
+                    if( notificationLogItemList != null)
+                        notificationLogItemList.clear();
                     handler.sendEmptyMessage(DETELEDATA);
                 }
             }.start();

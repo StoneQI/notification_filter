@@ -126,7 +126,8 @@ public class DanMuActioner {
         if (isDanmuClicked){
             rootContentLayout.setOnClickListener(v -> {
                 try {
-                    intent.send();
+                    if (intent != null)
+                        intent.send();
                 } catch (PendingIntent.CanceledException e) {
                     e.printStackTrace();
                 }
