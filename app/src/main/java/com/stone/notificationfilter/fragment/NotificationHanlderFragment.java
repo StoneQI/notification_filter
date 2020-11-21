@@ -25,6 +25,7 @@ import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerAdapter;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItem;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItemFileStorage;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerMMKVAdapter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,12 +50,8 @@ public class NotificationHanlderFragment extends Fragment {
     private final static  String TAG ="FiliterActivity";
     //    private NotificationFilterDao notificationFilterDao =null;
 //    private String filiter_path = "";
-    private ArrayList<NotificationHandlerItem> notificationMatcherArrayList = new ArrayList<>();
+    private final ArrayList<NotificationHandlerItem> notificationMatcherArrayList = new ArrayList<>();
     private NotificationHandlerAdapter notificationHandlerAdapter=null;
-
-    private static NotificationHandlerItemFileStorage notificationHandlerItemFileStorage;
-    //    private static ArrayAdapter<String> adapter = null;
-    private RecyclerView mRecyclerView;
 
     public NotificationHanlderFragment() {
         // Required empty public constructor
@@ -107,7 +104,8 @@ public class NotificationHanlderFragment extends Fragment {
 //        bundle.putString("amount", amount);
 //        view.findViewById(R.id.filiters_list).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_notificationHanlderFragment_to_addNotificationHandlerFragment));
 
-        mRecyclerView = view.findViewById(R.id.filiters_list);
+        //    private static ArrayAdapter<String> adapter = null;
+        RecyclerView mRecyclerView = view.findViewById(R.id.filiters_list);
 
         notificationHandlerAdapter = new NotificationHandlerAdapter(notificationMatcherArrayList);
         notificationHandlerAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -167,23 +165,16 @@ public class NotificationHanlderFragment extends Fragment {
     private void processThread(){
         //构建一个下载进度条
         pd= ProgressDialog.show(getActivity(), "加载", "加载中…");
-        new Thread(){
-            public void run(){
+        new Thread(() -> {
 
-                try {
-                    notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getContext(),true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
-                ArrayList<NotificationHandlerItem> notificationHandlerItems= notificationHandlerItemFileStorage.getAllAsArrayList();
+            ArrayList<NotificationHandlerItem> notificationHandlerItems= new NotificationHandlerMMKVAdapter(getContext(),true).getAllAsArrayList();
 
-                notificationMatcherArrayList.clear();
-                if (notificationHandlerItems.size() !=0){
-                    notificationMatcherArrayList.addAll(notificationHandlerItems);
-                }
-                handler.sendEmptyMessage(0);
+            notificationMatcherArrayList.clear();
+            if (notificationHandlerItems.size() !=0){
+                notificationMatcherArrayList.addAll(notificationHandlerItems);
             }
-        }.start();
+            handler.sendEmptyMessage(0);
+        }).start();
     }
 }

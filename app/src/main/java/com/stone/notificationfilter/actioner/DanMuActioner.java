@@ -564,7 +564,8 @@ public class DanMuActioner {
 
 
     public void removeView() {
-        windowManager.removeView(view);
+        if(view != null)
+            windowManager.removeView(view);
     }
 
 

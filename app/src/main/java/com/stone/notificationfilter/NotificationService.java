@@ -30,7 +30,8 @@ import com.stone.notificationfilter.actioner.RunIntentActioner;
 import com.stone.notificationfilter.actioner.SaveToFileActioner;
 import com.stone.notificationfilter.notificationhandler.NotificationHandlerJudge;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItem;
-import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItemFileStorage;
+//import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItemFileStorage;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerMMKVAdapter;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.notificationhandler.databases.SystemBaseHandler;
 import com.stone.notificationfilter.util.ImageUtil;
@@ -57,7 +58,6 @@ public class NotificationService extends NotificationListenerService {
 
     private static final String GROUP_KEY_NOTIFI_STROE = "com.stone.GROUP_KEY_NOTIFI_STROE";
     private static boolean isStartListener = false;
-    private NotificationHandlerItemFileStorage notificationHandlerItemFileStorage;
     private ArrayList<NotificationHandlerItem> notificationHandlerItems;
 
     public static Set<String> selectAppList = null;
@@ -130,18 +130,16 @@ public class NotificationService extends NotificationListenerService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    tempBlackAppLise.clear();
-                    String packageNamestring = SpUtil.getString(getApplicationContext(),"appSettings","select_applists", "");
-                    selectAppList = SpUtil.string2Set(packageNamestring);
-                    appListMode = SpUtil.getBoolean(getApplicationContext(),"appSettings","applist_mode", false);
+                tempBlackAppLise.clear();
+                String packageNamestring = SpUtil.getString(getApplicationContext(),"appSettings","select_applists", "");
+                selectAppList = SpUtil.string2Set(packageNamestring);
+                appListMode = SpUtil.getBoolean(getApplicationContext(),"appSettings","applist_mode", false);
 
-                    notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),true);
-                    notificationHandlerItems = notificationHandlerItemFileStorage.getAllAsArrayList();
-                    notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule(getApplicationContext()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                    notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),true);
+//                    notificationHandlerItems = notificationHandlerItemFileStorage.getAllAsArrayList();
+//
+                notificationHandlerItems = new NotificationHandlerMMKVAdapter(getApplicationContext(),true).getAllAsArrayList();
+                notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule(getApplicationContext()));
 
 //                mHandler.sendEmptyMessage(0);
             }

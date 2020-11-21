@@ -32,17 +32,6 @@ public class NotificationHandlerItemFileStorage {
 
   private boolean autosave;
 
-  /**
-   * Creates a FileStorage. It allows you to store your serializable object in a file using a key
-   * for identification and to read it somewhen later.
-   *
-   * @param autosave Whether every <code>store</code> operation shall automatically write the whole
-   *        FileStorage to disk. If false, you will need to call the <code>save</code> method
-   *        manually.
-   * @param filepath The path of the file your data shall be stored in
-   * @throws IOException if the file cannot be created
-   * @throws IllegalArgumentException if the file is a directory
-   */
   public NotificationHandlerItemFileStorage(Context context, boolean autosave)
       throws IllegalArgumentException, IOException {
     this(context);

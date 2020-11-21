@@ -29,6 +29,7 @@ import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
 import com.stone.notificationfilter.notificationhandler.AddNotificationPatterView;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItem;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerItemFileStorage;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationHandlerMMKVAdapter;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ public class AddNotificationHandlerFragment extends Fragment {
 
     private final static  String TAG ="AddNotiHandlerFragment";
     private  long notificationHandlerItemID = -1;
-    private NotificationHandlerItemFileStorage notificationHandlerItemFileStorage =null;
+    private NotificationHandlerMMKVAdapter notificationHandlerItemMMKVAdapter =null;
     private NotificationHandlerItem notificationFiliter =null;
     private HashSet<String> packageNames = null;
     private boolean isUpdate = false;
@@ -109,12 +110,8 @@ public class AddNotificationHandlerFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        if (notificationHandlerItemFileStorage ==null){
-            try {
-                notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getContext(),true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (notificationHandlerItemMMKVAdapter ==null){
+            notificationHandlerItemMMKVAdapter = new NotificationHandlerMMKVAdapter(getContext(),true);
         }
         final EditText filter_id =(EditText)view.findViewById(R.id.filter_ID);
         final EditText filter_name =(EditText)view.findViewById(R.id.filter_name);
@@ -127,7 +124,7 @@ public class AddNotificationHandlerFragment extends Fragment {
 
         final LinearLayout notification_patter_view = (LinearLayout)view.findViewById(R.id.notification_patter_view);
 
-        final Switch isBreak =(Switch) view.findViewById(R.id.isBreak);
+        final Switch isBreak = view.findViewById(R.id.isBreak);
         final Spinner actioner =(Spinner)view.findViewById(R.id.actioner);
         final Spinner sceen_status_on =(Spinner)view.findViewById(R.id.sceen_status_on);
 
@@ -135,7 +132,7 @@ public class AddNotificationHandlerFragment extends Fragment {
         notificationHandlerItemID = getArguments().getLong("NotificationHandlerID");
 
         if(notificationHandlerItemID != -1){
-            notificationFiliter = notificationHandlerItemFileStorage.get(String.valueOf(notificationHandlerItemID));
+            notificationFiliter = notificationHandlerItemMMKVAdapter.get(String.valueOf(notificationHandlerItemID));
             isUpdate =true;
             filter_id.setText(String.valueOf(notificationFiliter.orderID));
             filter_name.setText(notificationFiliter.name);
@@ -278,12 +275,8 @@ public class AddNotificationHandlerFragment extends Fragment {
 
     @Override
     public void onResume() {
-        if (notificationHandlerItemFileStorage ==null){
-            try {
-                notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getContext(),true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (notificationHandlerItemMMKVAdapter ==null){
+            notificationHandlerItemMMKVAdapter = new NotificationHandlerMMKVAdapter(getContext(),true);
         }
         super.onResume();
     }
@@ -302,7 +295,7 @@ public class AddNotificationHandlerFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    notificationHandlerItemFileStorage.remove(String.valueOf(notificationHandlerItemID));
+                    notificationHandlerItemMMKVAdapter.remove(String.valueOf(notificationHandlerItemID));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -320,7 +313,7 @@ public class AddNotificationHandlerFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    notificationHandlerItemFileStorage.store(String.valueOf(notificationHandlerItemID),notificationFiliter);
+                    notificationHandlerItemMMKVAdapter.store(String.valueOf(notificationHandlerItemID),notificationFiliter);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

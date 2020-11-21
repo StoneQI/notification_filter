@@ -1,6 +1,7 @@
 package com.stone.notificationfilter.fragment;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import com.stone.notificationfilter.R;
 import com.stone.notificationfilter.dialogapppicker.DialogAppPicker;
 import com.stone.notificationfilter.util.SpUtil;
+//import com.tencent.mmkv.MMKV;
 
 import java.util.Set;
 
@@ -70,6 +72,10 @@ public class GlobalSettingFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+//        MMKV preferences = MMKV.mmkvWithID("myData");
+//        SharedPreferences.Editor editor = preferences.edit();
+//        getPreferenceManager().setSharedPreferencesName(editor);
+
         getPreferenceManager().setSharedPreferencesName("appSettings");
         addPreferencesFromResource(R.xml.fragment_global_setting_preference);
 
