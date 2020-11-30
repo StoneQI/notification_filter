@@ -8,7 +8,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.stone.notificationfilter.util.SpUtil;
-import com.stone.notificationfilter.util.filestore.Crypter.DecryptionFailedException;
+import com.stone.notificationfilter.util.filestore.Crypter;
+//import com.tencent.mmkv.MMKV;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -17,54 +18,39 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
-public class NotificationHandlerItemFileStorage {
-
+public class JsonData {
   /**
    *
    */
-  private static final long serialVersionUID = 6410127608267365958L;
-  private static final String TAG ="HandlerItemFileStorage";
-  private Context context;
-  private static  String  fileName="NotificationHandler.json";
-  private HashMap<String, NotificationHandlerItem> storageMap;
+  private  final String saveKey ;
+  private  final String prencesName;
+  private final Context context;
+  private HashMap<String, NotificationHandlerItem> storageMap = new HashMap<>();
+//    private Set<NotificationHandlerItem> storageMap;
+//    private Set<Str>
 
-  private boolean autosave;
+  private final boolean autosave;
 
-  public NotificationHandlerItemFileStorage(Context context, boolean autosave)
-      throws IllegalArgumentException, IOException {
-    this(context);
-    this.autosave = autosave;
-  }
-
-  /**
-   * Creates a FileStorage. It allows you to store your serializable object in a file using a key
-   * for identification and to read it somewhen later.<br>
-   * All data <code>store</code>d in this FileStorage will instantly be stored in the given file.
-   * This might cause many write operations on disk.
-   *
-   * @param  context The file your data shall be stored in
-   * @throws IOException if your file cannot be created
-   * @throws IllegalArgumentException if your file is a directory
-   */
-  public NotificationHandlerItemFileStorage(Context context) throws IOException, IllegalArgumentException {
+  public JsonData(Context context,String prencesName, String saveKey, boolean autosave) {
     this.context = context;
-    storageMap = new HashMap<String, NotificationHandlerItem>();
-    boolean isFirstBoot = SpUtil.getBoolean(context,"appSettings","isFirstIntitHandler", true);
-    if (isFirstBoot){
-      save();
-      SpUtil.putBoolean(context,"appSettings","isFirstIntitHandler", false);
-    }
+    this.prencesName = prencesName;
+    this.saveKey = prencesName;
+    this.autosave = autosave;
     load();
   }
+
 
   /**
    * Stores the FileStorage in the file on disk
    */
   public void save() throws IOException {
 
-    if (storageMap==null && storageMap.size()==0){
+    if (storageMap == null || storageMap.size()==0){
       return ;
     }
     String json = "";
@@ -76,58 +62,19 @@ public class NotificationHandlerItemFileStorage {
       e.printStackTrace();
       return;
     }
-    FileOutputStream outputStream =null;
-    try{
-      outputStream = context.openFileOutput(fileName,Context.MODE_PRIVATE);
-      outputStream.write(json.getBytes());
-      outputStream.flush();
-      outputStream.close();
-    }catch (FileNotFoundException e){
-      e.printStackTrace();
-      return ;
-    }
-    catch (IOException e){
-      Log.e(TAG,"file");
-      try{
-        outputStream.close();
-      } catch (IOException e2) {
-        e2.printStackTrace();
-      }
-      return  ;
-    }
-    return ;
+//        kv.encode(saveKey,json);
+    SpUtil.putString(context,prencesName,saveKey,json);
   }
 
   /**
    * Loads the FileStorage from the file
    */
   @SuppressWarnings("unchecked")
-  private <T> void load() throws IOException {
-
-    FileInputStream fos = null;
-    BufferedReader reader = null;
-    StringBuilder content = new StringBuilder();
-    try {
-      fos = context.openFileInput(fileName);
-      reader = new BufferedReader((new InputStreamReader(fos)));
-      String line = "";
-      while ((line = reader.readLine())!= null){
-        content.append(line);
-      }
-      fos.close();
-    }catch (FileNotFoundException e){
-      e.printStackTrace();
-    }catch (IOException e) {
-      Log.e(TAG,"file");
-      try{
-        reader.close();
-
-      } catch (IOException e2) {
-        e2.printStackTrace();
-      }
-    }
+  private void load()  {
+    String content = SpUtil.getString(context,prencesName,saveKey,"");
+//        String content = kv.decodeString(saveKey,"");
     if (content.length() !=0){
-      storageMap = new Gson().fromJson(content.toString(), new TypeToken<HashMap<String,NotificationHandlerItem>>(){}.getType());
+      storageMap = new Gson().fromJson(content, new TypeToken<HashMap<String,NotificationHandlerItem>>(){}.getType());
     }
   }
 
@@ -135,7 +82,7 @@ public class NotificationHandlerItemFileStorage {
    * Stores an Object <i>o</i> using a String <i>key</i> for later identification.<br>
    * Use <code>store(String key, Object o, String password)</code> for storing your data using AES
    * encryption.
-   * 
+   *
    * @param key The key as String.
    * @param o The Object.
    */
@@ -149,7 +96,7 @@ public class NotificationHandlerItemFileStorage {
   /**
    * Stores an Object <i>o</i> using a String <i>key</i> for later identification.<br>
    * Use <code>store(String key, Object o)</code> for storing your data without encryption.
-   * 
+   *
    * @param key The key as String.
    * @param o The Object.
    * @param password The password.
@@ -162,7 +109,7 @@ public class NotificationHandlerItemFileStorage {
    * Reads your object from the storage.<br>
    * <br>
    * Use <u>get(String key, String password)</u> for AES encrypted objects.
-   * 
+   *
    * @param key The key the object is available under
    * @return your Object or null if nothing was found for <i>key</i>
    */
@@ -174,12 +121,12 @@ public class NotificationHandlerItemFileStorage {
    * Reads your AES encrypted object from the storage.<br>
    * <br>
    * Use <u>get(String key)</u> instead for unencrypted objects.
-   * 
+   *
    * @param key The key the object is available under
    * @param password The password to use for decryption
    * @return your object or null if nothing was found for <i>key</i> or if decryption failed (wrong
    *         password)
-   * @throws DecryptionFailedException This usually happens if the password is wrong
+   * @throws Crypter.DecryptionFailedException This usually happens if the password is wrong
    */
 //  public T get(String key, String password) throws DecryptionFailedException {
 //    if (storageMap.get(key) instanceof CryptedObject) {
@@ -191,20 +138,18 @@ public class NotificationHandlerItemFileStorage {
 
   /**
    * All stored objects in an ArrayList of Objects
-   * 
+   *
    * @return all stored objects in an ArrayList of Objects
    */
   public ArrayList<NotificationHandlerItem> getAllAsArrayList() {
-    ArrayList<NotificationHandlerItem> result = new ArrayList<NotificationHandlerItem>();
-    for (NotificationHandlerItem c : storageMap.values()) {
-      result.add(c);
-    }
+    ArrayList<NotificationHandlerItem> result = new ArrayList<>(storageMap.values());
+    result.sort((n1, n2) ->  n2.orderID - n1.orderID);
     return result;
   }
 
   /**
    * All stored objects in a HashMap of Strings and Objects
-   * 
+   *
    * @return all stored objects in a HashMap of Strings and Objects
    */
   public HashMap<String, NotificationHandlerItem> getAll() {
@@ -220,7 +165,7 @@ public class NotificationHandlerItemFileStorage {
 
   /**
    * Removes an Key-Object pair from the storage
-   * 
+   *
    * @param key The key of the object
    */
   public void remove(String key) throws IOException {
@@ -232,7 +177,7 @@ public class NotificationHandlerItemFileStorage {
 
   /**
    * Checks whether a key is registerd
-   * 
+   *
    * @param key The Key.
    * @return true if an object is available for that key
    */
@@ -242,7 +187,7 @@ public class NotificationHandlerItemFileStorage {
 
   /**
    * Checks whether an object is stored at all
-   * 
+   *
    * @param o The Object.
    * @return true if the object is stored
    */
@@ -252,7 +197,7 @@ public class NotificationHandlerItemFileStorage {
 
   /**
    * Returns the number of objects (elements) stored
-   * 
+   *
    * @return The number of objects (elements) stored
    */
   public int getSize() {
@@ -264,11 +209,10 @@ public class NotificationHandlerItemFileStorage {
    */
   @Override
   public String toString() {
-    String result = "FileStorage @ " + fileName + "\n";
+    String result = "FileStorage @ "  + "\n";
     for (String cKey : storageMap.keySet()) {
-        result += cKey + " :: " + storageMap.get(cKey) + "\n";
+      result += cKey + " :: " + storageMap.get(cKey) + "\n";
     }
     return result.trim();
   }
-
 }

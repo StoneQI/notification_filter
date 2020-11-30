@@ -17,7 +17,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -49,12 +48,12 @@ import static com.stone.notificationfilter.util.ToolUtils.startFreeformHack;
  */
 public class FloatingTileActioner {
     private static String TAG ="FloatingTile";
-    private NotificationInfo notificationInfo;
-    private Context context;
+    private final NotificationInfo notificationInfo;
+    private final Context context;
     private PendingIntent intent = null;
 
-    private WindowManager windowManager;
-    private WindowManager.LayoutParams layoutParams;
+    private final WindowManager windowManager;
+    private final WindowManager.LayoutParams layoutParams;
     public boolean isEditPos=false;
     private boolean isOpen=true;
     public boolean isRemove;
@@ -64,7 +63,7 @@ public class FloatingTileActioner {
     private int mScreenWidth;
     public  int showID = -1;
     private View view;
-    private Timer mtimer =null;
+    private Timer mRemoveItemTimer =null;
     private  boolean isLeft=true;
     private  boolean isVert =false;
     private  boolean isRefuse =false;
@@ -76,7 +75,11 @@ public class FloatingTileActioner {
         this.notificationInfo = notificationInfo;
         windowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        viewInit(context);
+        if (!notificationInfo.isClearable || (notificationInfo.content == null && notificationInfo.title==null)){
+            isRefuse =true;
+        }else{
+            viewInit(context);
+        }
     }
 
     private void setSceneOrientation(Context context){
@@ -218,15 +221,6 @@ public class FloatingTileActioner {
 
     private void viewInit(Context context) {
         layoutParams.x =0;
-        if (!notificationInfo.isClearable){
-            isRefuse =true;
-            return;
-        }
-        if (notificationInfo.content == null && notificationInfo.title==null) {
-            isRefuse = true;
-            return;
-        }
-
         customView();
         intent = this.notificationInfo.intent;
         int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -289,7 +283,7 @@ public class FloatingTileActioner {
         {
             layoutParams.y = SpUtil.getInt(context,"appSettings","floattitle_landscape_y", -65);
 
-//            layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_y", -101);
+//           layoutParams.y = SpUtil.getSp(context,"appSettings").getInt("floattitle_landscape_y", -101);
         }
 
         int mostShowNum = Integer.parseInt(SpUtil.getString(context,"appSettings","floattitle_tileShowNum", "4"));
@@ -303,40 +297,43 @@ public class FloatingTileActioner {
                     layoutParams.y = layoutParams.y + (viewHeight + 18)*showID;
                 }
 
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            windowManager.addView(view, layoutParams);
-                            long floattitle_time = Long.parseLong(SpUtil.getString(context,"appSettings","floattitle_time", "8"));
-                            if(!isEditPos && floattitle_time >0){
-                                TimerTask timerTask = new TimerTask(){
-                                    @Override
-                                    public void run() {
-                                        if (isOpen){
-                                            removeTile();
-                                        }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    try {
+                        windowManager.addView(view, layoutParams);
+                        long floattitle_time = Long.parseLong(SpUtil.getString(context,"appSettings","floattitle_time", "8"));
+                        if(!isEditPos && floattitle_time >0){
+                            TimerTask reMoveTimerTask = new TimerTask(){
+                                @Override
+                                public void run() {
+                                    if (isOpen){
+                                        removeTile();
                                     }
-                                };
-                                mtimer =new Timer();
-                                mtimer.schedule(timerTask,floattitle_time*1000);
-                            }
-
-
-
-                        } catch (WindowManager.BadTokenException e) {
-                            // 无悬浮窗权限
-                            e.printStackTrace();
+                                }
+                            };
+                            TimerTask  compressTimerTask = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    compressNoificationItem();
+                                }
+                            };
+                            mRemoveItemTimer =new Timer();
+                            mRemoveItemTimer.schedule(reMoveTimerTask,floattitle_time*1000);
                         }
+
+
+
+                    } catch (WindowManager.BadTokenException e) {
+                        // 无悬浮窗权限
+                        e.printStackTrace();
                     }
                 });
-                TileObject.showingFloatingTileList.add(this);
+                TileObject.addShowFloatingTile(this);
                 return;
 
             }
         }
 
-        TileObject.waitingForShowingTileList.add(this);
+        TileObject.addWaitFloatingTile(this);
     }
 
     private  void setOnTouchListenr(final Activity activity){
@@ -459,7 +456,7 @@ public class FloatingTileActioner {
                         e1.printStackTrace();
                     }
                 }else {
-                    showNoificationInfo();
+                    expandNoificationItem();
                 }
 //                Log.i(TAG, "点击...");
                 return true;
@@ -494,7 +491,7 @@ public class FloatingTileActioner {
                             TileObject.clearShowingTile();
                         }
                     }else {
-                        closeNoificationInfo();
+                        compressNoificationItem();
                     }
                     return true;
                 }
@@ -504,7 +501,7 @@ public class FloatingTileActioner {
                             TileObject.clearShowingTile();
                         }
                     }else {
-                        closeNoificationInfo();
+                        compressNoificationItem();
                     }
 
 //                    Log.i(TAG, "向左滑...");
@@ -525,10 +522,8 @@ public class FloatingTileActioner {
                 if (e2.getY() - e1.getY() > 30) {
                     if(isOpen){
                         removeTile();
-                        if(SpUtil.getBoolean(context,"appSettings","message_replay",false))
+                        if(SpUtil.getBoolean(context,"appSettings","message_replay",true))
                             if (notificationInfo.packageName.contains("com.tencent.mm")){
-                                //快捷回复
-//                                Log.e(TAG,"快捷回复");
                                 if (ToolUtils.checkAppInstalled(context,"com.google.android.projection.gearhead")){
                                     FloatMessageReply floatMessageReply = new FloatMessageReply(notificationInfo,context);
                                     floatMessageReply.run();
@@ -591,8 +586,8 @@ public class FloatingTileActioner {
                 }
             }
         };
-        mtimer =new Timer();
-        mtimer.schedule(timerTask,floattitle_time*60000);
+        mRemoveItemTimer =new Timer();
+        mRemoveItemTimer.schedule(timerTask,floattitle_time*60000);
     }
     private void removeCurrentNotificationAction(){
         removeTile();
@@ -615,7 +610,7 @@ public class FloatingTileActioner {
 
 
 
-    private void closeNoificationInfo() {
+    private void compressNoificationItem() {
         view.findViewById(R.id.window_messgae_lay).setVisibility(View.GONE);
         isOpen =false;
         int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -627,13 +622,13 @@ public class FloatingTileActioner {
         layoutParams.height = viewHeight;
         windowManager.updateViewLayout(view, layoutParams);
 //        Log.i(TAG, "向右滑...");
-        if(mtimer != null)
+        if(mRemoveItemTimer != null)
         {
-            mtimer.cancel();
+            mRemoveItemTimer.cancel();
         }
     }
 
-    private void showNoificationInfo() {
+    private void expandNoificationItem() {
         view.findViewById(R.id.window_messgae_lay).setVisibility(View.VISIBLE);
         isOpen = true;
         int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -657,13 +652,12 @@ public class FloatingTileActioner {
         if (isRemove) {
             return;
         }
-        if(mtimer !=null){
-            mtimer.cancel();
+        if(mRemoveItemTimer !=null){
+            mRemoveItemTimer.cancel();
         }
-        isRemove = true;
         removeView();
         TileObject.removeSingleShowingTile(this);
-
+        isRemove = true;
     }
 
 

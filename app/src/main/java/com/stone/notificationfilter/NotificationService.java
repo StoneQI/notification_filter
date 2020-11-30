@@ -9,10 +9,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.session.MediaSession;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -52,7 +54,7 @@ import java.util.Set;
  * Create by LingC on 2019/8/4 21:46
  */
 public class NotificationService extends NotificationListenerService {
-    private final static boolean DEBUG = false;
+    private final static boolean DEBUG = true;
 
     private final static String TAG ="NotificationService";
 
@@ -171,7 +173,7 @@ public class NotificationService extends NotificationListenerService {
             }
         }
 
-        // 黑 白名单检测
+        // 黑白名单检测
         if(selectAppList.size()>1){
             if(appListMode^selectAppList.contains(sbn.getPackageName())){
                 cancelNotification(sbn.getKey());
@@ -295,6 +297,11 @@ public class NotificationService extends NotificationListenerService {
 //        super.onNotificationRemoved(sbn);
     }
 
+    @Override
+    public IBinder onBind(Intent intent) {
+        if (DEBUG) Log.i(TAG,"bind");
+        return super.onBind(intent);
+    }
 
     @Override
     public boolean onUnbind(Intent intent) {
@@ -307,17 +314,39 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public void onListenerConnected() {
+        super.onListenerConnected();
         if (!isStartListener){
             onListener();
         }
+//        tryReconnectService();
         if (DEBUG) Log.i(TAG,"notification service connected start");
+    }
+
+    public void tryReconnectService() {
+        toggleNotificationListenerService();
+        ComponentName componentName =
+                new ComponentName(getApplicationContext(), NotificationService.class);
+
+        //It say to Notification Manager RE-BIND your service to listen notifications again inmediatelly!
+        requestRebind(componentName);
+    }
+
+    /**
+     * Try deactivate/activate your component service
+     */
+    private void toggleNotificationListenerService() {
+        PackageManager pm = getPackageManager();
+        pm.setComponentEnabledSetting(new ComponentName(this, NotificationService.class),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(new ComponentName(this, NotificationService.class),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
     @Override
     public void onListenerDisconnected() {
         offListener();
         if (DEBUG) Log.i(TAG,"notification service connected stop");
-        requestRebind(new ComponentName(this, NotificationService.class));
+//        requestRebind(new ComponentName(this, NotificationService.class));
     }
 
     public  void notificationRestore(NotificationInfo notificationInfo){
@@ -329,6 +358,7 @@ public class NotificationService extends NotificationListenerService {
         String AppName = (String) PackageUtil.getAppNameFromPackname(getApplicationContext(),notificationInfo.packageName);
         Notification newMessageNotification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentTitle(AppName+": "+notificationInfo.title)
                 .setLargeIcon(ImageUtil.drawable2Bitmap(notificationInfo.smallIcon.loadDrawable(getApplicationContext())))
                 .setContentText(notificationInfo.content)
@@ -350,6 +380,8 @@ public class NotificationService extends NotificationListenerService {
                 .setPriority(NotificationCompat.PRIORITY_LOW)
 //                .setContentIntent(notificationInfo.intent)
                 .setGroup(GROUP_KEY_NOTIFI_STROE)
+                .setVibrate(null)
+                .setSound(null)
                 .setGroupSummary(true)
                 .build();
         mNotificationManager.notify(MANAGER_NOTIFICATION_ID,newMessageNotification);
@@ -363,7 +395,7 @@ public class NotificationService extends NotificationListenerService {
     private void createNotificationChannel() {
         CharSequence name = "通知处理器";
         String description = "防止通知处理器被后台关闭和保存历史通知";
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        int importance = NotificationManager.IMPORTANCE_LOW;
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
         channel.setDescription(description);
         channel.enableLights(false);

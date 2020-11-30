@@ -8,7 +8,7 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(indices = {@Index("post_time")})
+@Entity(indices = {@Index("post_time"),@Index("app_name"),@Index("package_name")})
 public class NotificationItemEntity {
 
     @PrimaryKey(autoGenerate = true)
@@ -16,8 +16,12 @@ public class NotificationItemEntity {
 
     @ColumnInfo(name = "post_time")
     public long postTime;
+    @ColumnInfo(name = "app_name")
     public String appName;
+
     public int dayOfYear;
+
+    @ColumnInfo(name = "package_name")
     public String packageName;
     public String tag;
     public String intentUrl;

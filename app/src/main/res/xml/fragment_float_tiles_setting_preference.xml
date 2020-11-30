@@ -10,7 +10,7 @@
 
 
     <SwitchPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="message_replay"
         android:summary="开启后可下划微信快捷回复和长按打开小窗模式,小窗模式由于系统原因不一定生效"
         android:title="微信快捷回复" />

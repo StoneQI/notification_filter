@@ -246,13 +246,8 @@ public class FloatMessageReply {
         viewHeight = view.getMeasuredHeight();
         layoutParams.width = viewWidth;
         layoutParams.height = viewHeight;
+        layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 
-//        setOnTouchListenr();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        } else {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;;
-        }
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL|WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
         layoutParams.format = PixelFormat.RGBA_8888;
 //        layoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
@@ -275,9 +270,7 @@ public class FloatMessageReply {
         Notification notification = notificationInfo.notification;
         if (notification != null) {
             NotificationCompat.CarExtender mCarExtender = new NotificationCompat.CarExtender(notification);
-            if (mCarExtender != null) {
-                conversation = mCarExtender.getUnreadConversation();
-            }
+            conversation = mCarExtender.getUnreadConversation();
         }
 
         addViewToWindow();
@@ -285,17 +278,12 @@ public class FloatMessageReply {
     }
 
     public void addViewToWindow() {
-
-
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            windowManager.addView(view, layoutParams);
-                        } catch (WindowManager.BadTokenException e) {
-                            // 无悬浮窗权限
-                            e.printStackTrace();
-                        }
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    try {
+                        windowManager.addView(view, layoutParams);
+                    } catch (WindowManager.BadTokenException e) {
+                        // 无悬浮窗权限
+                        e.printStackTrace();
                     }
                 });
     }

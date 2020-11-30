@@ -31,7 +31,7 @@ android {
         minSdkVersion 26
         targetSdkVersion defaultTargetSdkVersion
         versionCode 20201117
-        versionName "1.0.0"
+        versionName "1.0.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "releaseTime", "\"" + new Date().format("yyyy-MM-dd HH:mm:ss") + "\"")
         multiDexEnabled true

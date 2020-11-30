@@ -147,7 +147,7 @@ public class DialogAppPicker {
                 ArrayList<AppItem> itemList = new ArrayList<AppItem>();
                 List<ResolveInfo> appList = new ArrayList<ResolveInfo>();
 
-                List<PackageInfo> packages = mPackageManager.getInstalledPackages(0);
+                List<PackageInfo> packages = mPackageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES|PackageManager.GET_SERVICES);
                 Intent mainIntent = new Intent();
                 if (mMode == MODE_APP) {
                     mainIntent.setAction(Intent.ACTION_MAIN);

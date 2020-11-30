@@ -18,3 +18,7 @@ file=D:\01-code\notification_filter\app\build\outputs\mapping\release\mapping.tx
 sha1=18e6d51dc2fcbb53e428d87b10f83f212412ebc2
 appId=e1a21830b6
 
+file=D:\01-code\notification_filter\app\build\outputs\mapping\release\mapping.txt
+sha1=b9f36c196fb9494acadb2691ead7d54c2122a282
+appId=e1a21830b6
+

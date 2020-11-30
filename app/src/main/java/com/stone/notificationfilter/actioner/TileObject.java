@@ -1,31 +1,39 @@
 package com.stone.notificationfilter.actioner;
 
-import android.util.Log;
+import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Create by LingC on 2019/8/6 16:06
  */
 public class TileObject {
- private final  static  String TAG = "TileObject";
+    private final  static  String TAG = "TileObject";
     public static int showTileNum = 0;
     public static  int mMostShowTitleNum =0;
 
-    public static FloatingTileActioner lastFloatingTile;
+//    public static NotificationInfo lastFloatingTileKey;
 
     public static List<FloatingTileActioner> showingFloatingTileList = new ArrayList<>();
-    public static int currentPosition=0;
-    private static boolean isClearMultiNOfici = false;
+    private static boolean isClearMultiNotification = false;
     // key: Tile的y, value: Tile是否在显示
     // 数量一般为指定数量
     public static List<Boolean> positionArray = new ArrayList<>();
 
     public static List<FloatingTileActioner> waitingForShowingTileList = new ArrayList<>();
 
+//    public static  synchronized NotificationInfo getLastNOtificationKey(){
+//            return lastFloatingTileKey;
+//    }
 
+    public static synchronized void addShowFloatingTile(FloatingTileActioner floatingTileActioner){
+        showingFloatingTileList.add(floatingTileActioner);
+//        lastFloatingTileKey = floatingTileActioner.
+    }
+    public static synchronized void addWaitFloatingTile(FloatingTileActioner floatingTileActioner){
+        waitingForShowingTileList.add(floatingTileActioner);
+    }
 
     public static synchronized int getNextPosition() {
         for (int i = 0; i <positionArray.size() ; i++) {
@@ -34,18 +42,6 @@ public class TileObject {
                 showTileNum++;
                 return i;
             }
-//            if(currentPosition==mMostShowTitleNum || showTileNum ==0){
-//                currentPosition=0;
-//            }
-//            if(!positionArray.get(currentPosition)){
-//                positionArray.set(currentPosition,true);
-//                showTileNum++;
-////                currentPosition++;
-//                return currentPosition;
-//            }
-//            currentPosition++;
-
-
         }
         return -1;
     }
@@ -58,22 +54,21 @@ public class TileObject {
     }
     public static synchronized void removeSingleShowingTile(FloatingTileActioner floatingTileActioner){
         int showID = floatingTileActioner.showID;
-        Log.e(TAG,String.valueOf(showID));
+//        Log.e(TAG,String.valueOf(showID));
         positionArray.set(showID,false);
         showingFloatingTileList.remove(floatingTileActioner);
         showTileNum--;
-        if (!isClearMultiNOfici){
+        if (!isClearMultiNotification){
             showWaitingTile();
         }
     }
 
     public static synchronized void clearShowingTile() {
-
-        isClearMultiNOfici =true;
-        for (int i = 0; i < showingFloatingTileList.size();) {
-            showingFloatingTileList.get(i).removeTile();
+        isClearMultiNotification =true;
+        while (showingFloatingTileList != null && !showingFloatingTileList.isEmpty()){
+            showingFloatingTileList.get(0).removeTile();
         }
-        isClearMultiNOfici =false;
+        isClearMultiNotification =false;
         showWaitingTile();
     }
 

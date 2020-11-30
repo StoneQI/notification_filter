@@ -29,7 +29,7 @@ public class NotificationHandlerMMKVAdapter {
      */
     private static final String saveKey ="HandlerItemSaveMMkv";
     private final Context context;
-    private HashMap<String, NotificationHandlerItem> storageMap;
+    private HashMap<String, NotificationHandlerItem> storageMap = new HashMap<>();
 //    private Set<NotificationHandlerItem> storageMap;
 //    private Set<Str>
 
@@ -38,6 +38,7 @@ public class NotificationHandlerMMKVAdapter {
     public NotificationHandlerMMKVAdapter(Context context,boolean autosave) {
         this.context = context;
         this.autosave = autosave;
+
 //       kv = MMKV.defaultMMKV();
        load();
     }
@@ -140,7 +141,7 @@ public class NotificationHandlerMMKVAdapter {
      * @return all stored objects in an ArrayList of Objects
      */
     public ArrayList<NotificationHandlerItem> getAllAsArrayList() {
-        ArrayList<NotificationHandlerItem> result = new ArrayList<NotificationHandlerItem>(storageMap.values());
+        ArrayList<NotificationHandlerItem> result = new ArrayList<>(storageMap.values());
         result.sort((n1, n2) ->  n2.orderID - n1.orderID);
         return result;
     }

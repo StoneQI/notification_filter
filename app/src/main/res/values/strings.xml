@@ -122,6 +122,7 @@
     <string name="launch_name">应用图标</string>
     <string name="filter_content">规则内容</string>
     <string name="selectActioner">通知处理器设置</string>
+    <string name="donate_name_list">捐赠列表</string>
     <!--    <string name="new_title" />-->
 
 </resources>

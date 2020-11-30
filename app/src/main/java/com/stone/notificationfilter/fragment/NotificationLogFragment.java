@@ -154,7 +154,9 @@ public class NotificationLogFragment extends Fragment {
 
             if (msg.what == DETELEDATA){
                 pd.dismiss();
-                notificationLogSwipeAdapter.notifyDataSetChanged();
+                if (notificationLogSwipeAdapter != null && notificationLogItemList !=null){
+                    notificationLogSwipeAdapter.notifyDataSetChanged();
+                }
                 view.findViewById(R.id.no_log_data).setVisibility(View.VISIBLE);
             }
 
@@ -219,12 +221,10 @@ public class NotificationLogFragment extends Fragment {
         }
 
         pd= ProgressDialog.show(getActivity(), "加载数据", "Loading…");
-        new Thread(){
-            public void run(){
-                notificationItemEntities = notificationItemDao.loadAllDESC();
-                handler.sendEmptyMessage(INITADAPTER);
-            }
-        }.start();
+        new Thread(() -> {
+            notificationItemEntities = notificationItemDao.loadAllDESC();
+            handler.sendEmptyMessage(INITADAPTER);
+        }).start();
 
 
     }
@@ -251,16 +251,14 @@ public class NotificationLogFragment extends Fragment {
             }
 
             pd= ProgressDialog.show(getActivity(), "删除数据", "Loading…");
-            new Thread(){
-                public void run(){
-                    notificationItemDao.deleteAll();
-                    if (notificationItemEntities != null)
-                        notificationItemEntities.clear();
-                    if( notificationLogItemList != null)
-                        notificationLogItemList.clear();
-                    handler.sendEmptyMessage(DETELEDATA);
-                }
-            }.start();
+            new Thread(() -> {
+                notificationItemDao.deleteAll();
+                if (notificationItemEntities != null)
+                    notificationItemEntities.clear();
+                if( notificationLogItemList != null)
+                    notificationLogItemList.clear();
+                handler.sendEmptyMessage(DETELEDATA);
+            }).start();
         }
         return super.onOptionsItemSelected(item);
     }

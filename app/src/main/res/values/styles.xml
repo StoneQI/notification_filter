@@ -8,6 +8,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryBlue</item>
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="android:statusBarColor">@color/colorPrimaryBlue</item>
+        <item name="actionMenuTextColor">#ffffff</item>
 
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
