@@ -6,14 +6,21 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.stone.notificationfilter.util.SpUtil;
 
 //import android.support.v7.app.AlertDialog;
@@ -37,18 +44,33 @@ import com.stone.notificationfilter.util.SpUtil;
  */
 public class MainActivity extends BaseActivity {
     public final String TAG ="MainActivity";
-    private Toolbar mToolBar;
+    private BottomNavigationView bottomNav;
+
+
+    public void BottomNavigationViewHide(boolean show){
+        if (show){
+            bottomNav.setVisibility(View.VISIBLE);
+        }else{
+            bottomNav.setVisibility(View.GONE);
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_nav_host);
 
 
-        NavController navController =  Navigation.findNavController(this,R.id.nav_host_fragment);
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = navHostFragment.getNavController();
 
+//        NavController navController =  Navigation.findNavController(this,R.id.nav_host_fragment);
+//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        bottomNav = findViewById(R.id.bottom_nav);
+        BottomNavigationViewHide(true);
+        NavigationUI.setupWithNavController(bottomNav,navController);
+//        BottomNavigationView.OnNavigationItemSelectedListener();
 
-        mToolBar = (Toolbar) findViewById(R.id.toolbar_main);
+        MaterialToolbar mToolBar = findViewById(R.id.toolbar_main);
         setSupportActionBar(mToolBar);
 
         NavigationUI.setupWithNavController(mToolBar,navController);
@@ -104,6 +126,7 @@ public class MainActivity extends BaseActivity {
 //        Navigation.findNavController(this,R.navigation.nav_graph).navigateUp();
         return super.onSupportNavigateUp();
     }
+
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {

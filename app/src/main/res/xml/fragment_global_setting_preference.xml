@@ -24,17 +24,11 @@
         android:key="hideInBackground"
         android:summary="退出软件后隐藏该应用在多任务栏的显示，请确保应用已加入白名单"
         android:title="隐藏任务后台显示" />
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="applist_mode"
-        android:summaryOff="当前为黑名单模式，选中的应用屏蔽通知"
-        android:summaryOn="当前为白名单模式，选中的应用才通知"
-        android:summary="默认黑名单，选中的应用屏蔽通知"
-        android:title="应用模式切换" />
+
     <Preference
         android:key="select_applist"
-        android:title="选择匹配应用"
-        android:summary="修改后，重新关闭开启服务才能生效"/>
+        android:title="选择黑名单应用"
+        android:summary="选择的应用通知处理器不处理其通知消息"/>
 
 
 <!--    <Preference-->

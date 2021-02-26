@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
        Copyright (C) 2015 Haruki Hasegawa
        Licensed under the Apache License, Version 2.0 (the "License");
        you may not use this file except in compliance with the License.
@@ -30,5 +29,8 @@
     <dimen name="sd_close_elevation">5dp</dimen>
     <dimen name="sd_overlay_elevation">@dimen/sd_close_elevation</dimen>
     <dimen name="notification_replace_input_margin_bottom">8dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="list_item_spacing">16dp</dimen>
+    <dimen name="list_item_spacing_half">8dp</dimen>
 
 </resources>

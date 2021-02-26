@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDao;
-import com.stone.notificationfilter.entitys.notificationitem.NotificationItemDataBase;
-import com.stone.notificationfilter.entitys.notificationitem.NotificationItemEntity;
+import com.stone.notificationfilter.entitys.notificationlogitem.NotificationItemDao;
+import com.stone.notificationfilter.entitys.notificationlogitem.NotificationItemDataBase;
+import com.stone.notificationfilter.entitys.notificationlogitem.NotificationItemEntity;
 import com.stone.notificationfilter.notificationhandler.databases.NotificationInfo;
 import com.stone.notificationfilter.util.PackageUtil;
 import com.stone.notificationfilter.util.SpUtil;

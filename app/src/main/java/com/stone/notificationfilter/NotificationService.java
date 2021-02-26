@@ -64,9 +64,6 @@ public class NotificationService extends NotificationListenerService {
 
     public static Set<String> selectAppList = null;
     public static Set<String> tempBlackAppLise = new HashSet<>();
-    public static Set<String> systemImportAPP = new HashSet<>();
-
-
     public static boolean isForegroundNotification = true;
     public static boolean isNotificationStore;
 //    True为白名单， false为黑名单
@@ -78,6 +75,7 @@ public class NotificationService extends NotificationListenerService {
     private boolean isNotificationUpblackLandscape = true;
     private NotificationInfo notificationInfo=null;
     private NotificationManager mNotificationManager;
+    private NotificationInfo preNotificationInfo = null;
     private static  int NOTIFICATIONID = 2;
     public static void offListener(){
         isStartListener = false;
@@ -106,8 +104,7 @@ public class NotificationService extends NotificationListenerService {
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_SCREEN_ON));
         registerReceiver(mBroadcastReceiver, new IntentFilter(Intent.ACTION_USER_PRESENT));
         registerReceiver(mBroadcastReceiver, new IntentFilter(NOTIFICATION_FILTER_START_INTENT));
-        systemImportAPP.add("com.android.incallui");
-        systemImportAPP.add("com.android.server.telecom");
+
 
 //
 
@@ -129,39 +126,36 @@ public class NotificationService extends NotificationListenerService {
     }
 
     public void reloadData(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                tempBlackAppLise.clear();
-                String packageNamestring = SpUtil.getString(getApplicationContext(),"appSettings","select_applists", "");
-                selectAppList = SpUtil.string2Set(packageNamestring);
-                appListMode = SpUtil.getBoolean(getApplicationContext(),"appSettings","applist_mode", false);
+        new Thread(() -> {
+            tempBlackAppLise.clear();
+            String packageNamestring = SpUtil.getString(getApplicationContext(),"appSettings","select_applists", "");
+            selectAppList = SpUtil.string2Set(packageNamestring);
+            selectAppList.add("com.android.incallui");
+            selectAppList.add("com.android.server.telecom");
 
 //                    notificationHandlerItemFileStorage = new NotificationHandlerItemFileStorage(getApplicationContext(),true);
 //                    notificationHandlerItems = notificationHandlerItemFileStorage.getAllAsArrayList();
 //
-                notificationHandlerItems = new NotificationHandlerMMKVAdapter(getApplicationContext(),true).getAllAsArrayList();
-                notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule(getApplicationContext()));
+            notificationHandlerItems = new NotificationHandlerMMKVAdapter(getApplicationContext(),true).getAllAsArrayList();
+            notificationHandlerItems.addAll(SystemBaseHandler.getSystemHandlerRule(getApplicationContext()));
 
-//                mHandler.sendEmptyMessage(0);
-            }
         }).start();
     }
 
 
     @Override
     public void onNotificationPosted(final StatusBarNotification sbn) {
+
         if (sbn==null || !isStartListener ) return;
         if (DEBUG) Log.e(TAG,sbn.getKey());
-
-        if( systemImportAPP.contains(sbn.getPackageName())){
+        if(selectAppList.size()>1 &&selectAppList.contains(sbn.getPackageName())){
+//                cancelNotification(sbn.getKey());
             return;
         }
+
         boolean isCancalSystemNotification = true;
         boolean isRestoreNotification = true;
         // 监测屏幕反向
-        setSceenAngle();
-
         // 临时禁止通知
         if (tempBlackAppLise.size() >0){
             if (!(isNotificationUpblackLandscape && !isLandScape)){
@@ -173,19 +167,26 @@ public class NotificationService extends NotificationListenerService {
             }
         }
 
-        // 黑白名单检测
-        if(selectAppList.size()>1){
-            if(appListMode^selectAppList.contains(sbn.getPackageName())){
-                cancelNotification(sbn.getKey());
-                return;
-            }
-        }
 
+
+
+
+        setSceenAngle();
         try {
             notificationInfo = getNotificationInfo(sbn);
             if (notificationInfo == null) return;
         }catch (Exception e){
             e.printStackTrace();
+        }
+
+        // 去重
+        if(!notificationInfo.hasCustomView && preNotificationInfo !=null
+                && preNotificationInfo.key.equals(notificationInfo.key)
+                && preNotificationInfo.title.equals(notificationInfo.title)
+                && preNotificationInfo.content.equals(notificationInfo.content)){
+                cancelNotification(notificationInfo.key);
+        }else{
+            preNotificationInfo = notificationInfo;
         }
 
 
@@ -452,9 +453,9 @@ public class NotificationService extends NotificationListenerService {
         notificationInfo.largeIcon = sbn.getNotification().getLargeIcon();
         notificationInfo.smallIcon = sbn.getNotification().getSmallIcon();
 
-        notificationInfo.title = extras.getString(Notification.EXTRA_TITLE,"");
+        notificationInfo.title = (String) extras.getCharSequence(Notification.EXTRA_TITLE,"");
 
-        notificationInfo.content = extras.getString(Notification.EXTRA_TEXT,"");
+        notificationInfo.content = (String) extras.getCharSequence(Notification.EXTRA_TEXT,"");
 
         notificationInfo.intent = sbn.getNotification().contentIntent;
         notificationInfo.ChannelID = notification.getChannelId();

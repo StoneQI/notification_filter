@@ -1,5 +1,6 @@
 package com.stone.notificationfilter.dialogapppicker;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -12,11 +13,13 @@ import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +30,7 @@ import com.stone.notificationfilter.dialogapppicker.objects.AppItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,13 +44,16 @@ public class DialogAppPicker {
     View mPrincipalView;
     RecyclerView mListView;
     EditText mSearch;
+    SwitchCompat mChecked;
     ProgressBar mProgressBar;
     private int mMode = 0;
+    private static AsyncTask mAsyncTask;
     public static final int MODE_APP = 0;
     public static final int MODE_SHORTCUT = 1;
     private Context c;
-    private boolean mNullItemEnabled = true;
+    private final boolean mNullItemEnabled = true;
     private Set<String> mDefaultPackageNames=null;
+    private Set<String> mAllPackageNames= null;
     private Resources mResources;
     private static IconListAdapter sIconPickerAdapter;
     Spinner mSpinner;
@@ -64,6 +71,18 @@ public class DialogAppPicker {
         mPrincipalView = ((Activity) c).getLayoutInflater().inflate(R.layout.app_picker_preference, null);
         mListView = (RecyclerView) mPrincipalView.findViewById(R.id.icon_list);
         mSearch = (EditText) mPrincipalView.findViewById(R.id.input_search);
+        mChecked = mPrincipalView.findViewById(R.id.input_checked);
+
+        mChecked.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Set<String> mCoptSelectPackages = new HashSet<>(mDefaultPackageNames);
+            mDefaultPackageNames.clear();
+            mDefaultPackageNames.addAll(mAllPackageNames);
+            mDefaultPackageNames.removeAll(mCoptSelectPackages);
+            if (sIconPickerAdapter != null){
+                sIconPickerAdapter.updateSelectApps(mDefaultPackageNames);
+            }
+        });
+
         mSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable arg0) { }
@@ -89,7 +108,7 @@ public class DialogAppPicker {
             }
         });
         mProgressBar = (ProgressBar) mPrincipalView.findViewById(R.id.progress_bar);
-        setData();
+//        setData();
 //        mSpinner = (Spinner) mPrincipalView.findViewById(R.id.mode_spinner);
 //
 //        ArrayAdapter<String> mModeSpinnerAdapter = new ArrayAdapter<String>(
@@ -128,8 +147,9 @@ public class DialogAppPicker {
        mIconPickerDialog.dismiss();
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void setData() {
-        AsyncTask mAsyncTask = new AsyncTask<Void, Void, ArrayList<AppItem>>() {
+         mAsyncTask = new AsyncTask<Void, Void, ArrayList<AppItem>>() {
             PackageManager mPackageManager;
 
             @Override
@@ -137,7 +157,8 @@ public class DialogAppPicker {
                 super.onPreExecute();
 
                 mListView.setVisibility(View.INVISIBLE);
-                mSearch.setVisibility(View.GONE);
+                mSearch.setVisibility(View.INVISIBLE);
+                mChecked.setVisibility(View.INVISIBLE);
                 mProgressBar.setVisibility(View.VISIBLE);
                 mPackageManager = ((Activity) c).getPackageManager();
             }
@@ -170,11 +191,13 @@ public class DialogAppPicker {
 //                            new ShortcutItem(c, "Shortcuts", null) :
 //                            new AppItem(c, "所有应用", null));
 //                }
+                mAllPackageNames = new HashSet<>();
                 for (ResolveInfo ri : appList) {
                     if (this.isCancelled()) break;
                     String appName = ri.loadLabel(mPackageManager).toString();
                     AppItem ai = new AppItem(c, appName, ri);
                     itemList.add(ai);
+                    mAllPackageNames.add(ai.getPackageName());
                 }
 
                 return itemList;
@@ -184,12 +207,14 @@ public class DialogAppPicker {
             protected void onPostExecute(final ArrayList<AppItem> result) {
                 mProgressBar.setVisibility(View.GONE);
                 mSearch.setVisibility(View.VISIBLE);
+                mChecked.setVisibility(View.VISIBLE);
                 sIconPickerAdapter = new IconListAdapter(c,mDefaultPackageNames);
+
                 sIconPickerAdapter.setAppItems(result);
+
                 LinearLayoutManager layoutManager = new LinearLayoutManager(c);
                 mListView.setLayoutManager(layoutManager);
                 mListView.setAdapter(sIconPickerAdapter);
-
                 mListView.setVisibility(View.VISIBLE);
             }
         }.execute();

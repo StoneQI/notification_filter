@@ -123,6 +123,8 @@
     <string name="filter_content">规则内容</string>
     <string name="selectActioner">通知处理器设置</string>
     <string name="donate_name_list">捐赠列表</string>
+    <!-- Preference Titles -->
+
     <!--    <string name="new_title" />-->
 
 </resources>

@@ -79,27 +79,21 @@ public class GlobalSettingFragment extends PreferenceFragmentCompat {
         getPreferenceManager().setSharedPreferencesName("appSettings");
         addPreferencesFromResource(R.xml.fragment_global_setting_preference);
 
-        findPreference("select_applist").setOnPreferenceClickListener((new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                final String packageNamestring = SpUtil.getSp(getContext(), "appSettings").getString("select_applists", "");
-                Log.e(TAG,"PackageNameList:"+packageNamestring);
-                final Set<String> packageNames = SpUtil.string2Set(packageNamestring);
-                final DialogAppPicker mDialog = new DialogAppPicker(getContext(), packageNames);
-                mDialog.getDialog()
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String newPackageNameList = SpUtil.set2String(packageNames);
-                                Log.e(TAG,"newPackageNameList:"+newPackageNameList);
-                                SpUtil.putString(getContext(), "appSettings","select_applists", newPackageNameList);
-                            }
-                        })
-                        .setNegativeButton("取消", null)
-                        .create()
-                        .show();
-                return false;
-            }
+        findPreference("select_applist").setOnPreferenceClickListener((preference -> {
+            final String packageNamestring = SpUtil.getSp(getContext(), "appSettings").getString("select_applists", "");
+            Log.e(TAG,"PackageNameList:"+packageNamestring);
+            final Set<String> packageNames = SpUtil.string2Set(packageNamestring);
+            final DialogAppPicker mDialog = new DialogAppPicker(getContext(), packageNames);
+            mDialog.getDialog()
+                    .setPositiveButton("确定", (dialog, which) -> {
+                        String newPackageNameList = SpUtil.set2String(packageNames);
+                        Log.e(TAG,"newPackageNameList:"+newPackageNameList);
+                        SpUtil.putString(getContext(), "appSettings","select_applists", newPackageNameList);
+                    })
+                    .setNegativeButton("取消", null)
+                    .create()
+                    .show();
+            return false;
         }));
     }
 

@@ -1,7 +1,6 @@
 package com.stone.notificationfilter.notificationhandler.databases;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -9,33 +8,26 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.stone.notificationfilter.util.SpUtil;
 import com.stone.notificationfilter.util.filestore.Crypter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 //import com.tencent.mmkv.MMKV;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
-
-public class NotificationHandlerMMKVAdapter {
+public class NotificationRuleMMKVAdapter {
     /**
      *
      */
     private String saveKey ="HandlerItemSaveMMkv";
     private final Context context;
-    private HashMap<String, NotificationHandlerItem> storageMap = new HashMap<>();
+    private HashMap<String, NotificationRuleItem> storageMap = new HashMap<>();
 //    private Set<NotificationHandlerItem> storageMap;
 //    private Set<Str>
 
     private final boolean autosave;
 
-    public NotificationHandlerMMKVAdapter(Context context,boolean autosave) {
+    public NotificationRuleMMKVAdapter(Context context, boolean autosave) {
         this.context = context;
         this.autosave = autosave;
 
@@ -43,7 +35,7 @@ public class NotificationHandlerMMKVAdapter {
        load();
     }
 
-    public NotificationHandlerMMKVAdapter(Context context,String saveKey, boolean autosave) {
+    public NotificationRuleMMKVAdapter(Context context, String saveKey, boolean autosave) {
         this.context = context;
         this.autosave = autosave;
         this.saveKey = saveKey;
@@ -80,7 +72,7 @@ public class NotificationHandlerMMKVAdapter {
         String content = SpUtil.getString(context,"Setting",saveKey,"");
 //        String content = kv.decodeString(saveKey,"");
         if (content.length() !=0){
-            storageMap = new Gson().fromJson(content, new TypeToken<HashMap<String,NotificationHandlerItem>>(){}.getType());
+            storageMap = new Gson().fromJson(content, new TypeToken<HashMap<String,NotificationRuleItem>>(){}.getType());
         }
     }
 
@@ -92,7 +84,7 @@ public class NotificationHandlerMMKVAdapter {
      * @param key The key as String.
      * @param o The Object.
      */
-    public void store(String key, NotificationHandlerItem o) throws IOException {
+    public void store(String key, NotificationRuleItem o) throws IOException {
         storageMap.put(key, o);
         if (autosave) {
             save();
@@ -119,7 +111,7 @@ public class NotificationHandlerMMKVAdapter {
      * @param key The key the object is available under
      * @return your Object or null if nothing was found for <i>key</i>
      */
-    public NotificationHandlerItem get(String key) {
+    public NotificationRuleItem get(String key) {
         return storageMap.get(key);
     }
 
@@ -147,8 +139,8 @@ public class NotificationHandlerMMKVAdapter {
      *
      * @return all stored objects in an ArrayList of Objects
      */
-    public ArrayList<NotificationHandlerItem> getAllAsArrayList() {
-        ArrayList<NotificationHandlerItem> result = new ArrayList<>(storageMap.values());
+    public ArrayList<NotificationRuleItem> getAllAsArrayList() {
+        ArrayList<NotificationRuleItem> result = new ArrayList<>(storageMap.values());
         result.sort((n1, n2) ->  n2.orderID - n1.orderID);
         return result;
     }
@@ -158,7 +150,7 @@ public class NotificationHandlerMMKVAdapter {
      *
      * @return all stored objects in a HashMap of Strings and Objects
      */
-    public HashMap<String, NotificationHandlerItem> getAll() {
+    public HashMap<String, NotificationRuleItem> getAll() {
         return storageMap;
     }
 
@@ -197,7 +189,7 @@ public class NotificationHandlerMMKVAdapter {
      * @param o The Object.
      * @return true if the object is stored
      */
-    public boolean hasObject(NotificationHandlerItem o) {
+    public boolean hasObject(NotificationRuleItem o) {
         return storageMap.containsValue(o);
     }
 

@@ -1,0 +1,48 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        app:title="通知处理器"
+        app:summary="以下规则按顺序只能匹配一个">
+
+        <Preference
+            app:key="dropNotification"
+            app:summary="符合规则的通知将被丢弃"
+            app:title="屏蔽通知处理器规则设置"/>
+        <Preference
+            app:key="systemNotification"
+            app:summary="符合规则的通知将以系统方式通知"
+            app:title="系统通知处理器规则设置"/>
+        <Preference
+            app:key="floatViewNotification"
+            app:summary="符合规则的通知将显示其悬浮通知组件（常用于音乐软件）"
+            app:title="通知组件悬浮处理器规则设置"/>
+        <Preference
+            app:key="bulletNotification"
+            app:summary="符合规则的通知将以弹幕方式通知"
+            app:selectable="true"
+            app:enabled="true"
+            android:fragment="com.stone.notificationfilter.fragment.NotificationRuleListFragment"
+            app:title="弹幕通知处理器规则设置"/>
+        <Preference
+            app:key="floatTileNotification"
+            app:summary="符合规则的通知将以侧边悬浮通知"
+            app:title="侧边悬浮通知处理器规则设置"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="通知处理器"
+        app:summary="以下规则可多个匹配">
+
+        <Preference
+            app:key="playMusicNotification"
+            app:summary="符合规则的通知将播放提示音通知"
+            app:title="播放提示音规则设置"/>
+        <Preference
+            app:key="saveLogNotification"
+            app:summary="符合规则的通知将被记录到日志"
+            app:title="保存通知到日志规则设置"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -18,17 +18,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/input_search"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:hint="搜索"
-        android:inputType="text"
-        android:saveEnabled="false" />
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/input_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="8dp"
+            android:hint="搜索"
+            android:inputType="text"
+            android:saveEnabled="false"
+            android:layout_weight="0.7"
+            android:autofillHints="输入应用名称" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/input_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:gravity="end"
+           />
+    </LinearLayout>
+
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -41,8 +59,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/icon_list"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:paddingRight="10dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+         />
 
 </LinearLayout>

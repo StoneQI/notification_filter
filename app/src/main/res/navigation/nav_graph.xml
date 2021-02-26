@@ -33,6 +33,12 @@
         <action
             android:id="@+id/action_mainNavHastFragment_to_donateFragment"
             app:destination="@id/donateFragment" />
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_notificationRuleFragment2"
+            app:destination="@id/notificationRuleFragment" />
+        <action
+            android:id="@+id/action_mainNavHastFragment_to_notificationRuleSettingsFragment"
+            app:destination="@id/notificationRuleSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/globlSetting"
@@ -87,4 +93,31 @@
         android:name="com.stone.notificationfilter.fragment.DonateFragment"
         android:label="@string/nav_donate"
         tools:layout="@layout/fragment_donate" />
+    <fragment
+        android:id="@+id/notificationRuleFragment"
+        android:name="com.stone.notificationfilter.fragment.NotificationRuleFragment"
+        android:label="规则设置"
+        tools:layout="@layout/fragment_notification_rule" />
+    <fragment
+        android:id="@+id/notificationRuleSettingsFragment"
+        android:name="com.stone.notificationfilter.fragment.NotificationRuleSettingsFragment"
+        android:label="NotificationRuleSettingsFragment" >
+        <action
+            android:id="@+id/action_notificationRuleSettingsFragment_to_notificationRuleListFragment"
+            app:destination="@id/notificationRuleListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/notificationRuleListFragment"
+        android:name="com.stone.notificationfilter.fragment.NotificationRuleListFragment"
+        android:label="规则列表"
+        tools:layout="@layout/fragment_notification_rule_item_list" >
+        <action
+            android:id="@+id/action_notificationRuleListFragment_to_updateNotificationRuleDialogFragment"
+            app:destination="@id/updateNotificationRuleDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/updateNotificationRuleDialogFragment"
+        android:name="com.stone.notificationfilter.fragment.UpdateNotificationRuleDialogFragment"
+        android:label="规则设置"
+        tools:layout="@layout/fragment_update_notification_rule_dialog_bottom" />
 </navigation>

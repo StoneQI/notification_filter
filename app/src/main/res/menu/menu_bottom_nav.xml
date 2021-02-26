@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/mainNavHastFragment"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="选项一"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/globlSetting"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="选项二"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/notificationRuleSettingsFragment"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_lock_silent_mode_off"
+        android:title="选项三"
+        app:showAsAction="ifRoom" />
+</menu>

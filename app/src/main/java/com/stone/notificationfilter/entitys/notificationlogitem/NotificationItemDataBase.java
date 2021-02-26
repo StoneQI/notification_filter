@@ -1,4 +1,4 @@
-package com.stone.notificationfilter.entitys.notificationitem;
+package com.stone.notificationfilter.entitys.notificationlogitem;
 
 import android.content.Context;
 
@@ -7,7 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 
-@Database(entities = {NotificationItemEntity.class},version = 2)
+@Database(entities = {NotificationItemEntity.class},version = 3)
 public abstract class NotificationItemDataBase extends RoomDatabase {
     private static final String DB_NAME ="notificationitens.db";
     private static volatile NotificationItemDataBase instance;

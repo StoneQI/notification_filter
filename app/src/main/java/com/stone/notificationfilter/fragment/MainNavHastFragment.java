@@ -34,6 +34,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.stone.notificationfilter.BuildConfig;
+import com.stone.notificationfilter.MainActivity;
 import com.stone.notificationfilter.MainActivity3;
 import com.stone.notificationfilter.NotificationService;
 import com.stone.notificationfilter.R;
@@ -93,6 +94,10 @@ public class MainNavHastFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        MainActivity mainActivity = (MainActivity)getActivity();
+        if(mainActivity!= null){
+            mainActivity.BottomNavigationViewHide(true);
         }
         setHasOptionsMenu(true);
 

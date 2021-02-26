@@ -22,7 +22,6 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -34,11 +33,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.stone.notificationfilter.R;
-import com.stone.notificationfilter.dialogapppicker.IIconListAdapterItem;
 import com.stone.notificationfilter.dialogapppicker.objects.AppItem;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +44,7 @@ public class IconListAdapter extends RecyclerView.Adapter<IconListAdapter.ViewHo
     private List<AppItem> mData = null;
     private List<AppItem> mCopyData = null;
     private List<AppItem> mFilteredData = null;
-    private Set<String> selectedPackages;
+    private Set<String> mSelectedPackages;
     private android.widget.Filter mFilter;
 
 
@@ -71,7 +68,7 @@ public class IconListAdapter extends RecyclerView.Adapter<IconListAdapter.ViewHo
     @SuppressLint("ResourceType")
     public IconListAdapter(Context context, Set<String> select) {
         super();
-        selectedPackages = select;
+        mSelectedPackages = select;
 //        mContext = context;
 //        mData = new ArrayList<AppItem>(objects);
 //        mFilteredData = new ArrayList<AppItem>(objects);
@@ -93,16 +90,16 @@ public class IconListAdapter extends RecyclerView.Adapter<IconListAdapter.ViewHo
         holder.icon.setImageDrawable(current.getIconLeft());
         holder.label.setText(current.getAppName());
         holder.packageName.setText(current.getPackageName());
-        holder.checkBox.setChecked(selectedPackages.contains(current.getPackageName()));
+        holder.checkBox.setChecked(mSelectedPackages.contains(current.getPackageName()));
 
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectedPackages.contains(current.getPackageName())) {
+                if (mSelectedPackages.contains(current.getPackageName())) {
                     holder.checkBox.setChecked(false);
-                    selectedPackages.remove(current.getPackageName());
+                    mSelectedPackages.remove(current.getPackageName());
                 } else {
-                    selectedPackages.add(current.getPackageName());
+                    mSelectedPackages.add(current.getPackageName());
                     holder.checkBox.setChecked(true);
                 }
             }
@@ -124,6 +121,13 @@ public class IconListAdapter extends RecyclerView.Adapter<IconListAdapter.ViewHo
         mData = new ArrayList<>();
         this.mData.addAll(data);
         this.mCopyData = data;
+        this.notifyDataSetChanged();
+    }
+
+    public void updateSelectApps( Set<String> selectedPackages){
+        this.mSelectedPackages = selectedPackages;
+        mData.clear();
+        this.mData.addAll(mCopyData);
         this.notifyDataSetChanged();
     }
 

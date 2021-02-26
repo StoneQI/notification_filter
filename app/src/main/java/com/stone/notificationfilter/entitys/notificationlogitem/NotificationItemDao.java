@@ -1,4 +1,4 @@
-package com.stone.notificationfilter.entitys.notificationitem;
+package com.stone.notificationfilter.entitys.notificationlogitem;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
